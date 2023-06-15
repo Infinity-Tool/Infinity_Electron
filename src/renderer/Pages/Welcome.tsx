@@ -35,7 +35,6 @@ export default function Welcome() {
           width: 1000,
         }}
         alt="Infinity Logo"
-        //assets/logo_banner.png
         src={Logobanner}
       />
       <Box sx={creditStyles}>
@@ -47,7 +46,12 @@ export default function Welcome() {
       </Box>
 
       <Box sx={buttonContainerStyles}>
-        <Button variant="contained" color="primary" onClick={handleBegin}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleBegin}
+        >
           Begin
         </Button>
       </Box>
