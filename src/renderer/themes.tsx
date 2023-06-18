@@ -10,7 +10,7 @@ export default function GetTheme(): any {
       },
       background: {
         default: '#1E1E1E',
-        paper: '#121212',
+        paper: '#000000',
       },
     },
     typography: {
