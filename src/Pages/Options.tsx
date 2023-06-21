@@ -32,8 +32,8 @@ export default function Options() {
   const [localModsError, setLocalModsError] = useState(false);
 
   enum FolderType {
-    mods,
-    localPrefabs,
+    mods = "mods",
+    localPrefabs = "localPrefabs",
   }
 
   //File selection
@@ -46,8 +46,18 @@ export default function Options() {
   useEffect(() => {
     ipcRenderer.on("selected-directory", (event: any, path, folderType) => {
       // Handle selected directory path
-      if (path && event.canceled === false) {
-        console.log("Selected Directory:", path, folderType, "aaaa");
+      if (!event.canceled) {
+        const filePath = path.filePaths[0];
+        switch (folderType) {
+          case FolderType.mods:
+            setModsPath(filePath);
+            break;
+          case FolderType.localPrefabs:
+            setLocalPrefabsPath(filePath);
+            break;
+          default:
+            console.error("Unknown folder type", folderType);
+        }
       } else {
         console.log("No directory selected.");
       }
@@ -56,7 +66,7 @@ export default function Options() {
     return () => {
       ipcRenderer.removeAllListeners("selected-directory");
     };
-  }, []);
+  }, [ipcRenderer]);
 
   //Functions
   const onBackClick = () => {
