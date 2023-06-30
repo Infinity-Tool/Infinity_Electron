@@ -1,5 +1,11 @@
-export const formContainer = {
+export const formContainerStyles = {
   display: "flex",
   flexDirection: "column",
   gap: "2rem",
+};
+
+export const buttonContainerStyles = {
+  display: "flex",
+  gap: "1rem",
+  justifyContent: "end",
 };
