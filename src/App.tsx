@@ -2,9 +2,10 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import GetTheme from "./Services/Themes";
 import Layout from "./Components/Layout";
-import { routes } from "./Services/Constants";
+import { AppRoutes } from "./Services/Constants";
 //pages
 import Welcome from "./Pages/Welcome";
+import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
 import Selection from "./Pages/Selection";
 
@@ -17,9 +18,10 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route path={routes.welcome} element={<Welcome />} />
-            <Route path={routes.options} element={<Options />} />
-            <Route path={routes.selection} element={<Selection />} />
+            <Route path={AppRoutes.welcome} element={<Welcome />} />
+            <Route path={AppRoutes.agreement} element={<Agreement />} />
+            <Route path={AppRoutes.options} element={<Options />} />
+            <Route path={AppRoutes.selection} element={<Selection />} />
           </Route>
         </Routes>
       </Router>

@@ -1,15 +1,14 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { routes } from "../Services/Constants";
+import { AppRoutes } from "../Services/Constants";
 import LogoBanner from "../Assets/logo_banner.png";
 
 export default function Welcome() {
   const router = useNavigate();
 
   const handleBegin = () => {
-    router(routes.options);
+    router(AppRoutes.agreement);
   };
-  const getFilePath = () => {};
 
   //Syles
   const page = {

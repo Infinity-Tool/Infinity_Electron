@@ -5,18 +5,22 @@ import {
   FormControl,
   FormControlLabel,
   Paper,
-  Typography,
 } from "@mui/material";
 import { buttonContainerStyles } from "Services/CommonStyles";
-import { routes } from "Services/Constants";
+import { AppRoutes } from "Services/Constants";
+import LocalStorageKeys from "Services/LocalStorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
+import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function Selection() {
   const router = useNavigate();
   const [directoryFile, setDirectoryFile]: any = useState();
-  const [selectedMods, setSelectedMods] = useState<any>([]);
+  const [selectedMods, setSelectedMods] = useLocalStorage(
+    LocalStorageKeys.selectedMods,
+    []
+  );
 
   useEffect(() => {
     GetDirectoryFileHttp().then((res) => {
@@ -27,7 +31,7 @@ export default function Selection() {
 
   //Functions
   const onBackClick = () => {
-    router(routes.options);
+    router(AppRoutes.options);
   };
   const onNextClick = () => {
     //TODO

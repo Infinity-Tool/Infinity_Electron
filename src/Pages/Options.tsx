@@ -16,7 +16,7 @@ import {
   buttonContainerStyles,
   formContainerStyles,
 } from "Services/CommonStyles";
-import { routes } from "Services/Constants";
+import { AppRoutes } from "Services/Constants";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -79,30 +79,28 @@ export default function Options() {
   };
 
   const onBackClick = () => {
-    router(routes.welcome);
+    router(AppRoutes.welcome);
   };
 
   const onNextClick = () => {
     if (Validate()) {
       SaveSettings();
-      router(routes.selection);
+      router(AppRoutes.selection);
     } else {
       // todo display error message?
     }
   };
   const Validate = (): boolean => {
-    // let valid = true;
-    // if (!IsOkayPath(localPrefabsPath)) {
-    //   valid = false;
-    //   setLocalPrefabsError(true);
-    // }
-    // if (!IsOkayPath(modsPath)) {
-    //   valid = false;
-    //   setLocalModsError(true);
-    // }
-    // //todo check paths exists
-    return true;
-    // return valid;
+    let valid = true;
+    if (!IsOkayPath(localPrefabsPath)) {
+      valid = false;
+      setLocalPrefabsError(true);
+    }
+    if (!IsOkayPath(modsPath)) {
+      valid = false;
+      setLocalModsError(true);
+    }
+    return valid;
   };
 
   const SaveSettings = () => {};
@@ -128,8 +126,6 @@ export default function Options() {
 
   return (
     <>
-      <h1>Setup</h1>
-
       <Box sx={formContainerStyles}>
         <FormGroup>
           <FormControlLabel
