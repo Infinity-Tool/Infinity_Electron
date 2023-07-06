@@ -35,7 +35,7 @@ export default function Selection() {
     router(AppRoutes.options);
   };
   const onNextClick = () => {
-    //TODO
+    router(AppRoutes.installation);
   };
 
   //Styles

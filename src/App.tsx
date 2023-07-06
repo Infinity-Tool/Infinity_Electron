@@ -8,6 +8,7 @@ import Welcome from "./Pages/Welcome";
 import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
 import Selection from "./Pages/Selection";
+import Installation from "Pages/Installation";
 
 export default function App() {
   const theme = createTheme(GetTheme());
@@ -22,6 +23,7 @@ export default function App() {
             <Route path={AppRoutes.agreement} element={<Agreement />} />
             <Route path={AppRoutes.options} element={<Options />} />
             <Route path={AppRoutes.selection} element={<Selection />} />
+            <Route path={AppRoutes.installation} element={<Installation />} />
           </Route>
         </Routes>
       </Router>
