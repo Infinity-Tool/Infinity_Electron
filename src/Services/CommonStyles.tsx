@@ -5,7 +5,7 @@ export const formContainerStyles = {
 };
 
 export const buttonContainerStyles = {
-  mt: "2rem",
+  mt: "auto",
   display: "flex",
   gap: "1rem",
   justifyContent: "end",

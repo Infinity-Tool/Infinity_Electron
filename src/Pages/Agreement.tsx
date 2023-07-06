@@ -4,13 +4,13 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Paper,
   Typography,
 } from "@mui/material";
 import Loading from "Components/Loading";
 import { buttonContainerStyles } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import { GetAgreementHttp } from "Services/http/Agreement";
-import { GetDirectoryFileHttp } from "Services/http/Directory";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -18,6 +18,7 @@ export default function Agreement() {
   const router = useNavigate();
   const [userAgreement, setUserAgreement]: any = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
+  const [testArray, setTestArray]: any = useState();
 
   useEffect(() => {
     fetchUserAgreement();
@@ -26,8 +27,8 @@ export default function Agreement() {
   //Functions
   const fetchUserAgreement = async () => {
     GetAgreementHttp().then((res) => {
-      const formattedAgreement = res.replaceAll("\\n", "<br/>");
-      setUserAgreement(formattedAgreement);
+      setTestArray(res.split("\n"));
+      setUserAgreement(res);
     });
   };
 
@@ -41,18 +42,29 @@ export default function Agreement() {
   //Styles
   const agreementContainerStyles = {
     color: "text.secondary",
-    m: "2rem",
-    height: "50vh",
+    m: "1rem",
+    p: "1rem",
+    height: "60vh",
     overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
+    gap: ".5rem",
   };
 
   return (
     <Box>
       <Typography variant="h5">Agreement</Typography>
 
-      <Box sx={agreementContainerStyles}>
-        {userAgreement ? <Typography>{userAgreement}</Typography> : <Loading />}
-      </Box>
+      <Paper sx={agreementContainerStyles}>
+        {/* {userAgreement ? <Typography>{userAgreement}</Typography> : <Loading />} */}
+        {testArray ? (
+          testArray.map((p: string) => (
+            <Typography variant="caption">{p}</Typography>
+          ))
+        ) : (
+          <Loading />
+        )}
+      </Paper>
       <FormGroup>
         <FormControlLabel
           control={

@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   Paper,
 } from "@mui/material";
+import Loading from "Components/Loading";
 import { buttonContainerStyles } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
@@ -50,6 +51,7 @@ export default function Selection() {
   return (
     <>
       <Box sx={modListContainer}>
+        {directoryFile == null && <Loading />}
         {directoryFile?.map((tas: any) => (
           <Paper sx={modContainer}>
             <FormControl>
