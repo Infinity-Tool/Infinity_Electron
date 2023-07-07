@@ -1,15 +1,11 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import InstallTimeline from "./InstallTimeline";
+import { useTheme } from "@emotion/react";
 
 export default function Layout() {
   //Styles
-  const pageContainerStyles = {
-    padding: "1rem",
-    width: { xs: "100%", sm: "90%", md: "80%", lg: "65%", xl: "50%" },
-    mx: "auto",
-    height: "100%",
-  };
+
   const layoutContainerStyles = {
     display: "flex",
     flexDirection: "row",
@@ -19,9 +15,7 @@ export default function Layout() {
   return (
     <Box sx={layoutContainerStyles}>
       <InstallTimeline />
-      <Box sx={pageContainerStyles}>
-        <Outlet />
-      </Box>
+      <Outlet />
     </Box>
   );
 }

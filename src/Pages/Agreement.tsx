@@ -8,7 +8,11 @@ import {
   Typography,
 } from "@mui/material";
 import Loading from "Components/Loading";
-import { buttonContainerStyles } from "Services/CommonStyles";
+import {
+  pageContainerStyles,
+  pageContentStyles,
+  pageFooterStyles,
+} from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import { GetAgreementHttp } from "Services/http/Agreement";
 import { useEffect, useState } from "react";
@@ -42,9 +46,9 @@ export default function Agreement() {
   //Styles
   const agreementContainerStyles = {
     color: "text.secondary",
-    m: "1rem",
+    my: "1rem",
     p: "1rem",
-    height: "60vh",
+    // height: "60vh",
     overflow: "auto",
     display: "flex",
     flexDirection: "column",
@@ -52,32 +56,33 @@ export default function Agreement() {
   };
 
   return (
-    <Box>
-      <Typography variant="h5">Agreement</Typography>
+    <Box sx={pageContainerStyles}>
+      <Box sx={pageContentStyles}>
+        <Typography variant="h5">Agreement</Typography>
 
-      <Paper sx={agreementContainerStyles}>
-        {/* {userAgreement ? <Typography>{userAgreement}</Typography> : <Loading />} */}
-        {testArray ? (
-          testArray.map((p: string) => (
-            <Typography variant="caption">{p}</Typography>
-          ))
-        ) : (
-          <Loading />
-        )}
-      </Paper>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              value={agreementChecked}
-              onChange={(e) => setAgreementChecked(e.target.checked)}
-            />
-          }
-          label="I Agree"
-        />
-      </FormGroup>
-
-      <Box sx={buttonContainerStyles}>
+        <Paper sx={agreementContainerStyles}>
+          {/* {userAgreement ? <Typography>{userAgreement}</Typography> : <Loading />} */}
+          {testArray ? (
+            testArray.map((p: string) => (
+              <Typography variant="caption">{p}</Typography>
+            ))
+          ) : (
+            <Loading />
+          )}
+        </Paper>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                value={agreementChecked}
+                onChange={(e) => setAgreementChecked(e.target.checked)}
+              />
+            }
+            label="I Agree"
+          />
+        </FormGroup>
+      </Box>
+      <Box sx={pageFooterStyles}>
         <Button color="primary" onClick={handleBack}>
           Back
         </Button>

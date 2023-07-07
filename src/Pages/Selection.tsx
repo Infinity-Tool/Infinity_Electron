@@ -7,7 +7,11 @@ import {
   Paper,
 } from "@mui/material";
 import Loading from "Components/Loading";
-import { buttonContainerStyles } from "Services/CommonStyles";
+import {
+  pageContainerStyles,
+  pageContentStyles,
+  pageFooterStyles,
+} from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
@@ -49,27 +53,29 @@ export default function Selection() {
   };
 
   return (
-    <>
-      <Box sx={modListContainer}>
-        {directoryFile == null && <Loading />}
-        {directoryFile?.map((tas: any) => (
-          <Paper sx={modContainer}>
-            <FormControl>
-              <FormControlLabel
-                control={<Checkbox />}
-                label={tas.name}
-              ></FormControlLabel>
-            </FormControl>
-          </Paper>
-        ))}
-        {directoryFile == null && <div>loading...</div>}
+    <Box sx={pageContainerStyles}>
+      <Box sx={pageContentStyles}>
+        <Box sx={modListContainer}>
+          {directoryFile == null && <Loading />}
+          {directoryFile?.map((tas: any) => (
+            <Paper sx={modContainer}>
+              <FormControl>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label={tas.name}
+                ></FormControlLabel>
+              </FormControl>
+            </Paper>
+          ))}
+          {directoryFile == null && <div>loading...</div>}
+        </Box>
       </Box>
-      <Box sx={buttonContainerStyles}>
+      <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Download & Install
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }

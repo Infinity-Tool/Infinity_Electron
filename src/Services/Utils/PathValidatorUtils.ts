@@ -1,5 +1,5 @@
 const folderKeyWords = ["7days", "prefabs", "mods", "die", "7d"];
-const blacklistKeyworks = ["system32"]; //TODO
+const blacklistKeyworks = ["system32", "c:/windows"]; //TODO
 
 export const IsOkayPath = (path: string): boolean => {
   if (path == null || path === "") return false;

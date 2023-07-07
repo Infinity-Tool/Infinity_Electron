@@ -1,4 +1,5 @@
 enum LocalStorageKeys {
+  cleanInstall = "cleanInstall",
   selectedMods = "selectedMods",
 }
 
