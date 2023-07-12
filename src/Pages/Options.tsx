@@ -31,16 +31,17 @@ export default function Options() {
     LocalStorageKeys.cleanInstall,
     false
   );
-  const [localPrefabsPath, setLocalPrefabsPath] = useLocalStorage(
-    "localPrefabsPath",
+  const [modsPath, setModsPath] = useLocalStorage(
+    LocalStorageKeys.modsDirectory,
     ""
   );
-  const [modsPath, setModsPath] = useLocalStorage("modsPath", "");
+  const [localPrefabsPath, setLocalPrefabsPath] = useLocalStorage(
+    LocalStorageKeys.localPrefabsDirectory,
+    ""
+  );
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
   const [localModsError, setLocalModsError] = useState(false);
   const hasErrors = localPrefabsError || localModsError;
-
-  console.log("modsPath", modsPath);
 
   enum FolderType {
     mods = "mods",

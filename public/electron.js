@@ -1,12 +1,14 @@
 const path = require("path");
 
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
-const fs = require("fs");
+const { download } = require("electron-dl");
 const isDev = require("electron-is-dev");
+
+let window;
 
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  window = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -19,14 +21,14 @@ function createWindow() {
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
-  win.loadURL(
+  window.loadURL(
     isDev
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: "detach" });
+    window.webContents.openDevTools({ mode: "detach" });
   }
 }
 
@@ -56,10 +58,39 @@ ipcMain.on("open-folder-dialog", (event, folderType) => {
       properties: ["openDirectory"],
     })
     .then((result) => {
-      console.log("selected-directory", result, folderType);
+      // console.log("selected-directory", result, folderType);
       event.reply("selected-directory", result, folderType);
     })
     .catch((err) => {
       console.log(err);
     });
 });
+
+ipcMain.on("download-file", (event, info) => {
+  info.properties.onProgress = (status) =>
+    window.webContents.send("download-progress", status);
+
+  download(window, info.url, info.properties)
+    .then((dl) =>
+      window.webContents.send("download-complete", info.properties.fileName)
+    )
+    .catch((err) => {
+      window.webContents.send("download-error", info.properties.fileName);
+    });
+});
+
+// ipcMain.on("download-file", (event, info) => {
+//   console.log("download-file", info);
+
+//   // info.properties.onProgress = (status) =>
+//   //   window.webContents.send("download-progress", status);
+
+//   download(BrowserWindow.getFocusedWindow(), info.url, info.properties).then(
+//     (dl) => {
+//       console.log("electron download-complete", dl);
+//       return event.reply("download-complete", info.properties.fileName);
+//       // return window.webContents.send("download-complete", info.properties.fileName)
+//     }
+//     //window.webContents.send("download-complete", info.url)
+//   );
+// });
