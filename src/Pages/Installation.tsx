@@ -120,6 +120,7 @@ export default function Installation() {
       properties: {
         directory: directoryWithoutFileName,
         fileName: file.path,
+        overwrite: true,
       },
     });
   }
