@@ -1,3 +1,10 @@
+import { useTheme } from "@emotion/react";
+import {
+  faCheck,
+  faTimes,
+  faTruckMonster,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Box,
   Button,
@@ -16,8 +23,10 @@ import LocalStorageKeys from "Services/LocalStorageKeys";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { styled } from "@mui/material/styles";
 
 export default function Installation() {
+  const theme = useTheme();
   const maxInQueue = 1;
   const router = useNavigate();
   const { ipcRenderer } = window.require("electron");
@@ -132,7 +141,13 @@ export default function Installation() {
     setDone(false);
   };
   const onBackClick = () => {
-    router(AppRoutes.selection);
+    //get current route value
+    //find previous route based on RoutesMeta value
+    //set route to previous route
+
+    //TODO
+
+    router(AppRoutes.welcome);
     setDone(false);
   };
 
@@ -187,36 +202,41 @@ export default function Installation() {
   const fileBoxStyles = {
     p: "1rem",
   };
+  const inProgressStyles = {
+    // color: "orange",
+  };
+  const completedStyles = {
+    // color: "primary.dark",
+    color: "text.secondary",
+  };
+  const errorStyles = {
+    color: "error.main",
+  };
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
         <Box sx={fileBoxContainerStyles}>
           <Paper sx={fileBoxStyles}>
-            <Typography>Queued:</Typography>
-            {filesToDownload.map((file: any) => (
+            {/* {filesToDownload.map((file: any) => (
               <Typography>{file.path}</Typography>
-            ))}
-          </Paper>
-
-          <Paper sx={fileBoxStyles}>
-            <Typography>In Progress:</Typography>
+            ))} */}
             {filesInProgress.map((file: any) => (
-              <Typography>{file}</Typography>
+              <Typography sx={inProgressStyles}>
+                <FontAwesomeIcon icon="spinner" spin /> {file.path}
+              </Typography>
             ))}
-          </Paper>
-
-          <Paper sx={fileBoxStyles}>
-            <Typography>Completed:</Typography>
             {filesCompleted.map((file: any) => (
-              <Typography>{file}</Typography>
+              <Typography sx={completedStyles}>
+                <FontAwesomeIcon icon={faCheck} height={20} width={20} />
+                {file}
+              </Typography>
             ))}
-          </Paper>
-
-          <Paper sx={fileBoxStyles}>
-            <Typography>Errored:</Typography>
             {filesErrored.map((file: any) => (
-              <Typography>{file}</Typography>
+              <Typography sx={errorStyles}>
+                <FontAwesomeIcon icon={faTimes} />
+                {file}
+              </Typography>
             ))}
           </Paper>
         </Box>

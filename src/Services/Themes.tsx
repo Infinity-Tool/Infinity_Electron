@@ -18,6 +18,10 @@ export default function GetTheme(): any {
     },
     typography: {
       fontFamily: "Roboto",
+      h1: {
+        fontSize: "2rem",
+        marginBottom: "1rem",
+      },
     },
     components: {
       MuiButton: {

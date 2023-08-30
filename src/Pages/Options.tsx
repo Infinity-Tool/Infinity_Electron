@@ -88,7 +88,7 @@ export default function Options() {
   const onNextClick = () => {
     if (Validate()) {
       SaveSettings();
-      router(AppRoutes.selection);
+      router(AppRoutes.citiesAndSettlements);
     } else {
       // todo display error message?
     }

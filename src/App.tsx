@@ -9,6 +9,7 @@ import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
 import Selection from "./Pages/Selection";
 import Installation from "Pages/Installation";
+import CitiesAndSettlements from "Pages/CitiesAndSettlements";
 
 export default function App() {
   const theme = createTheme(GetTheme());
@@ -22,7 +23,11 @@ export default function App() {
             <Route path={AppRoutes.welcome} element={<Welcome />} />
             <Route path={AppRoutes.agreement} element={<Agreement />} />
             <Route path={AppRoutes.options} element={<Options />} />
-            <Route path={AppRoutes.selection} element={<Selection />} />
+            <Route
+              path={AppRoutes.citiesAndSettlements}
+              element={<CitiesAndSettlements />}
+            />
+            <Route path={AppRoutes.options} element={<Options />} />
             <Route path={AppRoutes.installation} element={<Installation />} />
           </Route>
         </Routes>

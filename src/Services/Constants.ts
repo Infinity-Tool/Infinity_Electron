@@ -1,11 +1,13 @@
 export const InfinityAssetsPath =
-  "https://infinity-tool.github.io/Infinity_Assets";
+  "https://storage.googleapis.com/infinity-assets-dev";
 
 export enum AppRoutes {
   welcome = "/",
   agreement = "/agreement",
   options = "/options",
-  selection = "/selection",
+  citiesAndSettlements = "/cities-and-settlements",
+  bigStructures = "/big-structures",
+  standalonePois = "/standalone-pois",
   installation = "/installation",
   finished = "/finished",
 }
@@ -23,16 +25,24 @@ export const RoutesMeta: Record<AppRoutes, { title: string; value: number }> = {
     title: "Options",
     value: 2,
   },
-  [AppRoutes.selection]: {
-    title: "Selection",
+  [AppRoutes.citiesAndSettlements]: {
+    title: "Cities and Settlements",
     value: 3,
+  },
+  [AppRoutes.bigStructures]: {
+    title: "Big Structures",
+    value: 4,
+  },
+  [AppRoutes.standalonePois]: {
+    title: "Standalone POIs",
+    value: 5,
   },
   [AppRoutes.installation]: {
     title: "Installation",
-    value: 4,
+    value: 6,
   },
   [AppRoutes.finished]: {
     title: "Finished",
-    value: 5,
+    value: 7,
   },
 };

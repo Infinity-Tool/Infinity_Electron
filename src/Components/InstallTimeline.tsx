@@ -11,13 +11,10 @@ import {
 import { Paper } from "@mui/material";
 import { AppRoutes, RoutesMeta } from "Services/Constants";
 import { useLocation } from "react-router";
-import { useTheme } from "@emotion/react";
-import { toHtml } from "@fortawesome/fontawesome-svg-core";
 
 export default function InstallTimeline() {
   const location = useLocation();
   const routesArray = Object.values(AppRoutes);
-  const theme = useTheme();
 
   const currentRouteMeta = useMemo(
     () => RoutesMeta[(location.pathname ?? AppRoutes.welcome) as AppRoutes],
@@ -55,7 +52,7 @@ export default function InstallTimeline() {
         {
           //loop over all Routes enum
           routesArray.map((route, i) => (
-            <TimelineItem>
+            <TimelineItem key={i}>
               <TimelineSeparator>
                 <TimelineDot
                   color={GetTimelineDot(i).color}
@@ -72,55 +69,6 @@ export default function InstallTimeline() {
           ))
         }
       </Timeline>
-
-      {/* <Timeline sx={timelineItemStyles}>
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Welcome</TimelineContent>
-        </TimelineItem>
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Agreement</TimelineContent>
-        </TimelineItem>
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Configuration</TimelineContent>
-        </TimelineItem>
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Selection</TimelineContent>
-        </TimelineItem>
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Download & Install</TimelineContent>
-        </TimelineItem>
-
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-          </TimelineSeparator>
-          <TimelineContent>Finish</TimelineContent>
-        </TimelineItem>
-      </Timeline> */}
     </Paper>
   );
 }
