@@ -18,7 +18,7 @@ import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 export interface IUserSelection {
@@ -30,9 +30,12 @@ export default function CitiesAndSettlements() {
   const router = useNavigate();
   const theme = useTheme();
   const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
-  const [selectionAvailable, setSelectionAvailable]: any = useState();
+  const [availableFiles, setAvailableFiles]: any = useLocalStorage(
+    LocalStorageKeys.availableFiles,
+    []
+  );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
-    LocalStorageKeys.selectedMods,
+    LocalStorageKeys.step1Selection,
     []
   );
 
@@ -41,7 +44,7 @@ export default function CitiesAndSettlements() {
     GetDirectoryFileHttp().then((res) => {
       setHost(res.host);
       console.log("res", res);
-      setSelectionAvailable(res.step_1);
+      setAvailableFiles(res.step_1);
     });
   }, []);
 
@@ -51,7 +54,8 @@ export default function CitiesAndSettlements() {
   };
   const onNextClick = async () => {
     // await ConfigureSelectedFiles();
-    router(AppRoutes.bigStructures);
+    // router(AppRoutes.bigStructures);
+    router(AppRoutes.installation);
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
@@ -143,8 +147,8 @@ export default function CitiesAndSettlements() {
         <Button onClick={() => setCurrentSelection([])}>Clear Selection</Button>
         <Typography variant="h1">Cities & Settlements</Typography>
         <Box sx={modListContainer}>
-          {selectionAvailable == null && <Loading />}
-          {selectionAvailable?.map((tas: any, index: number) => (
+          {availableFiles == null && <Loading />}
+          {availableFiles?.map((tas: any, index: number) => (
             <Paper sx={getModListItemStyles(tas.name)} key={index}>
               <FormControl>
                 <FormControlLabel
@@ -187,7 +191,7 @@ export default function CitiesAndSettlements() {
               </Box>
             </Paper>
           ))}
-          {selectionAvailable == null && <div>loading...</div>}
+          {availableFiles == null && <div>loading...</div>}
         </Box>
       </Box>
       <Box sx={pageFooterStyles}>

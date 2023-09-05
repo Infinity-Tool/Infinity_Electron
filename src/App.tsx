@@ -7,7 +7,6 @@ import { AppRoutes } from "./Services/Constants";
 import Welcome from "./Pages/Welcome";
 import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
-import Selection from "./Pages/Selection";
 import Installation from "Pages/Installation";
 import CitiesAndSettlements from "Pages/CitiesAndSettlements";
 

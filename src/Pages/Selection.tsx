@@ -26,16 +26,10 @@ export default function Selection() {
   const theme = useTheme();
   const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
   const [selectionAvailable, setSelectionAvailable]: any = useState();
-  const [selectedMods, setSelectedMods] = useLocalStorage(
-    LocalStorageKeys.selectedMods,
-    []
-  );
-  const [modFiles, setModFiles] = useLocalStorage(
-    LocalStorageKeys.modFiles,
-    []
-  );
+  const [selectedMods, setSelectedMods] = useLocalStorage("selectedMods", []);
+  const [modFiles, setModFiles] = useLocalStorage("modFiles", []);
   const [localPrefabFiles, setLocalPrefabFiles] = useLocalStorage(
-    LocalStorageKeys.localPrefabFiles,
+    "localPrefabFiles",
     []
   );
 

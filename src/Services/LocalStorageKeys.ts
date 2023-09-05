@@ -1,11 +1,10 @@
 enum LocalStorageKeys {
   host = "host",
+  availableFiles = "availableFiles",
   modsDirectory = "modsDirectory",
   localPrefabsDirectory = "localPrefabsDirectory",
-  selectedMods = "selectedMods",
-  modFiles = "modFiles",
-  localPrefabFiles = "localPrefabFiles",
   cleanInstall = "cleanInstall",
+  step1Selection = "step1Selection",
 }
 
 export default LocalStorageKeys;

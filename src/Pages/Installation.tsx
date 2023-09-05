@@ -1,18 +1,4 @@
-import { useTheme } from "@emotion/react";
-import {
-  faCheck,
-  faTimes,
-  faTruckMonster,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Paper,
-  Typography,
-} from "@mui/material";
-import { FileType } from "Models/FileType";
+import { Box, Button, Typography } from "@mui/material";
 import {
   pageContainerStyles,
   pageContentStyles,
@@ -23,239 +9,137 @@ import LocalStorageKeys from "Services/LocalStorageKeys";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { styled } from "@mui/material/styles";
 
 export default function Installation() {
-  const theme = useTheme();
-  const maxInQueue = 1;
   const router = useNavigate();
-  const { ipcRenderer } = window.require("electron");
-  const [cancelled, setCancelled] = useState(false);
-  const [done, setDone] = useState(false);
-  const [host] = useLocalStorage(LocalStorageKeys.host, null);
+  //   const [host] = useLocalStorage(LocalStorageKeys.host, null);
+  const [host] = useState(
+    "https://storage.googleapis.com/infinity-assets-dev/"
+  );
   const [modsDirectory] = useLocalStorage(LocalStorageKeys.modsDirectory, "");
   const [localPrefabsDirectory] = useLocalStorage(
     LocalStorageKeys.localPrefabsDirectory,
     ""
   );
-
-  const [modFiles] = useLocalStorage(LocalStorageKeys.modFiles, []);
-  const [localPrefabFiles] = useLocalStorage(
-    LocalStorageKeys.localPrefabFiles,
+  const [availableFiles]: any = useLocalStorage(
+    LocalStorageKeys.availableFiles,
     []
   );
+  const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
 
-  const [cleanInstall] = useLocalStorage(LocalStorageKeys.cleanInstall, false);
-  const [filesToDownload, setFilesToDownload]: any = useState([]);
-  const [filesInProgress, setFilesInProgress]: any = useState([]);
-  const [filesCompleted, setFilesCompleted]: any = useState([]);
-  const [filesErrored, setFilesErrored]: any = useState([]);
-
-  //TODO clean install
-
-  //TODO make on useMount effect
-  // useEffect(() => {
-  //   const _filesToDownload = modFiles
-  //     .map((file: any) => ({
-  //       path: file,
-  //       type: FileType.Mod,
-  //     }))
-  //     .concat(
-  //       localPrefabFiles.map((file: any) => ({
-  //         path: file,
-  //         type: FileType.LocalPrefab,
-  //       }))
-  //     );
-  //   setFilesToDownload(_filesToDownload);
-  // }, []);
-
-  const testFiles = [
-    {
-      type: FileType.Mod,
-      path: "/files/Test_Settlement_Files/mods/01.mp4",
-    },
-    {
-      type: FileType.Mod,
-      path: "/files/Test_Settlement_Files/mods/02.mp4",
-    },
-    {
-      type: FileType.Mod,
-      path: "/files/Test_Settlement_Files/mods/03.mp4",
-    },
-    {
-      type: FileType.Mod,
-      path: "/files/Test_Settlement_Files/mods/04.mp4",
-    },
-    {
-      type: FileType.Mod,
-      path: "/files/Test_Settlement_Files/mods/05.mp4",
-    },
-  ];
+  const [filesToDownload, setFilesToDownload] = useState([]);
+  const [filesInProgress, setFilesInProgress] = useState([]);
+  const [filesCompleted, setFilesCompleted] = useState([]);
+  const [filesErrored, setFilesErrored] = useState([]);
 
   useEffect(() => {
-    setFilesToDownload(testFiles);
-  }, []);
-
-  //1. Create a useEffect that watches for the ipcRenderer to send a "download complete" event
-  //2. When the event is received, add the file to the filesCompleted array and remove from in progress
-  //3. Remove file from queue and add to inProgress
-  //4. When the queue is empty and inProgress is empty, set done to true
-
-  function QueueNextFile() {
-    console.log("QueueNextFile", filesToDownload.length);
-    if (filesToDownload.length === 0 || done) {
-      return;
-    }
-
-    const file = filesToDownload[0];
-
-    const destinationDirectory =
-      (file.type === FileType.Mod ? modsDirectory : localPrefabsDirectory) +
-      file.path;
-
-    // setFilesInProgress((_inProgress: any) => [..._inProgress, file]);
-    setFilesToDownload((_filesToDownload: any) =>
-      _filesToDownload.filter((f: any) => f !== file)
-    );
-
-    const directoryWithoutFileName = destinationDirectory.substring(
-      0,
-      destinationDirectory.lastIndexOf("/")
-    );
-
-    ipcRenderer.send("download-file", {
-      url: `${host}/${file.path}`,
-      // url: file.path,
-      properties: {
-        directory: directoryWithoutFileName,
-        fileName: file.path,
-        overwrite: true,
-      },
-    });
-  }
+    buildFileLists();
+  }, [step1Selection]);
 
   //Functions
-  const onCancelClick = () => {
-    setFilesToDownload([]);
-    setCancelled(true);
-    setDone(false);
-  };
-  const onBackClick = () => {
-    //get current route value
-    //find previous route based on RoutesMeta value
-    //set route to previous route
+  const buildFileLists = () => {
+    let modFiles: any = [];
 
-    //TODO
+    step1Selection.forEach((selected: any) => {
+      const foundEntry = availableFiles.find(
+        (available: any) => selected.name === available.name
+      );
 
-    router(AppRoutes.welcome);
-    setDone(false);
-  };
+      if (foundEntry) {
+        const mods = foundEntry.mods;
+        const localPrefabs = foundEntry.localPrefabs;
 
-  const onStartOverClick = () => {
-    router(AppRoutes.welcome);
-    setDone(false);
-  };
+        mods.forEach((mod: any) => {
+          const installationFile = new InstallationFile(
+            `${host}${mod.source}`,
+            `${modsDirectory}/${mod.destination}`
+          );
+          modFiles.push(installationFile);
+        });
 
-  //Effects
-  useEffect(() => {
-    ipcRenderer.on("download-complete", (event: any, file: any) => {
-      console.log("download-complete", file);
-      setFilesCompleted((_filesCompleted: any) => [..._filesCompleted, file]);
-      RemoveFromProgressAndQueueNext(file);
+        localPrefabs.forEach((localPrefab: any) => {
+          const installationFile = new InstallationFile(
+            `${host}${localPrefab.source}`,
+            `${localPrefabsDirectory}/${localPrefab.destination}`
+          );
+          modFiles.push(installationFile);
+        });
+      }
     });
 
-    // ipcRenderer.on("download-progress", (status: any) => {
-    //   console.log("download-progress", status);
-    // });
+    setFilesToDownload(modFiles);
+  };
 
-    ipcRenderer.on("download-error", (event: any, file: any) => {
-      setFilesErrored([...filesErrored, file]);
-      RemoveFromProgressAndQueueNext(file);
-    });
+  const onBackClick = (event: any) => {
+    router(AppRoutes.citiesAndSettlements);
+  };
 
-    return () => {
-      ipcRenderer.removeAllListeners("download-complete");
-      ipcRenderer.removeAllListeners("download-error");
-    };
-  }, [ipcRenderer, filesToDownload]);
+  const onDownloadClick = () => {
+    // call downloadNextFile
+  };
 
-  function RemoveFromProgressAndQueueNext(file: string) {
-    setFilesInProgress((_filesInProgress: any) =>
-      _filesInProgress.filter((f: any) => f !== file)
-    );
+  const downloadNextFile = () => {
+    // pull a file out of filesToDownload
+    // add it to filesInProgress
+    // download it
+  };
 
-    if (filesToDownload.length > 0) {
-      setTimeout(() => {
-        QueueNextFile();
-      }, 500);
-    } else {
-      setDone(true);
-    }
-  }
+  const onFileDone = () => {
+    // remove from filesInProgress
+    // add to filesCompleted
+    // call downloadNextFile
+  };
 
   //Styles
-  const fileBoxContainerStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  };
-  const fileBoxStyles = {
-    p: "1rem",
-  };
-  const inProgressStyles = {
-    // color: "orange",
-  };
-  const completedStyles = {
-    // color: "primary.dark",
-    color: "text.secondary",
-  };
-  const errorStyles = {
-    color: "error.main",
-  };
-
   return (
     <Box sx={pageContainerStyles}>
+      {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
       <Box sx={pageContentStyles}>
-        <Box sx={fileBoxContainerStyles}>
-          <Paper sx={fileBoxStyles}>
-            {/* {filesToDownload.map((file: any) => (
-              <Typography>{file.path}</Typography>
-            ))} */}
-            {filesInProgress.map((file: any) => (
-              <Typography sx={inProgressStyles}>
-                <FontAwesomeIcon icon="spinner" spin /> {file.path}
-              </Typography>
-            ))}
-            {filesCompleted.map((file: any) => (
-              <Typography sx={completedStyles}>
-                <FontAwesomeIcon icon={faCheck} height={20} width={20} />
-                {file}
-              </Typography>
-            ))}
-            {filesErrored.map((file: any) => (
-              <Typography sx={errorStyles}>
-                <FontAwesomeIcon icon={faTimes} />
-                {file}
-              </Typography>
-            ))}
-          </Paper>
-        </Box>
+        {/* <div>
+          <Typography>Available Files:</Typography>
+          {availableFiles.map((file: any, index: number) => (
+            <div>{JSON.stringify(file)}</div>
+          ))}
+        </div>
+        <br />
+        <br />
 
-        {done && <Typography>Done!</Typography>}
+        <div>
+          <Typography>User Selection:</Typography>
+          {step1Selection.map((selection: any, index: number) => (
+            <div>
+              Name: {selection.name}, Children:{" "}
+              {selection.childSelections.length}
+            </div>
+          ))}
+        </div>
+        <br />
+        <br />
+        <br /> */}
 
-        <Button onClick={QueueNextFile}>Begin Install</Button>
-
-        {cancelled && (
-          <Box>
-            <Typography>Download canceled! ☹️</Typography>
-            <Button onClick={onStartOverClick}>Start over</Button>
-          </Box>
-        )}
+        <div>
+          <Typography>Files to download 😀</Typography>
+          {filesToDownload.map((file: any, index) => (
+            <div key={index}>{JSON.stringify(file)}</div>
+          ))}
+        </div>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
-        <Button onClick={onCancelClick}>Cancel</Button>
+        <Button onClick={onDownloadClick} variant="contained">
+          Download
+        </Button>
       </Box>
     </Box>
   );
+}
+
+class InstallationFile {
+  source: string;
+  destination: string;
+
+  constructor(source: string, destination: string) {
+    this.source = source;
+    this.destination = destination;
+  }
 }
