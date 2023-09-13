@@ -70,10 +70,17 @@ ipcMain.on("download-file", (event, info) => {
   info.properties.onProgress = (status) =>
     window.webContents.send("download-progress", status);
 
+  console.log("[ELECTRON] download-file", info.properties.fileName);
+
   download(window, info.url, info.properties)
-    .then((dl) =>
-      window.webContents.send("download-complete", info.properties.fileName)
-    )
+    .then((dl) => {
+      console.log("[ELECTRON] download-complete", info.properties.fileName);
+
+      return window.webContents.send(
+        "download-complete",
+        info.properties.fileName
+      );
+    })
     .catch((err) => {
       window.webContents.send("download-error", info.properties.fileName);
     });

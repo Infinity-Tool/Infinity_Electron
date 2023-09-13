@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import {
   pageContainerStyles,
   pageContentStyles,
@@ -7,7 +7,7 @@ import {
 import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import useLocalStorage from "Services/useLocalStorage";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function Installation() {
@@ -26,6 +26,7 @@ export default function Installation() {
     LocalStorageKeys.availableFiles,
     []
   );
+  const [fullFileList, setFullFileList] = useState([]);
   const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
 
   const [filesToDownload, setFilesToDownload]: any = useState([]);
@@ -35,18 +36,49 @@ export default function Installation() {
   const [done, setDone]: any = useState(false);
 
   useEffect(() => {
+    setDone(false);
+  }, []);
+
+  useEffect(() => {
     buildFileLists();
   }, [step1Selection]);
 
   useEffect(() => {
     ipcRenderer.on("download-complete", (event: any, file: any) => {
+      console.log("[download-complete]", file);
       onFileDone(event, file);
     });
 
     ipcRenderer.on("download-error", (event: any, file: any) => {
+      console.log("[download-error]", file);
       onFileError(event, file);
     });
+
+    return () => {
+      ipcRenderer.removeAllListeners("download-complete");
+      ipcRenderer.removeAllListeners("download-error");
+    };
   }, [ipcRenderer]);
+
+  // useEffect(() => {
+  //   ipcRenderer.on("download-complete", (event: any, file: any) => {
+  //     console.log("[download-complete]", file);
+  //     onFileDone(event, file);
+  //   });
+
+  //   ipcRenderer.on("download-error", (event: any, file: any) => {
+  //     console.log("[download-error]", file);
+  //     onFileError(event, file);
+  //   });
+  // }, [ipcRenderer]);
+
+  const downloadProgress = useMemo(() => {
+    const totalFiles = fullFileList.length;
+    const completedFiles = filesCompleted.length;
+    const erroredFiles = filesErrored.length;
+
+    return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
+  }, [filesInProgress]);
 
   //Functions
   const buildFileLists = () => {
@@ -88,6 +120,7 @@ export default function Installation() {
     });
 
     setFilesToDownload(modFiles);
+    setFullFileList(modFiles);
   };
 
   const onBackClick = (event: any) => {
@@ -99,51 +132,77 @@ export default function Installation() {
   };
 
   const downloadNextFile = () => {
-    const nextFile: any =
-      filesToDownload.length > 0 ? filesToDownload[0] : null;
+    const nextFile = getNextFile();
     if (nextFile) {
-      // add it to filesInProgress
-      setFilesInProgress([...filesInProgress, nextFile]);
-      setFilesToDownload(filesToDownload.slice(1));
-      // remove from filesToDownload
+      addToInProgressFiles(nextFile);
+      removeFromFilesToDownload(nextFile);
 
       const directoryWithoutFileName = nextFile.destination.substring(
         0,
         nextFile.destination.lastIndexOf("/")
       );
 
+      console.log("[downloadNextFile]", nextFile.fileName);
       ipcRenderer.send("download-file", {
         url: nextFile.source,
-        // url: file.path,
         properties: {
           directory: directoryWithoutFileName,
           fileName: nextFile.fileName,
           overwrite: true,
         },
       });
-      // download it
     } else {
       setDone(true);
     }
   };
 
+  const getNextFile = () => {
+    const nextFile: any =
+      filesToDownload.length > 0 ? filesToDownload[0] : null;
+    return nextFile;
+  };
+
   const onFileDone = (event: any, file: any) => {
     console.log("onFileDone", event, file);
-
-    setFilesInProgress(filesInProgress.filter((f: any) => f.fileName !== file));
-    const newFilesCompeleted = [...filesCompleted, file];
-    setFilesCompleted(newFilesCompeleted);
-    // downloadNextFile();
+    removeFromInProgressFiles(file);
+    addToCompletedFiles(file);
+    downloadNextFile();
   };
 
   const onFileError = (event: any, file: any) => {
     console.error("onFileError", event, file);
-    // remove from filesInProgress
-    // add to filesErrored
-    // call downloadNextFile
+    removeFromInProgressFiles(file);
+    addToErroredFiles(file);
+    // downloadNextFile();
+  };
+
+  const addToInProgressFiles = (file: any) => {
+    setFilesInProgress((prev: any) => [...prev, file.fileName]);
+  };
+
+  const removeFromInProgressFiles = (file: any) => {
+    setFilesInProgress((prev: any) => prev.filter((f: any) => f !== file));
+  };
+
+  const removeFromFilesToDownload = (file: any) => {
+    setFilesToDownload((prev: any) => prev.filter((f: any) => f !== file));
+  };
+
+  const addToCompletedFiles = (file: string) => {
+    setFilesCompleted((prev: any) => [...prev, file]);
+  };
+
+  const addToErroredFiles = (file: string) => {
+    setFilesErrored((prev: any) => [...prev, file]);
   };
 
   //Styles
+  const percentDoneStyles = {
+    width: "100%",
+    fontSize: "3rem",
+    textAlign: "center",
+  };
+
   return (
     <Box sx={pageContainerStyles}>
       {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
@@ -169,7 +228,14 @@ export default function Installation() {
         <br />
         <br />
         <br /> */}
+        <Typography variant="h1" sx={percentDoneStyles}>
+          {downloadProgress.toFixed(1)}%
+        </Typography>
 
+        <LinearProgress
+          variant="determinate"
+          value={downloadProgress ?? 0}
+        ></LinearProgress>
         {done && <Typography color="success">Done</Typography>}
         <div>
           <Typography>Files to download</Typography>
@@ -189,8 +255,12 @@ export default function Installation() {
 
         <div>
           <Typography>Files complete</Typography>
-          {filesCompleted.length}
+          {filesCompleted?.length}
+          {JSON.stringify(filesCompleted)}
         </div>
+        <br />
+
+        <Typography color="success.main">DONE!</Typography>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
