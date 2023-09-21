@@ -30,47 +30,11 @@ export default function Installation() {
   const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
 
   const [filesToDownload, setFilesToDownload]: any = useState([]);
+  const [filesInQueue, setFilesInQueue]: any = useState([]);
   const [filesInProgress, setFilesInProgress]: any = useState([]);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [done, setDone]: any = useState(false);
-
-  useEffect(() => {
-    setDone(false);
-  }, []);
-
-  useEffect(() => {
-    buildFileLists();
-  }, [step1Selection]);
-
-  useEffect(() => {
-    ipcRenderer.on("download-complete", (event: any, file: any) => {
-      console.log("[download-complete]", file);
-      onFileDone(event, file);
-    });
-
-    ipcRenderer.on("download-error", (event: any, file: any) => {
-      console.log("[download-error]", file);
-      onFileError(event, file);
-    });
-
-    return () => {
-      ipcRenderer.removeAllListeners("download-complete");
-      ipcRenderer.removeAllListeners("download-error");
-    };
-  }, [ipcRenderer]);
-
-  // useEffect(() => {
-  //   ipcRenderer.on("download-complete", (event: any, file: any) => {
-  //     console.log("[download-complete]", file);
-  //     onFileDone(event, file);
-  //   });
-
-  //   ipcRenderer.on("download-error", (event: any, file: any) => {
-  //     console.log("[download-error]", file);
-  //     onFileError(event, file);
-  //   });
-  // }, [ipcRenderer]);
 
   const downloadProgress = useMemo(() => {
     const totalFiles = fullFileList.length;
@@ -80,9 +44,29 @@ export default function Installation() {
     return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
   }, [filesInProgress]);
 
-  //Functions
-  const buildFileLists = () => {
-    let modFiles: any = [];
+  const onDownloadClick = () => {
+    const files = buildFileLists();
+
+    const filesPreppedForDownload = files.map((file: any) => {
+      const directoryWithoutFileName = file.destination.substring(
+        0,
+        file.destination.lastIndexOf("/")
+      );
+      return {
+        url: file.source,
+        properties: {
+          directory: directoryWithoutFileName,
+          fileName: file.fileName,
+          overwrite: true,
+        },
+      };
+    });
+
+    ipcRenderer.send("queue-files-for-download", filesPreppedForDownload);
+  };
+
+  const buildFileLists = (): InstallationFile[] => {
+    let formattedInstallationFiles: any = [];
 
     step1Selection.forEach((selected: any) => {
       const foundEntry = availableFiles.find(
@@ -102,7 +86,7 @@ export default function Installation() {
             `${modsDirectory}/${mod.destination}`,
             fileName
           );
-          modFiles.push(installationFile);
+          formattedInstallationFiles.push(installationFile);
         });
 
         localPrefabs.forEach((localPrefab: any) => {
@@ -114,79 +98,187 @@ export default function Installation() {
             `${localPrefabsDirectory}/${localPrefab.destination}`,
             fileName
           );
-          modFiles.push(installationFile);
+          formattedInstallationFiles.push(installationFile);
         });
       }
     });
 
-    setFilesToDownload(modFiles);
-    setFullFileList(modFiles);
+    return formattedInstallationFiles;
   };
+
+  useEffect(() => {
+    ipcRenderer.on("download-complete", (event: any, file: any) => {
+      console.log("[download-complete]", file);
+      addToCompletedFiles(file);
+    });
+    ipcRenderer.on("download-error", (event: any, file: any) => {
+      console.log("[download-error]", file);
+      addToErroredFiles(file);
+    });
+    return () => {
+      ipcRenderer.removeAllListeners("download-complete");
+      ipcRenderer.removeAllListeners("download-error");
+    };
+  }, [ipcRenderer]);
+
+  // useEffect(() => {
+  //   buildFileLists();
+  // }, [step1Selection]);
+
+  // useEffect(() => {
+  //   ipcRenderer.on("download-complete", (event: any, file: any) => {
+  //     console.log("[download-complete]", file);
+  //     onFileDone(event, file);
+  //   });
+
+  //   ipcRenderer.on("download-error", (event: any, file: any) => {
+  //     console.log("[download-error]", file);
+  //     onFileError(event, file);
+  //   });
+
+  //   return () => {
+  //     ipcRenderer.removeAllListeners("download-complete");
+  //     ipcRenderer.removeAllListeners("download-error");
+  //   };
+  // }, [ipcRenderer]);
+
+  // useEffect(() => {
+  //   downloadNextFile();
+  // }, [filesInQueue]);
+
+  // const downloadNextFile = () => {
+  //   if (filesInQueue.length > 0) {
+  //     const nextFile = getOneFromQueue();
+  //     if (nextFile) {
+  //       addToInProgressFiles(nextFile);
+  //       // removeFromFilesToDownload(nextFile);
+  //       const directoryWithoutFileName = nextFile.destination.substring(
+  //         0,
+  //         nextFile.destination.lastIndexOf("/")
+  //       );
+  //       // console.log("[downloadNextFile]", nextFile.fileName);
+  //       ipcRenderer.send("download-file", {
+  //         url: nextFile.source,
+  //         properties: {
+  //           directory: directoryWithoutFileName,
+  //           fileName: nextFile.fileName,
+  //           overwrite: true,
+  //         },
+  //       });
+  //     } else {
+  //       setDone(true);
+  //     }
+  //   }
+  // };
+
+  // //Functions
+  // const buildFileLists = () => {
+  //   let modFiles: any = [];
+
+  //   step1Selection.forEach((selected: any) => {
+  //     const foundEntry = availableFiles.find(
+  //       (available: any) => selected.name === available.name
+  //     );
+
+  //     if (foundEntry) {
+  //       const mods = foundEntry.mods;
+  //       const localPrefabs = foundEntry.localPrefabs;
+
+  //       mods.forEach((mod: any) => {
+  //         const fileName = mod.destination.substring(
+  //           mod.destination.lastIndexOf("/") + 1
+  //         );
+  //         const installationFile = new InstallationFile(
+  //           `${host}${mod.source}`,
+  //           `${modsDirectory}/${mod.destination}`,
+  //           fileName
+  //         );
+  //         modFiles.push(installationFile);
+  //       });
+
+  //       localPrefabs.forEach((localPrefab: any) => {
+  //         const fileName = localPrefab.destination.substring(
+  //           localPrefab.destination.lastIndexOf("/") + 1
+  //         );
+  //         const installationFile = new InstallationFile(
+  //           `${host}${localPrefab.source}`,
+  //           `${localPrefabsDirectory}/${localPrefab.destination}`,
+  //           fileName
+  //         );
+  //         modFiles.push(installationFile);
+  //       });
+  //     }
+  //   });
+
+  //   setFilesToDownload(modFiles);
+  //   setFullFileList(modFiles);
+  // };
 
   const onBackClick = (event: any) => {
     router(AppRoutes.citiesAndSettlements);
   };
 
-  const onDownloadClick = () => {
-    downloadNextFile();
-  };
+  // const onDownloadClick = () => {
+  //   // downloadNextFile();
+  //   queueNextFile();
+  // };
 
-  const downloadNextFile = () => {
-    const nextFile = getNextFile();
-    if (nextFile) {
-      addToInProgressFiles(nextFile);
-      removeFromFilesToDownload(nextFile);
+  // const onFileDone = (event: any, file: any) => {
+  //   console.log("onFileDone", event, file);
+  //   removeFromInProgressFiles(file);
+  //   addToCompletedFiles(file);
+  //   queueNextFile();
+  // };
 
-      const directoryWithoutFileName = nextFile.destination.substring(
-        0,
-        nextFile.destination.lastIndexOf("/")
-      );
+  // const onFileError = (event: any, file: any) => {
+  //   console.error("onFileError", event, file);
+  //   removeFromInProgressFiles(file);
+  //   addToErroredFiles(file);
+  //   queueNextFile();
+  // };
 
-      console.log("[downloadNextFile]", nextFile.fileName);
-      ipcRenderer.send("download-file", {
-        url: nextFile.source,
-        properties: {
-          directory: directoryWithoutFileName,
-          fileName: nextFile.fileName,
-          overwrite: true,
-        },
-      });
-    } else {
-      setDone(true);
-    }
-  };
+  // const queueNextFile = () => {
+  //   const nextFile: any =
+  //     filesToDownload.length > 0 ? filesToDownload[0] : null;
 
-  const getNextFile = () => {
-    const nextFile: any =
-      filesToDownload.length > 0 ? filesToDownload[0] : null;
-    return nextFile;
-  };
+  //   if (nextFile) {
+  //     // removeFromFilesToDownload(nextFile);
+  //     setFilesToDownload((prev: any) =>
+  //       prev.filter((f: any) => f.destination !== nextFile.destination)
+  //     );
+  //     addToQueue(nextFile);
+  //   } else {
+  //     console.warn("Next file not found");
+  //   }
+  // };
 
-  const onFileDone = (event: any, file: any) => {
-    console.log("onFileDone", event, file);
-    removeFromInProgressFiles(file);
-    addToCompletedFiles(file);
-    downloadNextFile();
-  };
+  // const addToQueue = (file: any) => {
+  //   setFilesInQueue((prev: any) => [...prev, file]);
+  // };
 
-  const onFileError = (event: any, file: any) => {
-    console.error("onFileError", event, file);
-    removeFromInProgressFiles(file);
-    addToErroredFiles(file);
-    // downloadNextFile();
-  };
+  // const removeFromQueue = (file: any) => {
+  //   setFilesInQueue((prev: any) =>
+  //     prev.filter((f: any) => f.destination !== file.destination)
+  //   );
+  // };
 
-  const addToInProgressFiles = (file: any) => {
-    setFilesInProgress((prev: any) => [...prev, file.fileName]);
-  };
+  // const getOneFromQueue = () => {
+  //   const file = filesInQueue[0];
+  //   removeFromQueue(file);
+  //   return file;
+  // };
 
-  const removeFromInProgressFiles = (file: any) => {
-    setFilesInProgress((prev: any) => prev.filter((f: any) => f !== file));
-  };
+  // const addToInProgressFiles = (file: any) => {
+  //   setFilesInProgress((prev: any) => [...prev, file.fileName]);
+  // };
 
-  const removeFromFilesToDownload = (file: any) => {
-    setFilesToDownload((prev: any) => prev.filter((f: any) => f !== file));
-  };
+  // const removeFromInProgressFiles = (file: any) => {
+  //   setFilesInProgress((prev: any) => prev.filter((f: any) => f !== file));
+  // };
+
+  // const removeFromFilesToDownload = (file: any) => {
+  //   setFilesToDownload((prev: any) => prev.filter((f: any) => f !== file));
+  // };
 
   const addToCompletedFiles = (file: string) => {
     setFilesCompleted((prev: any) => [...prev, file]);
@@ -253,6 +345,13 @@ export default function Installation() {
         </div>
         <br />
 
+        <br />
+        <div>
+          <Typography>Files queued</Typography>
+          {filesInQueue.length}
+        </div>
+        <br />
+
         <div>
           <Typography>Files complete</Typography>
           {filesCompleted?.length}
@@ -260,7 +359,9 @@ export default function Installation() {
         </div>
         <br />
 
-        <Typography color="success.main">DONE!</Typography>
+        {/* <Typography color="success.main">DONE!</Typography> */}
+
+        {JSON.stringify(filesToDownload)}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>

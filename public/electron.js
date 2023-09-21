@@ -86,18 +86,44 @@ ipcMain.on("download-file", (event, info) => {
     });
 });
 
-// ipcMain.on("download-file", (event, info) => {
-//   console.log("download-file", info);
+ipcMain.on("download-files", async (event, files) => {
+  // Download files one at a time, wait for each one to complete before starting the next
+  // This is to avoid the issue where multiple downloads are started at the same time
+  // and the download progress events get mixed up
+  await files.reduce((promise, file) => {
+    return promise.then(() => downloadNew(file));
+  }, Promise.resolve());
+});
 
-//   // info.properties.onProgress = (status) =>
-//   //   window.webContents.send("download-progress", status);
+const downloadNew = async (file) => {
+  download(window, file.url, file.properties)
+    .then((dl) => {
+      console.log("[ELECTRON] download-complete", file.properties.fileName);
+      window.webContents.send("download-complete", file.properties.fileName);
+      return Promise.resolve();
+    })
+    .catch((err) => {
+      window.webContents.send("download-error", file.properties.fileName);
+    });
+};
 
-//   download(BrowserWindow.getFocusedWindow(), info.url, info.properties).then(
-//     (dl) => {
-//       console.log("electron download-complete", dl);
-//       return event.reply("download-complete", info.properties.fileName);
-//       // return window.webContents.send("download-complete", info.properties.fileName)
-//     }
-//     //window.webContents.send("download-complete", info.url)
-//   );
-// });
+ipcMain.on("queue-files-for-download", async (event, files) => {
+  // Download files one at a time, wait for each one to complete before starting the next
+  // This is to avoid the issue where multiple downloads are started at the same time
+  // and the download progress events get mixed up
+  await files.reduce((promise, file) => {
+    return promise.then(() => queueNew(file));
+  }, Promise.resolve());
+});
+
+const queueNew = async (file) => {
+  return download(window, file.url, file.properties)
+    .then((dl) => {
+      console.log("[ELECTRON] download-complete", file.properties.fileName);
+      window.webContents.send("download-complete", file.properties.fileName);
+      return Promise.resolve();
+    })
+    .catch((err) => {
+      window.webContents.send("download-error", file.properties.fileName);
+    });
+};
