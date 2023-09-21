@@ -26,26 +26,24 @@ export default function Installation() {
     LocalStorageKeys.availableFiles,
     []
   );
-  const [fullFileList, setFullFileList] = useState([]);
+  const [fileCount, setFileCount]: any = useState();
   const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
-
-  const [filesToDownload, setFilesToDownload]: any = useState([]);
-  const [filesInQueue, setFilesInQueue]: any = useState([]);
-  const [filesInProgress, setFilesInProgress]: any = useState([]);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [done, setDone]: any = useState(false);
 
   const downloadProgress = useMemo(() => {
-    const totalFiles = fullFileList.length;
+    const totalFiles = fileCount;
     const completedFiles = filesCompleted.length;
     const erroredFiles = filesErrored.length;
 
     return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
-  }, [filesInProgress]);
+  }, [filesCompleted]);
 
   const onDownloadClick = () => {
     const files = buildFileLists();
+
+    setFileCount(files.length);
 
     const filesPreppedForDownload = files.map((file: any) => {
       const directoryWithoutFileName = file.destination.substring(
@@ -328,29 +326,7 @@ export default function Installation() {
           variant="determinate"
           value={downloadProgress ?? 0}
         ></LinearProgress>
-        {done && <Typography color="success">Done</Typography>}
-        <div>
-          <Typography>Files to download</Typography>
-          {filesToDownload.length}
-        </div>
-        <br />
-        <div>
-          <Typography>Files in progress</Typography>
-          {filesInProgress.length}
-        </div>
-        <br />
-        <div>
-          <Typography>Files errored</Typography>
-          {filesErrored.length}
-        </div>
-        <br />
-
-        <br />
-        <div>
-          <Typography>Files queued</Typography>
-          {filesInQueue.length}
-        </div>
-        <br />
+        {downloadProgress >= 1 && <Typography color="success">Done</Typography>}
 
         <div>
           <Typography>Files complete</Typography>
@@ -358,10 +334,6 @@ export default function Installation() {
           {JSON.stringify(filesCompleted)}
         </div>
         <br />
-
-        {/* <Typography color="success.main">DONE!</Typography> */}
-
-        {JSON.stringify(filesToDownload)}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
