@@ -6,7 +6,7 @@ export enum AppRoutes {
   agreement = "/agreement",
   options = "/options",
   citiesAndSettlements = "/cities-and-settlements",
-  standalonePois = "/standalone-pois",
+  singlePoiSelection = "/standalone-pois",
   installation = "/installation",
   finished = "/finished",
 }
@@ -25,11 +25,11 @@ export const RoutesMeta: Record<AppRoutes, { title: string; value: number }> = {
     value: 2,
   },
   [AppRoutes.citiesAndSettlements]: {
-    title: "Cities and Settlements",
+    title: "Cities & Settlements",
     value: 3,
   },
-  [AppRoutes.standalonePois]: {
-    title: "Standalone POIs",
+  [AppRoutes.singlePoiSelection]: {
+    title: "Single POI Selection",
     value: 4,
   },
   [AppRoutes.installation]: {

@@ -9,6 +9,7 @@ import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
 import Installation from "Pages/Installation";
 import CitiesAndSettlements from "Pages/CitiesAndSettlements";
+import StandalonePois from "Pages/SinglePoiSelection";
 
 export default function App() {
   const theme = createTheme(GetTheme());
@@ -25,6 +26,10 @@ export default function App() {
             <Route
               path={AppRoutes.citiesAndSettlements}
               element={<CitiesAndSettlements />}
+            />
+            <Route
+              path={AppRoutes.singlePoiSelection}
+              element={<StandalonePois />}
             />
             <Route path={AppRoutes.options} element={<Options />} />
             <Route path={AppRoutes.installation} element={<Installation />} />

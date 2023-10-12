@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import ListSelection from "Components/ListSelection";
+import TabSelection from "Components/TabSelection";
 import {
   pageContainerStyles,
   pageContentStyles,
@@ -17,7 +17,7 @@ export interface IUserSelection {
   childSelections: string[];
 }
 
-export default function CitiesAndSettlements() {
+export default function StandalonePois() {
   const router = useNavigate();
   const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
@@ -25,7 +25,7 @@ export default function CitiesAndSettlements() {
     []
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
-    LocalStorageKeys.step1Selection,
+    LocalStorageKeys.step2Selection,
     []
   );
 
@@ -34,16 +34,16 @@ export default function CitiesAndSettlements() {
     GetDirectoryFileHttp().then((res) => {
       setHost(res.host);
       console.log("res", res);
-      setAvailableFiles(res.step_1);
+      setAvailableFiles(res.step_2);
     });
   }, []);
 
   //Functions
   const onBackClick = (event: any) => {
-    router(AppRoutes.options);
+    router(AppRoutes.citiesAndSettlements);
   };
   const onNextClick = async () => {
-    router(AppRoutes.singlePoiSelection);
+    router(AppRoutes.installation);
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
@@ -89,11 +89,10 @@ export default function CitiesAndSettlements() {
 
   return (
     <Box sx={pageContainerStyles}>
-      {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
       <Box sx={pageContentStyles}>
-        <Typography variant="h1">Cities & Settlements</Typography>
+        <Typography variant="h1">Single POI Selection</Typography>
         <Button onClick={() => setCurrentSelection([])}>Clear Selection</Button>
-        <ListSelection
+        <TabSelection
           currentSelection={currentSelection}
           availableFiles={availableFiles}
           onParentCheckToggle={onParentCheckToggle}
@@ -107,7 +106,7 @@ export default function CitiesAndSettlements() {
           onClick={onNextClick}
           disabled={currentSelection.length === 0}
         >
-          Next
+          Download & Install
         </Button>
       </Box>
     </Box>
