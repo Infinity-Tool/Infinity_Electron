@@ -17,11 +17,16 @@ import {
 } from "@mui/material";
 import Loading from "./Loading";
 import { useEffect, useState } from "react";
+import useLocalStorage from "Services/useLocalStorage";
+import LocalStorageKeys from "Services/LocalStorageKeys";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
-  const [selectedTags, setSelectedTags]: any = useState(props.availableTags);
+  const [selectedTags, setSelectedTags]: any = useLocalStorage(
+    LocalStorageKeys.selectedTags,
+    props.availableTags
+  );
 
   const currentSelection = props.currentSelection;
   const availableFiles = props.availableFiles;
