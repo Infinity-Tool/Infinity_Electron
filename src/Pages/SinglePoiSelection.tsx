@@ -9,7 +9,7 @@ import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 export interface IUserSelection {
@@ -28,13 +28,14 @@ export default function StandalonePois() {
     LocalStorageKeys.step2Selection,
     []
   );
+  const [availableTags, setAvailableTags]: any = useState([]);
 
   //Effects
   useEffect(() => {
     GetDirectoryFileHttp().then((res) => {
       setHost(res.host);
-      console.log("res", res);
       setAvailableFiles(res.step_2);
+      setAvailableTags(res.editorGroups);
     });
   }, []);
 
@@ -47,7 +48,6 @@ export default function StandalonePois() {
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
-    console.log("checked", checked, "fileName", fileName);
     if (checked) {
       const newSelection = [...currentSelection];
       newSelection.push({ name: fileName, childSelections: [] });
@@ -97,6 +97,7 @@ export default function StandalonePois() {
           availableFiles={availableFiles}
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
+          availableTags={availableTags}
         />
       </Box>
       <Box sx={pageFooterStyles}>

@@ -3,7 +3,13 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
   Paper,
+  Select,
+  SelectChangeEvent,
   Tab,
   Tabs,
   TextField,
@@ -15,11 +21,13 @@ import { useEffect, useState } from "react";
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
+  const [selectedTags, setSelectedTags]: any = useState(props.availableTags);
 
   const currentSelection = props.currentSelection;
   const availableFiles = props.availableFiles;
   const onParentCheckToggle = props.onParentCheckToggle;
   const onChildCheckToggle = props.onChildCheckToggle;
+  const availableTags = props.availableTags;
 
   const getIsSelected = (fileName: string): boolean => {
     return currentSelection.some((x: any) => x.name === fileName);
@@ -43,21 +51,78 @@ export default function TabSelection(props: any) {
     setCurrentTab(newValue);
   };
 
+  const handleSelectedTagChange = (event: any) => {
+    setSelectedTags(event.target.value);
+  };
+
+  const formatName = (tag: string) => {
+    return tag.replace("_", " ").replace(/\w\S*/g, (txt: string) => {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
+
+  // Styles
+  const filterContainerStyles = {
+    display: "flex",
+    alignItems: "center",
+    //wrap
+
+    gap: theme.spacing(2),
+  };
+
+  const GetTagDropdownText = (selected: any) => {
+    if (selected.length > 2) {
+      return selected.length + " selected";
+    }
+
+    return selected.join(", ");
+  };
+
+  const searchBarStyles = {
+    minWidth: "300px",
+  };
+  const tagSelectorStyles = {
+    minWidth: "300px",
+  };
+
   return (
     <>
       {/* Search Bar */}
-
-      <Box>
+      <Box sx={filterContainerStyles}>
         <TextField
           id="outlined-basic"
           label="Search"
           variant="outlined"
-          sx={{ width: "100%" }}
+          sx={searchBarStyles}
         />
+
+        <FormControl sx={tagSelectorStyles}>
+          <InputLabel id="tag-selection">Editor Groups</InputLabel>
+          <Select
+            labelId="tag-selection"
+            id="demo-multiple-checkbox"
+            multiple
+            value={selectedTags}
+            onChange={handleSelectedTagChange}
+            input={<OutlinedInput label="Editor Groups" />}
+            renderValue={GetTagDropdownText}
+          >
+            {availableTags
+              .sort((a: string, b: string) =>
+                a.toLowerCase().localeCompare(b.toLowerCase())
+              )
+              .map((tag: string, i: number) => (
+                <MenuItem key={tag} value={tag}>
+                  <Checkbox checked={selectedTags.indexOf(tag) > -1} />
+                  <ListItemText primary={formatName(tag)} />
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
       </Box>
 
       {availableFiles == null && <Loading />}
-      <Tabs value={currentTab} onChange={onTabChange}>
+      <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
         <Tab label={"All"} value={"All"} />
 
         {availableFiles?.map((tas: any, index: number) => (
