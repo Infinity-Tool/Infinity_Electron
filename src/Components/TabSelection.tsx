@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  Chip,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -9,14 +10,13 @@ import {
   OutlinedInput,
   Paper,
   Select,
-  SelectChangeEvent,
   Tab,
   Tabs,
   TextField,
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import useLocalStorage from "Services/useLocalStorage";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -66,6 +66,18 @@ export default function TabSelection(props: any) {
     });
   };
 
+  const filteredAvailableFiles = useMemo(() => {
+    return availableFiles.map((file: any) => {
+      file.childSelections = file.childSelections.filter((child: any) => {
+        return child.editorGroups?.some((tag: string) => {
+          return selectedTags.includes(tag);
+        });
+      });
+
+      return file;
+    });
+  }, [availableFiles, selectedTags]);
+
   // Styles
   const filterContainerStyles = {
     display: "flex",
@@ -74,11 +86,17 @@ export default function TabSelection(props: any) {
   };
 
   const GetTagDropdownText = (selected: any) => {
-    if (selected.length > 2) {
-      return selected.length + " selected";
-    }
+    const selectedCount = selected.length;
 
-    return selected.join(", ");
+    if (selectedCount === 0) {
+      return "None Selected";
+    } else if (selectedCount === availableTags.length) {
+      return "All Selected";
+    } else if (selectedCount > 2) {
+      return selectedCount + " selected";
+    } else {
+      return selected.join(", ");
+    }
   };
 
   const searchBarStyles = {
@@ -88,7 +106,17 @@ export default function TabSelection(props: any) {
     minWidth: "300px",
   };
   const tabRowstyles = { borderBottom: 1, borderColor: "divider" };
-  const childContainerStyles = {};
+
+  const poiStyles = {
+    paddingY: theme.spacing(1),
+    paddingX: theme.spacing(2),
+    marginY: theme.spacing(1),
+  };
+
+  const tagChipContainerStyles = {
+    display: "flex",
+    gap: theme.spacing(1),
+  };
 
   return (
     <>
@@ -113,6 +141,24 @@ export default function TabSelection(props: any) {
             input={<OutlinedInput label="Editor Groups" />}
             renderValue={GetTagDropdownText}
           >
+            {/* TODO All Tag selection */}
+            {/* <MenuItem
+              value="All"
+              selected={selectedTags.length >= availableTags.length}
+            >
+              <Checkbox
+                checked={selectedTags.length >= availableTags.length}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedTags(availableTags);
+                  } else {
+                    setSelectedTags([]);
+                  }
+                }}
+              />
+              <ListItemText primary="All" />
+            </MenuItem> */}
+
             {availableTags
               ?.sort((a: string, b: string) =>
                 a.toLowerCase().localeCompare(b.toLowerCase())
@@ -127,23 +173,23 @@ export default function TabSelection(props: any) {
         </FormControl>
       </Box>
 
-      {availableFiles == null && <Loading />}
+      {filteredAvailableFiles == null && <Loading />}
 
       <TabContext value={currentTab}>
         <Box sx={tabRowstyles}>
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
             <Tab label={"All"} value={"All"} />
 
-            {availableFiles?.map((tas: any, index: number) => (
+            {filteredAvailableFiles?.map((tas: any, index: number) => (
               <Tab label={tas.name} value={tas.name} />
             ))}
           </Tabs>
         </Box>
-        {availableFiles?.map((parent: any, index: number) => (
+        {filteredAvailableFiles?.map((parent: any, index: number) => (
           <TabPanel value={parent.name}>{SelectablePois(parent)}</TabPanel>
         ))}
         <TabPanel value={"All"}>
-          {availableFiles?.map((parent: any, index: number) =>
+          {filteredAvailableFiles?.map((parent: any, index: number) =>
             SelectablePois(parent)
           )}
         </TabPanel>
@@ -153,10 +199,10 @@ export default function TabSelection(props: any) {
 
   function SelectablePois(parent: any) {
     return (
-      <Box sx={childContainerStyles}>
+      <Box>
         {parent.childSelections?.length > 0 &&
           parent.childSelections.map((child: any) => (
-            <Box>
+            <Paper sx={poiStyles}>
               <FormControl>
                 <FormControlLabel
                   control={
@@ -170,7 +216,12 @@ export default function TabSelection(props: any) {
                   label={child.name}
                 ></FormControlLabel>
               </FormControl>
-            </Box>
+              <Box sx={tagChipContainerStyles}>
+                {child.editorGroups?.map((eg: string) => (
+                  <Chip label={formatName(eg)} size="small"></Chip>
+                ))}
+              </Box>
+            </Paper>
           ))}
       </Box>
     );
