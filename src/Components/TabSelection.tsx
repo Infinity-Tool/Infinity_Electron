@@ -140,87 +140,39 @@ export default function TabSelection(props: any) {
           </Tabs>
         </Box>
         {availableFiles?.map((parent: any, index: number) => (
-          <TabPanel value={parent.name}>
-            <Box sx={childContainerStyles}>
-              {parent.childSelections?.length > 0 &&
-                parent.childSelections.map((child: any) => (
-                  <Box>
-                    <FormControl>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={getIsChildSelected(
-                              parent.name,
-                              child.name
-                            )}
-                            onClick={(e: any) => {
-                              onToggle(
-                                e.target.checked,
-                                parent.name,
-                                child.name
-                              );
-                            }}
-                          />
-                        }
-                        label={child.name}
-                      ></FormControlLabel>
-                    </FormControl>
-                  </Box>
-                ))}
-            </Box>
-          </TabPanel>
+          <TabPanel value={parent.name}>{SelectablePois(parent)}</TabPanel>
         ))}
-        <TabPanel value={"All"}>All</TabPanel>
+        <TabPanel value={"All"}>
+          {availableFiles?.map((parent: any, index: number) =>
+            SelectablePois(parent)
+          )}
+        </TabPanel>
       </TabContext>
-
-      {/* 
-      <Box sx={modListContainer}>
-        {availableFiles == null && <Loading />}
-        {availableFiles?.map((tas: any, index: number) => (
-          <Paper sx={getModListItemStyles(tas.name)} key={index}>
-            <FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={getIsSelected(tas.name)}
-                    onClick={(e: any) =>
-                      onParentCheckToggle(e.target.checked, tas.name)
-                    }
-                  />
-                }
-                label={tas.name}
-              ></FormControlLabel>
-            </FormControl>
-
-            <Box sx={childContainerStyles}>
-              {tas.childSelections?.length > 0 &&
-                tas.childSelections.map((child: any) => (
-                  <Box>
-                    <FormControl>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            disabled={!getIsSelected(tas.name)}
-                            checked={getIsChildSelected(tas.name, child.name)}
-                            onClick={(e: any) =>
-                              onChildCheckToggle(
-                                e.target.checked,
-                                tas.name,
-                                child.name
-                              )
-                            }
-                          />
-                        }
-                        label={child.name}
-                      ></FormControlLabel>
-                    </FormControl>
-                  </Box>
-                ))}
-            </Box>
-          </Paper>
-        ))}
-        {availableFiles == null && <div>loading...</div>}
-      </Box> */}
     </>
   );
+
+  function SelectablePois(parent: any) {
+    return (
+      <Box sx={childContainerStyles}>
+        {parent.childSelections?.length > 0 &&
+          parent.childSelections.map((child: any) => (
+            <Box>
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={getIsChildSelected(parent.name, child.name)}
+                      onClick={(e: any) => {
+                        onToggle(e.target.checked, parent.name, child.name);
+                      }}
+                    />
+                  }
+                  label={child.name}
+                ></FormControlLabel>
+              </FormControl>
+            </Box>
+          ))}
+      </Box>
+    );
+  }
 }
