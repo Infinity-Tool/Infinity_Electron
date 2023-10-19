@@ -19,6 +19,7 @@ import Loading from "./Loading";
 import { useEffect, useState } from "react";
 import useLocalStorage from "Services/useLocalStorage";
 import LocalStorageKeys from "Services/LocalStorageKeys";
+import { TabContext, TabPanel } from "@mui/lab";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -30,13 +31,12 @@ export default function TabSelection(props: any) {
 
   const currentSelection = props.currentSelection;
   const availableFiles = props.availableFiles;
-  const onParentCheckToggle = props.onParentCheckToggle;
-  const onChildCheckToggle = props.onChildCheckToggle;
   const availableTags = props.availableTags;
+  const onToggle = props.onToggle;
 
-  const getIsSelected = (fileName: string): boolean => {
-    return currentSelection.some((x: any) => x.name === fileName);
-  };
+  // const getIsSelected = (fileName: string): boolean => {
+  //   return currentSelection.some((x: any) => x.name === fileName);
+  // };
 
   const getIsChildSelected = (
     parentFileName: string,
@@ -70,8 +70,6 @@ export default function TabSelection(props: any) {
   const filterContainerStyles = {
     display: "flex",
     alignItems: "center",
-    //wrap
-
     gap: theme.spacing(2),
   };
 
@@ -89,6 +87,8 @@ export default function TabSelection(props: any) {
   const tagSelectorStyles = {
     minWidth: "300px",
   };
+  const tabRowstyles = { borderBottom: 1, borderColor: "divider" };
+  const childContainerStyles = {};
 
   return (
     <>
@@ -101,6 +101,7 @@ export default function TabSelection(props: any) {
           sx={searchBarStyles}
         />
 
+        {/* Tag Selection */}
         <FormControl sx={tagSelectorStyles}>
           <InputLabel id="tag-selection">Editor Groups</InputLabel>
           <Select
@@ -113,7 +114,7 @@ export default function TabSelection(props: any) {
             renderValue={GetTagDropdownText}
           >
             {availableTags
-              .sort((a: string, b: string) =>
+              ?.sort((a: string, b: string) =>
                 a.toLowerCase().localeCompare(b.toLowerCase())
               )
               .map((tag: string, i: number) => (
@@ -127,18 +128,50 @@ export default function TabSelection(props: any) {
       </Box>
 
       {availableFiles == null && <Loading />}
-      <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
-        <Tab label={"All"} value={"All"} />
 
-        {availableFiles?.map((tas: any, index: number) => (
-          <Tab label={tas.name} value={tas.name} />
+      <TabContext value={currentTab}>
+        <Box sx={tabRowstyles}>
+          <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
+            <Tab label={"All"} value={"All"} />
+
+            {availableFiles?.map((tas: any, index: number) => (
+              <Tab label={tas.name} value={tas.name} />
+            ))}
+          </Tabs>
+        </Box>
+        {availableFiles?.map((parent: any, index: number) => (
+          <TabPanel value={parent.name}>
+            <Box sx={childContainerStyles}>
+              {parent.childSelections?.length > 0 &&
+                parent.childSelections.map((child: any) => (
+                  <Box>
+                    <FormControl>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={getIsChildSelected(
+                              parent.name,
+                              child.name
+                            )}
+                            onClick={(e: any) => {
+                              onToggle(
+                                e.target.checked,
+                                parent.name,
+                                child.name
+                              );
+                            }}
+                          />
+                        }
+                        label={child.name}
+                      ></FormControlLabel>
+                    </FormControl>
+                  </Box>
+                ))}
+            </Box>
+          </TabPanel>
         ))}
-      </Tabs>
-
-      {/* <TabSelection value={"All"}>{"ALLLLLLLLL"}</TabSelection>
-      {availableFiles?.map((tas: any, index: number) => (
-        <TabSelection value={tas.name}>{tas.name}</TabSelection>
-      ))} */}
+        <TabPanel value={"All"}>All</TabPanel>
+      </TabContext>
 
       {/* 
       <Box sx={modListContainer}>
