@@ -22,12 +22,17 @@ export default function Installation() {
     LocalStorageKeys.localPrefabsDirectory,
     ""
   );
-  const [availableFiles]: any = useLocalStorage(
-    LocalStorageKeys.availableFiles,
+  const [availableStep1Files]: any = useLocalStorage(
+    LocalStorageKeys.availableStep1Files,
+    []
+  );
+  const [availableStep2Files]: any = useLocalStorage(
+    LocalStorageKeys.availableStep2Files,
     []
   );
   const [fileCount, setFileCount]: any = useState();
   const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
+  const [step2Selection] = useLocalStorage(LocalStorageKeys.step2Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
 
@@ -41,6 +46,8 @@ export default function Installation() {
 
   const onDownloadClick = () => {
     const files = buildFileLists();
+    console.log("step1Selection", step1Selection);
+    console.log("availableStep1Files", availableStep1Files);
 
     setFileCount(files.length);
 
@@ -59,6 +66,8 @@ export default function Installation() {
       };
     });
 
+    console.log("filesPreppedForDownload", filesPreppedForDownload);
+
     ipcRenderer.send("queue-files-for-download", filesPreppedForDownload);
   };
 
@@ -66,7 +75,7 @@ export default function Installation() {
     let formattedInstallationFiles: any = [];
 
     step1Selection.forEach((selected: any) => {
-      const foundEntry = availableFiles.find(
+      const foundEntry = availableStep1Files.find(
         (available: any) => selected.name === available.name
       );
 
@@ -97,6 +106,8 @@ export default function Installation() {
           );
           formattedInstallationFiles.push(installationFile);
         });
+      } else {
+        // TODO display error?
       }
     });
 
@@ -141,7 +152,7 @@ export default function Installation() {
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
         <Typography variant="h1" sx={percentDoneStyles}>
-          {downloadProgress.toFixed(1)}%
+          {downloadProgress.toFixed(1) || 0}%
         </Typography>
 
         <LinearProgress

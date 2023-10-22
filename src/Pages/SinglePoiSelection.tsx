@@ -21,7 +21,7 @@ export default function StandalonePois() {
   const router = useNavigate();
   const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    LocalStorageKeys.availableFiles,
+    LocalStorageKeys.availableStep2Files,
     []
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(

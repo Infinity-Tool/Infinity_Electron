@@ -1,6 +1,7 @@
 enum LocalStorageKeys {
   host = "host",
-  availableFiles = "availableFiles",
+  availableStep1Files = "availableStep1Files",
+  availableStep2Files = "availableStep2Files",
   modsDirectory = "modsDirectory",
   localPrefabsDirectory = "localPrefabsDirectory",
   cleanInstall = "cleanInstall",

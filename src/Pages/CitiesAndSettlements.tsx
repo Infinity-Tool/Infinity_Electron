@@ -21,7 +21,7 @@ export default function CitiesAndSettlements() {
   const router = useNavigate();
   const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    LocalStorageKeys.availableFiles,
+    LocalStorageKeys.availableStep1Files,
     []
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
@@ -33,7 +33,6 @@ export default function CitiesAndSettlements() {
   useEffect(() => {
     GetDirectoryFileHttp().then((res) => {
       setHost(res.host);
-      console.log("res", res);
       setAvailableFiles(res.step_1);
     });
   }, []);

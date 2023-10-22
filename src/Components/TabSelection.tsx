@@ -13,6 +13,7 @@ import {
   Tab,
   Tabs,
   TextField,
+  Typography,
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
@@ -78,6 +79,14 @@ export default function TabSelection(props: any) {
     });
   }, [availableFiles, selectedTags]);
 
+  const GetChipColor = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      return "primary";
+    } else {
+      return "default";
+    }
+  };
+
   // Styles
   const filterContainerStyles = {
     display: "flex",
@@ -116,6 +125,9 @@ export default function TabSelection(props: any) {
   const tagChipContainerStyles = {
     display: "flex",
     gap: theme.spacing(1),
+  };
+  const noResultsMessageMainStyles = {
+    fontSize: "1.5rem",
   };
 
   return (
@@ -179,30 +191,48 @@ export default function TabSelection(props: any) {
         <Box sx={tabRowstyles}>
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
             <Tab label={"All"} value={"All"} />
-
             {filteredAvailableFiles?.map((tas: any, index: number) => (
               <Tab label={tas.name} value={tas.name} />
             ))}
           </Tabs>
         </Box>
         {filteredAvailableFiles?.map((parent: any, index: number) => (
-          <TabPanel value={parent.name}>{SelectablePois(parent)}</TabPanel>
-        ))}
+          <TabPanel value={parent.name} key={parent.name + index}>
+            {SelectablePois(parent)}
+          </TabPanel>
+        )) || DisplayNoResults()}
         <TabPanel value={"All"}>
           {filteredAvailableFiles?.map((parent: any, index: number) =>
             SelectablePois(parent)
-          )}
+          ) || DisplayNoResults()}
         </TabPanel>
       </TabContext>
     </>
   );
 
+  function DisplayNoResults() {
+    return !filteredAvailableFiles
+      ?.map((x: any) => x.childSelections)
+      ?.some() ? (
+      <>
+        <Typography sx={noResultsMessageMainStyles}>
+          No results found!
+        </Typography>
+        <Typography variant="caption">
+          Try changing your search or selected tags
+        </Typography>
+      </>
+    ) : (
+      <></>
+    );
+  }
+
   function SelectablePois(parent: any) {
     return (
       <Box>
         {parent.childSelections?.length > 0 &&
-          parent.childSelections.map((child: any) => (
-            <Paper sx={poiStyles}>
+          parent.childSelections.map((child: any, index: number) => (
+            <Paper sx={poiStyles} key={index}>
               <FormControl>
                 <FormControlLabel
                   control={
@@ -218,7 +248,11 @@ export default function TabSelection(props: any) {
               </FormControl>
               <Box sx={tagChipContainerStyles}>
                 {child.editorGroups?.map((eg: string) => (
-                  <Chip label={formatName(eg)} size="small"></Chip>
+                  <Chip
+                    label={formatName(eg)}
+                    size="small"
+                    color={GetChipColor(eg)}
+                  ></Chip>
                 ))}
               </Box>
             </Paper>
