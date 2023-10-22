@@ -63,6 +63,9 @@ export default function Installation() {
           directory: directoryWithoutFileName,
           fileName: file.fileName,
           overwrite: true,
+          openFolderWhenDone: false,
+          showBadge: false,
+          // showProgressBar: false,
         },
       };
     });

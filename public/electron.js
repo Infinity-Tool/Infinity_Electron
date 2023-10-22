@@ -1,8 +1,14 @@
 const path = require("path");
 
-const { app, BrowserWindow, dialog, ipcMain } = require("electron");
-const { download } = require("electron-dl");
+const { app, BrowserWindow, dialog, ipcMain, Menu } = require("electron");
+const electronDl = require("electron-dl");
 const isDev = require("electron-is-dev");
+const async = require("async");
+
+electronDl();
+
+// Remove the default menu
+Menu.setApplicationMenu(null);
 
 let window;
 
@@ -10,7 +16,10 @@ function createWindow() {
   // Create the browser window.
   window = new BrowserWindow({
     width: 800,
+    minWidth: 800,
     height: 600,
+    minHeight: 600,
+
     webPreferences: {
       nodeIntegration: true,
       //this line is crucial
@@ -66,58 +75,26 @@ ipcMain.on("open-folder-dialog", (event, folderType) => {
     });
 });
 
-ipcMain.on("download-file", (event, info) => {
-  info.properties.onProgress = (status) =>
-    window.webContents.send("download-progress", status);
-
-  console.log("[ELECTRON] download-file", info.properties.fileName);
-
-  download(window, info.url, info.properties)
-    .then((dl) => {
-      console.log("[ELECTRON] download-complete", info.properties.fileName);
-
-      return window.webContents.send(
-        "download-complete",
-        info.properties.fileName
-      );
-    })
-    .catch((err) => {
-      window.webContents.send("download-error", info.properties.fileName);
-    });
-});
-
-ipcMain.on("download-files", async (event, files) => {
-  // Download files one at a time, wait for each one to complete before starting the next
-  // This is to avoid the issue where multiple downloads are started at the same time
-  // and the download progress events get mixed up
-  await files.reduce((promise, file) => {
-    return promise.then(() => downloadNew(file));
-  }, Promise.resolve());
-});
-
-const downloadNew = async (file) => {
-  download(window, file.url, file.properties)
-    .then((dl) => {
-      console.log("[ELECTRON] download-complete", file.properties.fileName);
-      window.webContents.send("download-complete", file.properties.fileName);
-      return Promise.resolve();
-    })
-    .catch((err) => {
-      window.webContents.send("download-error", file.properties.fileName);
-    });
-};
-
 ipcMain.on("queue-files-for-download", async (event, files) => {
-  // Download files one at a time, wait for each one to complete before starting the next
-  // This is to avoid the issue where multiple downloads are started at the same time
-  // and the download progress events get mixed up
-  await files.reduce((promise, file) => {
-    return promise.then(() => queueNew(file));
-  }, Promise.resolve());
+  async.eachLimit(
+    files,
+    3,
+    async (file) => {
+      await queueNew(file);
+    },
+    (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("All tasks completed successfully");
+      }
+    }
+  );
 });
 
-const queueNew = async (file) => {
-  return download(window, file.url, file.properties)
+const queueNew = async (file) =>
+  electronDl
+    .download(window, file.url, file.properties)
     .then((dl) => {
       console.log("[ELECTRON] download-complete", file.properties.fileName);
       window.webContents.send("download-complete", file.properties.fileName);
@@ -126,4 +103,3 @@ const queueNew = async (file) => {
     .catch((err) => {
       window.webContents.send("download-error", file.properties.fileName);
     });
-};
