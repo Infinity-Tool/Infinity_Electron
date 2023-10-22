@@ -35,6 +35,7 @@ export default function Installation() {
   const [step2Selection] = useLocalStorage(LocalStorageKeys.step2Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
+  const [downloadStarted, setDownloadStarted] = useState(false);
 
   const downloadProgress = useMemo(() => {
     const totalFiles = fileCount;
@@ -44,7 +45,7 @@ export default function Installation() {
     return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
   }, [filesCompleted]);
 
-  const onDownloadClick = () => {
+  const startDownloads = () => {
     const step1Files = buildFileLists(availableStep1Files, step1Selection);
     const step2Files = buildFileLists(availableStep2Files, step2Selection);
 
@@ -65,7 +66,7 @@ export default function Installation() {
           overwrite: true,
           openFolderWhenDone: false,
           showBadge: false,
-          // showProgressBar: false,
+          showProgressBar: false,
         },
       };
     });
@@ -119,6 +120,21 @@ export default function Installation() {
     return formattedInstallationFiles;
   };
 
+  // Effects
+
+  useEffect(() => {
+    if (!downloadStarted) {
+      setDownloadStarted(true);
+      startDownloads();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (downloadProgress >= 100) {
+      router(AppRoutes.finished);
+    }
+  }, [downloadProgress]);
+
   useEffect(() => {
     ipcRenderer.on("download-complete", (event: any, file: any) => {
       console.log("[download-complete]", file);
@@ -136,6 +152,10 @@ export default function Installation() {
 
   const onBackClick = (event: any) => {
     router(AppRoutes.citiesAndSettlements);
+  };
+
+  const onCancelClick = (event: any) => {
+    // TODO
   };
 
   const addToCompletedFiles = (file: string) => {
@@ -156,6 +176,8 @@ export default function Installation() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
+        <Typography>TODO Zombie walking/running animation</Typography>
+
         <Typography variant="h1" sx={percentDoneStyles}>
           {downloadProgress.toFixed(1) || 0}%
         </Typography>
@@ -164,17 +186,18 @@ export default function Installation() {
           variant="determinate"
           value={downloadProgress ?? 0}
         ></LinearProgress>
-        {downloadProgress >= 100 && (
+        {/* {downloadProgress >= 100 && (
           <Typography variant="h3" color="success">
             Done! 😎
           </Typography>
-        )}
+        )} */}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
-        <Button onClick={onDownloadClick} variant="contained">
+        <Button onClick={onCancelClick}>Cancel</Button>
+        {/* <Button onClick={startDownloads} variant="contained">
           Download
-        </Button>
+        </Button> */}
       </Box>
     </Box>
   );

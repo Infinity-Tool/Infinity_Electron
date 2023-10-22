@@ -7,9 +7,10 @@ import { AppRoutes } from "./Services/Constants";
 import Welcome from "./Pages/Welcome";
 import Agreement from "./Pages/Agreement";
 import Options from "./Pages/Options";
-import Installation from "Pages/Installation";
 import CitiesAndSettlements from "Pages/CitiesAndSettlements";
 import StandalonePois from "Pages/SinglePoiSelection";
+import Installation from "Pages/Installation";
+import Finished from "Pages/Finished";
 
 export default function App() {
   const theme = createTheme(GetTheme());
@@ -33,6 +34,7 @@ export default function App() {
             />
             <Route path={AppRoutes.options} element={<Options />} />
             <Route path={AppRoutes.installation} element={<Installation />} />
+            <Route path={AppRoutes.finished} element={<Finished />} />
           </Route>
         </Routes>
       </Router>
