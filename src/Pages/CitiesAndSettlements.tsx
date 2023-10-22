@@ -104,7 +104,7 @@ export default function CitiesAndSettlements() {
         <Button
           variant="contained"
           onClick={onNextClick}
-          disabled={currentSelection.length === 0}
+          // disabled={currentSelection.length === 0}
         >
           Next
         </Button>

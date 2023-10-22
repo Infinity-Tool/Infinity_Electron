@@ -45,13 +45,14 @@ export default function Installation() {
   }, [filesCompleted]);
 
   const onDownloadClick = () => {
-    const files = buildFileLists();
-    console.log("step1Selection", step1Selection);
-    console.log("availableStep1Files", availableStep1Files);
+    const step1Files = buildFileLists(availableStep1Files, step1Selection);
+    const step2Files = buildFileLists(availableStep2Files, step2Selection);
 
-    setFileCount(files.length);
+    const combinedFileLists = [...step1Files, ...step2Files];
 
-    const filesPreppedForDownload = files.map((file: any) => {
+    setFileCount(combinedFileLists.length);
+
+    const filesPreppedForDownload = combinedFileLists.map((file: any) => {
       const directoryWithoutFileName = file.destination.substring(
         0,
         file.destination.lastIndexOf("/")
@@ -66,16 +67,17 @@ export default function Installation() {
       };
     });
 
-    console.log("filesPreppedForDownload", filesPreppedForDownload);
-
     ipcRenderer.send("queue-files-for-download", filesPreppedForDownload);
   };
 
-  const buildFileLists = (): InstallationFile[] => {
+  const buildFileLists = (
+    availableFiles: any,
+    selectedFiles: any
+  ): InstallationFile[] => {
     let formattedInstallationFiles: any = [];
 
-    step1Selection.forEach((selected: any) => {
-      const foundEntry = availableStep1Files.find(
+    selectedFiles.forEach((selected: any) => {
+      const foundEntry = availableFiles.find(
         (available: any) => selected.name === available.name
       );
 
