@@ -35,7 +35,6 @@ export default function Installation() {
   const [step2Selection] = useLocalStorage(LocalStorageKeys.step2Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
-  const [downloadStarted, setDownloadStarted] = useState(false);
 
   const downloadProgress = useMemo(() => {
     const totalFiles = fileCount;
@@ -123,10 +122,8 @@ export default function Installation() {
   // Effects
 
   useEffect(() => {
-    if (!downloadStarted) {
-      setDownloadStarted(true);
-      startDownloads();
-    }
+    alert("use effect");
+    startDownloads();
   }, []);
 
   useEffect(() => {

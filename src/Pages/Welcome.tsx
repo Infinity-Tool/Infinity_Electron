@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "../Services/Constants";
 import LogoBanner from "../Assets/logo_banner.png";
@@ -14,6 +14,10 @@ export default function Welcome() {
   //Functions
   const handleBegin = () => {
     router(AppRoutes.agreement);
+  };
+  const handleDiscordClick = () => {
+    const { ipcRenderer } = window.require("electron");
+    ipcRenderer.send("open-discord");
   };
 
   //Styles
@@ -37,10 +41,13 @@ export default function Welcome() {
         <Box sx={creditStyles}>
           <Typography variant="caption">Founder: Magoli</Typography>
           <Typography variant="caption">Infinity Team: Stallionsden</Typography>
-          <Typography variant="caption" color="text.secondary">
+          {/* <Typography variant="caption" color="text.secondary">
             Join our Discord!
-          </Typography>
+          </Typography> */}
         </Box>
+        <Button color="primary" onClick={handleDiscordClick}>
+          Join our Discord
+        </Button>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button

@@ -75,21 +75,24 @@ ipcMain.on("open-folder-dialog", (event, folderType) => {
     });
 });
 
+ipcMain.on("close-app", () => {
+  window.close();
+});
+
+ipcMain.on("open-discord", () => {
+  const { shell } = require("electron");
+  shell.openExternal("https://discord.gg/magolis-compopack");
+});
+
 ipcMain.on("queue-files-for-download", async (event, files) => {
-  async.eachLimit(
-    files,
-    3,
-    async (file) => {
-      await queueNew(file);
-    },
-    (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("All tasks completed successfully");
-      }
-    }
-  );
+  console.log("[ELECTRON] queue-files-for-download", files);
+  const queue = async.queue(queueNew, 1);
+  queue.drain = async (file) => {
+    // console.log("[ELECTRON] queue-drain");
+    // event.reply("download-queue-drain");
+    await queueNew(file);
+  };
+  queue.push(files);
 });
 
 const queueNew = async (file) =>
