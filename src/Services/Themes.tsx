@@ -15,7 +15,7 @@ export default function GetTheme(): any {
       background: {
         default: "#1E1E1E",
         defaultDarker: "#101010",
-        paper: "#000000",
+        paper: "#070707",
       },
     },
     typography: {
