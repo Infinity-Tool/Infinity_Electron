@@ -9,7 +9,7 @@ import { AppRoutes } from "Services/Constants";
 import LocalStorageKeys from "Services/LocalStorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 export interface IUserSelection {
@@ -29,13 +29,28 @@ export default function StandalonePois() {
     []
   );
   const [availableTags, setAvailableTags]: any = useState([]);
+  const [selectedTags, setSelectedTags]: any = useLocalStorage(
+    LocalStorageKeys.selectedTags,
+    []
+  );
 
   //Effects
   useEffect(() => {
     GetDirectoryFileHttp().then((res) => {
       setHost(res.host);
       setAvailableFiles(res.step_2);
+      setCurrentSelection((prev: any) => {
+        return prev.length > 0
+          ? prev
+          : res.step_2.map((x: any) => ({
+              name: x.name,
+              childSelections: x.childSelections.map((y: any) => y.name),
+            }));
+      });
       setAvailableTags(res.editorGroups);
+      setSelectedTags((prev: any) => {
+        return prev.length > 0 ? prev : res.editorGroups;
+      });
     });
   }, []);
 
@@ -128,14 +143,18 @@ export default function StandalonePois() {
       <Box sx={pageContentStyles}>
         <Typography variant="h1">Single POI Selection</Typography>
         <Button onClick={() => setCurrentSelection([])}>Clear Selection</Button>
-        <TabSelection
-          currentSelection={currentSelection}
-          availableFiles={availableFiles}
-          onToggle={onToggle}
-          // onParentCheckToggle={onParentCheckToggle}
-          // onChildCheckToggle={onChildCheckToggle}
-          availableTags={availableTags}
-        />
+        {availableFiles && availableTags && (
+          <TabSelection
+            currentSelection={currentSelection}
+            availableFiles={availableFiles}
+            onToggle={onToggle}
+            // onParentCheckToggle={onParentCheckToggle}
+            // onChildCheckToggle={onChildCheckToggle}
+            availableTags={availableTags}
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+          />
+        )}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>

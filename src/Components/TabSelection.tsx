@@ -25,15 +25,19 @@ import { TabContext, TabPanel } from "@mui/lab";
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
-  const [selectedTags, setSelectedTags]: any = useLocalStorage(
-    LocalStorageKeys.selectedTags,
-    props.availableTags
-  );
+  // const [selectedTags, setSelectedTags]: any = useLocalStorage(
+  //   LocalStorageKeys.selectedTags,
+  //   props.availableTags
+  // );
 
-  const currentSelection = props.currentSelection;
-  const availableFiles = props.availableFiles;
-  const availableTags = props.availableTags;
-  const onToggle = props.onToggle;
+  const {
+    currentSelection,
+    availableFiles,
+    availableTags,
+    selectedTags,
+    setSelectedTags,
+    onToggle,
+  } = props;
 
   // const getIsSelected = (fileName: string): boolean => {
   //   return currentSelection.some((x: any) => x.name === fileName);

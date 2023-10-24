@@ -1,4 +1,5 @@
 import "@fontsource/roboto";
+import "@font";
 
 export default function GetTheme(): any {
   return {
@@ -6,6 +7,7 @@ export default function GetTheme(): any {
       mode: "dark",
       primary: {
         main: "#3AFFC4",
+        // main: "#ff0000",
       },
       secondary: {
         main: "#FFFFFF",
