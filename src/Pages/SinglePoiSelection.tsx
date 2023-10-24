@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import TabSelection from "Components/TabSelection";
 import {
+  headerContainerStyles,
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
@@ -141,8 +142,13 @@ export default function StandalonePois() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Typography variant="h1">Single POI Selection</Typography>
-        <Button onClick={() => setCurrentSelection([])}>Clear Selection</Button>
+        <Box sx={headerContainerStyles}>
+          <Typography variant="h1">Single POI Selection</Typography>
+          <Button onClick={() => setCurrentSelection([])}>
+            Clear Selection
+          </Button>
+        </Box>
+
         {availableFiles && availableTags && (
           <TabSelection
             currentSelection={currentSelection}

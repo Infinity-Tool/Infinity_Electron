@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import ListSelection from "Components/ListSelection";
 import {
+  headerContainerStyles,
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
@@ -90,8 +91,13 @@ export default function CitiesAndSettlements() {
     <Box sx={pageContainerStyles}>
       {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
       <Box sx={pageContentStyles}>
-        <Typography variant="h1">Cities & Settlements</Typography>
-        <Button onClick={() => setCurrentSelection([])}>Clear Selection</Button>
+        <Box sx={headerContainerStyles}>
+          <Typography variant="h1">Cities & Settlements</Typography>
+          <Button onClick={() => setCurrentSelection([])}>
+            Clear Selection
+          </Button>
+        </Box>
+
         <ListSelection
           currentSelection={currentSelection}
           availableFiles={availableFiles}

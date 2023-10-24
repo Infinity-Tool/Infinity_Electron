@@ -23,7 +23,6 @@ export default function GetTheme(): any {
       h1: {
         fontFamily: "Poiret One",
         fontSize: "2rem",
-        marginBottom: "1rem",
       },
       h2: {
         fontFamily: "Poiret One",
