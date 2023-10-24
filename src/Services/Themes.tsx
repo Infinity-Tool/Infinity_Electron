@@ -1,5 +1,5 @@
 import "@fontsource/roboto";
-import "@font";
+import "@fontsource/poiret-one";
 
 export default function GetTheme(): any {
   return {
@@ -21,8 +21,24 @@ export default function GetTheme(): any {
     typography: {
       fontFamily: "Roboto",
       h1: {
+        fontFamily: "Poiret One",
         fontSize: "2rem",
         marginBottom: "1rem",
+      },
+      h2: {
+        fontFamily: "Poiret One",
+      },
+      h3: {
+        fontFamily: "Poiret One",
+      },
+      h4: {
+        fontFamily: "Poiret One",
+      },
+      h5: {
+        fontFamily: "Poiret One",
+      },
+      h6: {
+        fontFamily: "Poiret One",
       },
     },
     components: {
