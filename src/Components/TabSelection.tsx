@@ -18,17 +18,13 @@ import {
 } from "@mui/material";
 import Loading from "./Loading";
 import { useMemo, useState } from "react";
-import useLocalStorage from "Services/useLocalStorage";
-import LocalStorageKeys from "Services/LocalStorageKeys";
 import { TabContext, TabPanel } from "@mui/lab";
+import { cloneDeep } from "lodash";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
-  // const [selectedTags, setSelectedTags]: any = useLocalStorage(
-  //   LocalStorageKeys.selectedTags,
-  //   props.availableTags
-  // );
+  const [search, setSearch]: any = useState("");
 
   const {
     currentSelection,
@@ -72,16 +68,23 @@ export default function TabSelection(props: any) {
   };
 
   const filteredAvailableFiles = useMemo(() => {
-    return availableFiles.map((file: any) => {
+    const cloneFiles = cloneDeep(availableFiles);
+    return cloneFiles.map((file: any) => {
       file.childSelections = file.childSelections.filter((child: any) => {
-        return child.editorGroups?.some((tag: string) => {
+        const containsTag = child.editorGroups?.some((tag: string) => {
           return selectedTags.includes(tag);
         });
+
+        const containsSearch = child?.name
+          ?.toLowerCase()
+          ?.includes(search.toLowerCase());
+
+        return containsTag && containsSearch;
       });
 
       return file;
     });
-  }, [availableFiles, selectedTags]);
+  }, [availableFiles, selectedTags, search]);
 
   const GetChipColor = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -96,6 +99,7 @@ export default function TabSelection(props: any) {
     display: "flex",
     alignItems: "center",
     gap: theme.spacing(2),
+    mb: theme.spacing(4),
   };
 
   const GetTagDropdownText = (selected: any) => {
@@ -143,6 +147,8 @@ export default function TabSelection(props: any) {
           label="Search"
           variant="outlined"
           sx={searchBarStyles}
+          value={search}
+          onChange={(e: any) => setSearch(e.target.value)}
         />
 
         {/* Tag Selection */}

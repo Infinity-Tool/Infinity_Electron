@@ -51,5 +51,5 @@ export const headerContainerStyles = {
   justifyContent: "space-between",
   alignItems: "center",
   gap: "1rem",
-  mb: "1rem",
+  mb: "1.5rem",
 };
