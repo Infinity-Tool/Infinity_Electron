@@ -92,7 +92,12 @@ export default function CitiesAndSettlements() {
       {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
       <Box sx={pageContentStyles}>
         <Box sx={headerContainerStyles}>
-          <Typography variant="h1">Cities & Settlements</Typography>
+          <Box>
+            <Typography variant="h1">Cities & Settlements</Typography>
+            <Typography variant="caption">
+              Add entire cities to your world and
+            </Typography>
+          </Box>
           <Button onClick={() => setCurrentSelection([])}>
             Clear Selection
           </Button>

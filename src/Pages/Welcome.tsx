@@ -1,4 +1,4 @@
-import { Box, Button, Link, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "../Services/Constants";
 import {
@@ -7,6 +7,7 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import InfinityLogo from "Assets/InfinityLogo";
+import Discord from "Components/Discord";
 
 export default function Welcome() {
   const router = useNavigate();
@@ -16,15 +17,14 @@ export default function Welcome() {
   const handleBegin = () => {
     router(AppRoutes.agreement);
   };
-  const handleDiscordClick = () => {
-    const { ipcRenderer } = window.require("electron");
-    ipcRenderer.send("open-discord");
-  };
 
   //Styles
   const creditStyles = {
     display: "flex",
-    flexDirection: "column",
+    fontSize: "1rem",
+    color: theme.palette.text.secondary,
+    gap: theme.spacing(1),
+    alignItems: "center",
   };
 
   const logoContainerStyles = {
@@ -32,6 +32,18 @@ export default function Welcome() {
     justifyContent: "center",
     alignItems: "center",
     padding: theme.spacing(2),
+    "& svg": {
+      maxHeight: "50%",
+      maxWidth: "50%",
+    },
+    mb: theme.spacing(2),
+  };
+
+  const infinityTitleStyles = {
+    fontSize: "5rem",
+  };
+  const subHeaderStyles = {
+    fontSize: "2rem",
   };
 
   return (
@@ -40,24 +52,26 @@ export default function Welcome() {
         <Box sx={logoContainerStyles}>
           <InfinityLogo />
         </Box>
-        {/* <Box
-          component="img"
-          sx={logoStyles}
-          alt="Infinity Logo"
-          src={LogoBanner}
-        /> */}
+        <Typography variant="h1" sx={infinityTitleStyles}>
+          Infinity
+        </Typography>
+        <Typography variant="h2" sx={subHeaderStyles}>
+          Magoli's Compopack
+        </Typography>
+        <br />
+        <Typography>
+          A mod and custom prefab installer for 7DaysToDie
+        </Typography>
         <Box sx={creditStyles}>
-          <Typography variant="caption">Founder: Magoli</Typography>
-          <Typography variant="caption">Infinity Team: Stallionsden</Typography>
-          {/* <Typography variant="caption" color="text.secondary">
-            Join our Discord!
-          </Typography> */}
+          <Typography variant="caption">Founded by Magoli</Typography>
+          <Typography>•</Typography>
+          <Typography variant="caption">Managed by Stallionsden</Typography>
+          <Typography>•</Typography>
+          <Typography variant="caption">Developed by bent head</Typography>
         </Box>
-        <Button color="primary" onClick={handleDiscordClick}>
-          Join our Discord
-        </Button>
       </Box>
       <Box sx={pageFooterStyles}>
+        <Discord />
         <Button
           variant="contained"
           color="primary"

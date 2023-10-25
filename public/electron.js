@@ -19,6 +19,8 @@ function createWindow() {
     minWidth: 800,
     height: 600,
     minHeight: 600,
+    // icon: path.join(__dirname, "/src/Assets/InfinityLogo.ico"),
+    icon: path.join(app.getAppPath(), "/src/Assets/InfinityLogo.ico"),
 
     webPreferences: {
       nodeIntegration: true,
@@ -39,6 +41,8 @@ function createWindow() {
   if (isDev) {
     window.webContents.openDevTools({ mode: "detach" });
   }
+
+  // window.setIcon(path.join(__dirname, "/src/Assets/InfinityLogo.png"));
 }
 
 // This method will be called when Electron has finished

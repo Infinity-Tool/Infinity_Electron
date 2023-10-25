@@ -22,13 +22,15 @@ export default function GetTheme(): any {
       fontFamily: "Roboto",
       h1: {
         fontFamily: "Poiret One",
-        fontSize: "2rem",
+        fontSize: "3rem",
       },
       h2: {
         fontFamily: "Poiret One",
+        fontSize: "2.5rem",
       },
       h3: {
         fontFamily: "Poiret One",
+        fontSize: "2rem",
       },
       h4: {
         fontFamily: "Poiret One",
