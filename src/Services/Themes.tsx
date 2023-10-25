@@ -10,7 +10,7 @@ export default function GetTheme(): any {
         // main: "#ff0000",
       },
       secondary: {
-        main: "#FFFFFF",
+        main: "#DD1F26",
       },
       background: {
         default: "#1E1E1E",

@@ -1,15 +1,16 @@
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Box, Button, Link, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "../Services/Constants";
-import LogoBanner from "../Assets/logo_banner.png";
 import {
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
 } from "Services/CommonStyles";
+import InfinityLogo from "Assets/InfinityLogo";
 
 export default function Welcome() {
   const router = useNavigate();
+  const theme = useTheme();
 
   //Functions
   const handleBegin = () => {
@@ -25,19 +26,26 @@ export default function Welcome() {
     display: "flex",
     flexDirection: "column",
   };
-  const logoStyles = {
-    width: "100%",
+
+  const logoContainerStyles = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.spacing(2),
   };
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Box
+        <Box sx={logoContainerStyles}>
+          <InfinityLogo />
+        </Box>
+        {/* <Box
           component="img"
           sx={logoStyles}
           alt="Infinity Logo"
           src={LogoBanner}
-        />
+        /> */}
         <Box sx={creditStyles}>
           <Typography variant="caption">Founder: Magoli</Typography>
           <Typography variant="caption">Infinity Team: Stallionsden</Typography>
