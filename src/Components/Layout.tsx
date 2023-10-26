@@ -10,6 +10,7 @@ export default function Layout() {
     display: "flex",
     flexDirection: "row",
     height: "100vh",
+    width: "100vw",
   };
 
   return (

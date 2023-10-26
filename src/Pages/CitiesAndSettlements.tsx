@@ -7,7 +7,7 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
-import LocalStorageKeys from "Services/LocalStorageKeys";
+import StorageKeys from "Services/StorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect } from "react";
@@ -20,13 +20,13 @@ export interface IUserSelection {
 
 export default function CitiesAndSettlements() {
   const router = useNavigate();
-  const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
+  const [, setHost] = useLocalStorage(StorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    LocalStorageKeys.availableStep1Files,
+    StorageKeys.availableStep1Files,
     []
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
-    LocalStorageKeys.step1Selection,
+    StorageKeys.step1Selection,
     []
   );
 

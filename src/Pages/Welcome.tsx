@@ -1,4 +1,4 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Chip, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { AppRoutes } from "../Services/Constants";
 import {
@@ -8,14 +8,29 @@ import {
 } from "Services/CommonStyles";
 import InfinityLogo from "Assets/InfinityLogo";
 import Discord from "Components/Discord";
+import { useState } from "react";
+import useSessionStorage from "Services/useSessionStorage";
+import StorageKeys from "Services/StorageKeys";
 
 export default function Welcome() {
   const router = useNavigate();
   const theme = useTheme();
+  const [logoClickCount, setLogoClickCount]: any = useState(0);
+  const [devMode, setDevMode] = useSessionStorage(
+    StorageKeys.devModEnabled,
+    false
+  );
 
   //Functions
   const handleBegin = () => {
     router(AppRoutes.agreement);
+  };
+  const onLogoClick = () => {
+    setLogoClickCount((prev: any) => prev + 1);
+    if (logoClickCount >= 8) {
+      setDevMode((prev: any) => !prev);
+      setLogoClickCount(0);
+    }
   };
 
   //Styles
@@ -54,8 +69,8 @@ export default function Welcome() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Box sx={logoContainerStyles}>
-          <InfinityLogo />
+        <Box sx={logoContainerStyles} onClick={onLogoClick}>
+          <InfinityLogo devMode={devMode} />
         </Box>
         <Typography variant="h1" sx={infinityTitleStyles}>
           Infinity

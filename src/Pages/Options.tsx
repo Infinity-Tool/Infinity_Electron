@@ -22,21 +22,21 @@ import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { IsOkayPath } from "Services/Utils/PathValidatorUtils";
-import LocalStorageKeys from "Services/LocalStorageKeys";
+import StorageKeys from "Services/StorageKeys";
 
 export default function Options() {
   const { ipcRenderer } = window.require("electron");
   const router = useNavigate();
   const [cleanInstall, setCleanInstall] = useLocalStorage(
-    LocalStorageKeys.cleanInstall,
+    StorageKeys.cleanInstall,
     false
   );
   const [modsPath, setModsPath] = useLocalStorage(
-    LocalStorageKeys.modsDirectory,
+    StorageKeys.modsDirectory,
     ""
   );
   const [localPrefabsPath, setLocalPrefabsPath] = useLocalStorage(
-    LocalStorageKeys.localPrefabsDirectory,
+    StorageKeys.localPrefabsDirectory,
     ""
   );
   const [localPrefabsError, setLocalPrefabsError] = useState(false);

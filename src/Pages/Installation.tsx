@@ -5,7 +5,7 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
-import LocalStorageKeys from "Services/LocalStorageKeys";
+import StorageKeys from "Services/StorageKeys";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -17,22 +17,22 @@ export default function Installation() {
   const [host] = useState(
     "https://storage.googleapis.com/infinity-assets-dev/"
   );
-  const [modsDirectory] = useLocalStorage(LocalStorageKeys.modsDirectory, "");
+  const [modsDirectory] = useLocalStorage(StorageKeys.modsDirectory, "");
   const [localPrefabsDirectory] = useLocalStorage(
-    LocalStorageKeys.localPrefabsDirectory,
+    StorageKeys.localPrefabsDirectory,
     ""
   );
   const [availableStep1Files]: any = useLocalStorage(
-    LocalStorageKeys.availableStep1Files,
+    StorageKeys.availableStep1Files,
     []
   );
   const [availableStep2Files]: any = useLocalStorage(
-    LocalStorageKeys.availableStep2Files,
+    StorageKeys.availableStep2Files,
     []
   );
   const [fileCount, setFileCount]: any = useState();
-  const [step1Selection] = useLocalStorage(LocalStorageKeys.step1Selection, []);
-  const [step2Selection] = useLocalStorage(LocalStorageKeys.step2Selection, []);
+  const [step1Selection] = useLocalStorage(StorageKeys.step1Selection, []);
+  const [step2Selection] = useLocalStorage(StorageKeys.step2Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
 

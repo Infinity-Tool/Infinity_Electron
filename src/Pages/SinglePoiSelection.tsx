@@ -7,7 +7,7 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
-import LocalStorageKeys from "Services/LocalStorageKeys";
+import StorageKeys from "Services/StorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
@@ -20,18 +20,18 @@ export interface IUserSelection {
 
 export default function StandalonePois() {
   const router = useNavigate();
-  const [, setHost] = useLocalStorage(LocalStorageKeys.host, null);
+  const [, setHost] = useLocalStorage(StorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    LocalStorageKeys.availableStep2Files,
+    StorageKeys.availableStep2Files,
     []
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
-    LocalStorageKeys.step2Selection,
+    StorageKeys.step2Selection,
     []
   );
   const [availableTags, setAvailableTags]: any = useState([]);
   const [selectedTags, setSelectedTags]: any = useLocalStorage(
-    LocalStorageKeys.selectedTags,
+    StorageKeys.selectedTags,
     []
   );
 

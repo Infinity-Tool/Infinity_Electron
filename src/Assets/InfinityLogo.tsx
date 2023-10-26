@@ -1,14 +1,11 @@
-import { useTheme } from "@emotion/react";
+import { css, keyframes, useTheme } from "@emotion/react";
 
-export default function InfinityLogo() {
-  //     <style type="text/css">
-  // 	.st0{fill:none;}
-  // 	.st1{fill:#7AC9AD;}
-  // 	.st2{fill:#DD1F26;}
-  // </style>
+export default function InfinityLogo(props: any) {
+  const { devMode } = props;
+
   const theme: any = useTheme();
-  const primary = theme.palette.primary.main;
-  const secondary = theme.palette.secondary.main;
+  const primary = devMode ? "white" : theme.palette.primary.main;
+  const secondary = devMode ? "white" : theme.palette.secondary.main;
 
   return (
     <svg
@@ -19,6 +16,7 @@ export default function InfinityLogo() {
       x="0px"
       y="0px"
       viewBox="0 0 500 313.56"
+      // style={devMode ? devModeStyles : {}}
       //   style="enable-background:new 0 0 500 313.56;"
       //   xml:space="preserve"
     >
