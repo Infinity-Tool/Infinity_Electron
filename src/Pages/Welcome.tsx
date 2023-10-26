@@ -45,6 +45,11 @@ export default function Welcome() {
   const subHeaderStyles = {
     fontSize: "2rem",
   };
+  const listOfTextStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(1),
+  };
 
   return (
     <Box sx={pageContainerStyles}>
@@ -55,19 +60,22 @@ export default function Welcome() {
         <Typography variant="h1" sx={infinityTitleStyles}>
           Infinity
         </Typography>
-        <Typography variant="h2" sx={subHeaderStyles}>
-          Magoli's Compopack
-        </Typography>
-        <br />
-        <Typography>
-          A mod and custom prefab installer for 7DaysToDie
-        </Typography>
-        <Box sx={creditStyles}>
-          <Typography variant="caption">Founded by Magoli</Typography>
-          <Typography>•</Typography>
-          <Typography variant="caption">Managed by Stallionsden</Typography>
-          <Typography>•</Typography>
-          <Typography variant="caption">Developed by bent head</Typography>
+        <Box sx={listOfTextStyles}>
+          <Typography variant="h2" sx={subHeaderStyles}>
+            Magoli's Compopack
+          </Typography>
+          <Typography>
+            A mod and custom prefab installer for{" "}
+            <span style={{ color: "red" }}>7</span>
+            DaysToDie
+          </Typography>
+          <Box sx={creditStyles}>
+            <Typography variant="caption">Founded by Magoli</Typography>
+            <Typography>•</Typography>
+            <Typography variant="caption">Managed by Stallionsden</Typography>
+            <Typography>•</Typography>
+            <Typography variant="caption">Developed by bent head</Typography>
+          </Box>
         </Box>
       </Box>
       <Box sx={pageFooterStyles}>

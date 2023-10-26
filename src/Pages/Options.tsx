@@ -58,23 +58,26 @@ export default function Options() {
 
   //Functions
   const HandleFolderSelected = () => {
-    ipcRenderer.on("selected-directory", (event: any, path, folderType) => {
-      if (!event.canceled && path?.filePaths.length > 0) {
-        const filePath = path.filePaths[0];
-        switch (folderType) {
-          case FolderType.mods:
-            onModsPathChange(filePath);
-            break;
-          case FolderType.localPrefabs:
-            onLocalPrefabsPathChange(filePath);
-            break;
-          default:
-            console.error("Unknown folder type", folderType);
+    ipcRenderer.on(
+      "selected-directory",
+      (event: any, path: any, folderType: any) => {
+        if (!event.canceled && path?.filePaths.length > 0) {
+          const filePath = path.filePaths[0];
+          switch (folderType) {
+            case FolderType.mods:
+              onModsPathChange(filePath);
+              break;
+            case FolderType.localPrefabs:
+              onLocalPrefabsPathChange(filePath);
+              break;
+            default:
+              console.error("Unknown folder type", folderType);
+          }
+        } else {
+          console.warn("No directory selected.");
         }
-      } else {
-        console.warn("No directory selected.");
       }
-    });
+    );
 
     return () => {
       ipcRenderer.removeAllListeners("selected-directory");
