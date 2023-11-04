@@ -8,7 +8,7 @@ import {
 } from "Services/CommonStyles";
 import InfinityLogo from "Assets/InfinityLogo";
 import Discord from "Components/Discord";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSessionStorage from "Services/useSessionStorage";
 import StorageKeys from "Services/StorageKeys";
 

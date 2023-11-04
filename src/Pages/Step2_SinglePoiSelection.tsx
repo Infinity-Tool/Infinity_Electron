@@ -10,6 +10,7 @@ import { AppRoutes } from "Services/Constants";
 import StorageKeys from "Services/StorageKeys";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
+import useSessionStorage from "Services/useSessionStorage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -34,10 +35,11 @@ export default function StandalonePois() {
     StorageKeys.selectedTags,
     []
   );
+  const [devMode] = useSessionStorage(StorageKeys.devModEnabled, false);
 
   //Effects
   useEffect(() => {
-    GetDirectoryFileHttp().then((res) => {
+    GetDirectoryFileHttp(devMode).then((res) => {
       setHost(res.host);
       setAvailableFiles(res.step_2);
       setCurrentSelection((prev: any) => {

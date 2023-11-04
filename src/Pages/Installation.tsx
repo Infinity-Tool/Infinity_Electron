@@ -41,6 +41,7 @@ export default function Installation() {
     const completedFiles = filesCompleted.length;
     const erroredFiles = filesErrored.length;
 
+    //return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles || 1) * 100;
     return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
   }, [filesCompleted]);
 
@@ -120,9 +121,8 @@ export default function Installation() {
   };
 
   // Effects
-
   useEffect(() => {
-    alert("use effect");
+    //alert("use effect");
     startDownloads();
   }, []);
 

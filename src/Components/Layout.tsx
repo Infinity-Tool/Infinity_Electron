@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import InstallTimeline from "./InstallTimeline";
-import { useTheme } from "@emotion/react";
 
 export default function Layout() {
   //Styles

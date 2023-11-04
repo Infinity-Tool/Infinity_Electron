@@ -90,7 +90,7 @@ ipcMain.on("open-discord", () => {
 
 ipcMain.on("queue-files-for-download", async (event, files) => {
   console.log("[ELECTRON] queue-files-for-download", files);
-  const queue = async.queue(queueNew, 1);
+  const queue = async.queue(queueNew, 3);
   queue.drain = async (file) => {
     // console.log("[ELECTRON] queue-drain");
     // event.reply("download-queue-drain");

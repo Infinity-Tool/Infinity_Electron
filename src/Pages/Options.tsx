@@ -20,7 +20,7 @@ import {
 import { AppRoutes } from "Services/Constants";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { NavigateOptions, useNavigate } from "react-router";
 import { IsOkayPath } from "Services/Utils/PathValidatorUtils";
 import StorageKeys from "Services/StorageKeys";
 
@@ -85,6 +85,7 @@ export default function Options() {
   };
 
   const onBackClick = () => {
+    console.log("Back");
     router(AppRoutes.welcome);
   };
 

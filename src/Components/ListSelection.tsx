@@ -4,6 +4,7 @@ import {
   FormControl,
   FormControlLabel,
   Paper,
+  Typography,
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
@@ -54,50 +55,71 @@ export default function ListSelection(props: any) {
   const childContainerStyles = {
     paddingLeft: "2rem",
   };
+  const imageContainerStyles = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    "& img": {
+      maxHeight: "200px",
+      maxWidth: "200px",
+    },
+  };
 
   return (
     <Box sx={modListContainer}>
       {availableFiles == null && <Loading />}
       {availableFiles?.map((tas: any, index: number) => (
         <Paper sx={getModListItemStyles(tas.name)} key={index}>
-          <FormControl>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={getIsSelected(tas.name)}
-                  onClick={(e: any) =>
-                    onParentCheckToggle(e.target.checked, tas.name)
-                  }
-                />
-              }
-              label={tas.name}
-            ></FormControlLabel>
-          </FormControl>
+          <Box>
+            <FormControl>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={getIsSelected(tas.name)}
+                    onClick={(e: any) =>
+                      onParentCheckToggle(e.target.checked, tas.name)
+                    }
+                  />
+                }
+                label={tas.name}
+              ></FormControlLabel>
+              <Typography variant="caption">{tas.description}</Typography>
+            </FormControl>
 
-          <Box sx={childContainerStyles}>
-            {tas.childSelections?.length > 0 &&
-              tas.childSelections.map((child: any) => (
-                <Box>
-                  <FormControl>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          disabled={!getIsSelected(tas.name)}
-                          checked={getIsChildSelected(tas.name, child.name)}
-                          onClick={(e: any) =>
-                            onChildCheckToggle(
-                              e.target.checked,
-                              tas.name,
-                              child.name
-                            )
-                          }
-                        />
-                      }
-                      label={child.name}
-                    ></FormControlLabel>
-                  </FormControl>
-                </Box>
-              ))}
+            <Box sx={childContainerStyles}>
+              {tas.childSelections?.length > 0 &&
+                tas.childSelections.map((child: any) => (
+                  <Box>
+                    <FormControl>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            disabled={!getIsSelected(tas.name)}
+                            checked={getIsChildSelected(tas.name, child.name)}
+                            onClick={(e: any) =>
+                              onChildCheckToggle(
+                                e.target.checked,
+                                tas.name,
+                                child.name
+                              )
+                            }
+                          />
+                        }
+                        label={child.name}
+                      ></FormControlLabel>
+                    </FormControl>
+                  </Box>
+                ))}
+            </Box>
+          </Box>
+          <Box sx={imageContainerStyles}>
+            {/* TODO: Remove hard-coded url, use configurable path */}
+            {"https://infinity-tool.github.io/Infinity_Assets/" + tas.image}
+            <img
+              src={
+                "https://infinity-tool.github.io/Infinity_Assets/" + tas.image
+              }
+            />
           </Box>
         </Paper>
       ))}
