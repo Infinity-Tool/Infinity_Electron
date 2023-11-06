@@ -53,7 +53,15 @@ export default function TabSelection(props: any) {
   };
 
   const handleSelectedTagChange = (event: any) => {
-    setSelectedTags(event.target.value);
+    if (event.target.value.includes("All")) {
+      const newValue =
+        event.target.value.length === availableTags.length + 1
+          ? []
+          : availableTags;
+      setSelectedTags(newValue);
+    } else {
+      setSelectedTags(event.target.value);
+    }
   };
 
   const FormatName = (tag: string) => {
@@ -157,23 +165,13 @@ export default function TabSelection(props: any) {
             input={<OutlinedInput label="Editor Groups" />}
             renderValue={GetTagDropdownText}
           >
-            {/* TODO All Tag selection */}
-            {/* <MenuItem
+            {/* Select/Unselect ALL toggle */}
+            <MenuItem
               value="All"
               selected={selectedTags.length >= availableTags.length}
             >
-              <Checkbox
-                checked={selectedTags.length >= availableTags.length}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedTags(availableTags);
-                  } else {
-                    setSelectedTags([]);
-                  }
-                }}
-              />
-              <ListItemText primary="All" />
-            </MenuItem> */}
+              <ListItemText primary="Select All" />
+            </MenuItem>
 
             {availableTags
               ?.sort((a: string, b: string) =>
