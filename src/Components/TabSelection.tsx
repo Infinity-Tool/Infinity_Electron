@@ -13,6 +13,7 @@ import {
   Tab,
   Tabs,
   TextField,
+  Typography,
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
@@ -140,6 +141,19 @@ export default function TabSelection(props: any) {
     gap: theme.spacing(1),
   };
 
+  const noResultsMessageTitleStyles = {
+    color: theme.palette.text.secondary,
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    textAlign: "center",
+  };
+
+  const noResultsMessageCaptionStyles = {
+    color: theme.palette.text.secondary,
+    fontSize: "1rem",
+    textAlign: "center",
+  };
+
   return (
     <>
       {/* Search Bar */}
@@ -200,71 +214,71 @@ export default function TabSelection(props: any) {
         </Box>
         {filteredAvailableFiles?.map((parent: any, index: number) => (
           <TabPanel value={parent.name} key={parent.name + index}>
-            {SelectablePois(parent)}
+            {parent.childSelections.length > 0
+              ? SelectablePois(parent, index)
+              : DisplayNoResults()}
           </TabPanel>
         ))}
         <TabPanel value={"All"}>
-          {filteredAvailableFiles?.map((parent: any, index: number) =>
-            SelectablePois(parent)
-          )}
+          {filteredAvailableFiles?.some(
+            (parent: any) => parent.childSelections.length > 0
+          )
+            ? filteredAvailableFiles.map((parent: any, index: number) =>
+                SelectablePois(parent, index)
+              )
+            : DisplayNoResults()}
         </TabPanel>
       </TabContext>
     </>
   );
 
-  // function DisplayNoResults() {
-  //   return !filteredAvailableFiles
-  //     ?.map((x: any) => x.childSelections)
-  //     ?.some() ? (
-  //     <>
-  //       <Typography sx={noResultsMessageMainStyles}>
-  //         No results found!
-  //       </Typography>
-  //       <Typography variant="caption">
-  //         Try changing your search or selected tags
-  //       </Typography>
-  //     </>
-  //   ) : (
-  //     <></>
-  //   );
-  // }
-
-  function SelectablePois(parent: any) {
+  function DisplayNoResults() {
     return (
-      <Box>
-        {parent.childSelections?.length > 0 &&
-          parent.childSelections.map((child: any, index: number) => {
-            const selected = getIsChildSelected(parent.name, child.name);
+      <>
+        <Typography sx={noResultsMessageTitleStyles}>
+          No results found
+        </Typography>
+        <Typography sx={noResultsMessageCaptionStyles}>
+          Try changing your search or selected tags
+        </Typography>
+      </>
+    );
+  }
 
-            return (
-              <Paper sx={poiStyles(selected)} key={index}>
-                <FormControl>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selected}
-                        onClick={(e: any) => {
-                          onToggle(e.target.checked, parent.name, child.name);
-                        }}
-                      />
-                    }
-                    label={child.name}
-                  ></FormControlLabel>
-                </FormControl>
-                <Box sx={tagChipContainerStyles}>
-                  {child.editorGroups?.map((eg: string) => (
-                    <Chip
-                      // sx={}
-                      label={FormatName(eg)}
-                      size="small"
-                      color={GetChipColor(eg)}
-                      variant="filled"
-                    ></Chip>
-                  ))}
-                </Box>
-              </Paper>
-            );
-          })}
+  function SelectablePois(parent: any, index: number) {
+    return (
+      <Box key={index}>
+        {parent.childSelections.map((child: any, index: number) => {
+          const selected = getIsChildSelected(parent.name, child.name);
+
+          return (
+            <Paper sx={poiStyles(selected)} key={index}>
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selected}
+                      onClick={(e: any) => {
+                        onToggle(e.target.checked, parent.name, child.name);
+                      }}
+                    />
+                  }
+                  label={child.name}
+                ></FormControlLabel>
+              </FormControl>
+              <Box sx={tagChipContainerStyles}>
+                {child.editorGroups?.map((eg: string) => (
+                  <Chip
+                    label={FormatName(eg)}
+                    size="small"
+                    color={GetChipColor(eg)}
+                    variant="filled"
+                  ></Chip>
+                ))}
+              </Box>
+            </Paper>
+          );
+        })}
       </Box>
     );
   }
