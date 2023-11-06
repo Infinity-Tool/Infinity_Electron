@@ -4,6 +4,7 @@ import {
   Chip,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -20,6 +21,8 @@ import Loading from "./Loading";
 import { useMemo, useState } from "react";
 import { TabContext, TabPanel } from "@mui/lab";
 import { cloneDeep } from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -165,6 +168,22 @@ export default function TabSelection(props: any) {
           variant="outlined"
           value={search}
           onChange={(e: any) => setSearch(e.target.value)}
+          // icon at the end to clear
+          InputProps={{
+            endAdornment: (
+              <IconButton
+                onClick={() => {
+                  setSearch("");
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faXmark}
+                  size="sm"
+                  color={theme.palette.text.secondary}
+                />
+              </IconButton>
+            ),
+          }}
         />
 
         {/* Tag Selection */}
