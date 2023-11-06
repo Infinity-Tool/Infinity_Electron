@@ -35,7 +35,7 @@ export default function StandalonePois() {
     StorageKeys.selectedTags,
     []
   );
-  const [devMode] = useSessionStorage(StorageKeys.devModEnabled, false);
+  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
 
   //Effects
   useEffect(() => {
@@ -99,48 +99,6 @@ export default function StandalonePois() {
     }
   };
 
-  // const onParentCheckToggle = (checked: boolean, fileName: string) => {
-  //   const alreadyAdded = currentSelection.some((x: any) => x.name === fileName);
-
-  //   if (checked && !alreadyAdded) {
-  //     const newSelection = [...currentSelection];
-  //     newSelection.push({ name: fileName, childSelections: [] });
-  //     setCurrentSelection(newSelection);
-  //   } else {
-  //     setCurrentSelection((prev: any) => {
-  //       return prev.filter((x: any) => x.name !== fileName);
-  //     });
-  //   }
-  // };
-
-  // const onChildCheckToggle = (
-  //   checked: boolean,
-  //   parentFileName: string,
-  //   childFileName: string
-  // ) => {
-  //   if (checked) {
-  //     const newSelection = [...currentSelection];
-  //     const index = newSelection.findIndex(
-  //       (x: any) => x.name === parentFileName
-  //     );
-  //     if (index > -1) {
-  //       newSelection[index].childSelections.push(childFileName);
-  //     }
-  //     setCurrentSelection(newSelection);
-  //   } else {
-  //     const newSelection = [...currentSelection];
-  //     const index = newSelection.findIndex(
-  //       (x: any) => x.name === parentFileName
-  //     );
-  //     if (index > -1) {
-  //       newSelection[index].childSelections = newSelection[
-  //         index
-  //       ].childSelections.filter((x: any) => x !== childFileName);
-  //     }
-  //     setCurrentSelection(newSelection);
-  //   }
-  // };
-
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
@@ -156,8 +114,6 @@ export default function StandalonePois() {
             currentSelection={currentSelection}
             availableFiles={availableFiles}
             onToggle={onToggle}
-            // onParentCheckToggle={onParentCheckToggle}
-            // onChildCheckToggle={onChildCheckToggle}
             availableTags={availableTags}
             selectedTags={selectedTags}
             setSelectedTags={setSelectedTags}

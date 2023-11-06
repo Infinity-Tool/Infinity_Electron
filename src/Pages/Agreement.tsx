@@ -25,7 +25,7 @@ export default function Agreement() {
   const [userAgreement, setUserAgreement]: any = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [testArray, setTestArray]: any = useState();
-  const [devMode] = useSessionStorage(StorageKeys.devModEnabled, false);
+  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
 
   useEffect(() => {
     fetchUserAgreement();

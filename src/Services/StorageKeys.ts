@@ -8,7 +8,8 @@ enum StorageKeys {
   step1Selection = "step1Selection",
   step2Selection = "step2Selection",
   selectedTags = "selectedTags",
-  devModEnabled = "devModEnabled",
+  devModeEnabled = "devModeEnabled",
+  devModeKey = "devModeKey",
 }
 
 export default StorageKeys;

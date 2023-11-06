@@ -30,7 +30,7 @@ export default function CitiesAndSettlements() {
     StorageKeys.step1Selection,
     []
   );
-  const [devMode] = useSessionStorage(StorageKeys.devModEnabled, false);
+  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
 
   //Effects
   useEffect(() => {

@@ -17,7 +17,7 @@ export default function Welcome() {
   const theme = useTheme();
   const [logoClickCount, setLogoClickCount]: any = useState(0);
   const [devMode, setDevMode] = useSessionStorage(
-    StorageKeys.devModEnabled,
+    StorageKeys.devModeEnabled,
     false
   );
 

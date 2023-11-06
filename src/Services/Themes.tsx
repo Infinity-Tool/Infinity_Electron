@@ -51,10 +51,14 @@ export default function GetTheme(): any {
           },
         },
       },
-      MuiBox: {
+      MuiChip: {
+        // make primary chip color darker
         styleOverrides: {
-          root: {
-            backgroundColor: "red !important",
+          colorPrimary: {
+            backgroundColor: "#22ab82",
+          },
+          colorDefault: {
+            color: "#b0b0b0",
           },
         },
       },

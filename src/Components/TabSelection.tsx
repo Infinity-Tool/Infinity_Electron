@@ -13,7 +13,6 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography,
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
@@ -34,10 +33,6 @@ export default function TabSelection(props: any) {
     setSelectedTags,
     onToggle,
   } = props;
-
-  // const getIsSelected = (fileName: string): boolean => {
-  //   return currentSelection.some((x: any) => x.name === fileName);
-  // };
 
   const getIsChildSelected = (
     parentFileName: string,
@@ -61,7 +56,7 @@ export default function TabSelection(props: any) {
     setSelectedTags(event.target.value);
   };
 
-  const formatName = (tag: string) => {
+  const FormatName = (tag: string) => {
     return tag.replace("_", " ").replace(/\w\S*/g, (txt: string) => {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
@@ -102,6 +97,11 @@ export default function TabSelection(props: any) {
     mb: theme.spacing(4),
   };
 
+  const filterStyles = {
+    // make all filters the same width
+    width: "100%",
+  };
+
   const GetTagDropdownText = (selected: any) => {
     const selectedCount = selected.length;
 
@@ -116,26 +116,20 @@ export default function TabSelection(props: any) {
     }
   };
 
-  const searchBarStyles = {
-    minWidth: "300px",
-  };
-  const tagSelectorStyles = {
-    minWidth: "300px",
-  };
   const tabRowstyles = { borderBottom: 1, borderColor: "divider" };
 
-  const poiStyles = {
+  const poiStyles = (selected: boolean): any => ({
     paddingY: theme.spacing(1),
     paddingX: theme.spacing(2),
     marginY: theme.spacing(1),
-  };
+    border: `1px solid ${
+      selected ? theme.palette.primary.dark : theme.palette.divider
+    }`,
+  });
 
   const tagChipContainerStyles = {
     display: "flex",
     gap: theme.spacing(1),
-  };
-  const noResultsMessageMainStyles = {
-    fontSize: "1.5rem",
   };
 
   return (
@@ -143,16 +137,16 @@ export default function TabSelection(props: any) {
       {/* Search Bar */}
       <Box sx={filterContainerStyles}>
         <TextField
+          sx={filterStyles}
           id="outlined-basic"
           label="Search"
           variant="outlined"
-          sx={searchBarStyles}
           value={search}
           onChange={(e: any) => setSearch(e.target.value)}
         />
 
         {/* Tag Selection */}
-        <FormControl sx={tagSelectorStyles}>
+        <FormControl sx={filterStyles}>
           <InputLabel id="tag-selection">Editor Groups</InputLabel>
           <Select
             labelId="tag-selection"
@@ -188,7 +182,7 @@ export default function TabSelection(props: any) {
               .map((tag: string, i: number) => (
                 <MenuItem key={tag} value={tag}>
                   <Checkbox checked={selectedTags.indexOf(tag) > -1} />
-                  <ListItemText primary={formatName(tag)} />
+                  <ListItemText primary={FormatName(tag)} />
                 </MenuItem>
               ))}
           </Select>
@@ -210,63 +204,69 @@ export default function TabSelection(props: any) {
           <TabPanel value={parent.name} key={parent.name + index}>
             {SelectablePois(parent)}
           </TabPanel>
-        )) || DisplayNoResults()}
+        ))}
         <TabPanel value={"All"}>
           {filteredAvailableFiles?.map((parent: any, index: number) =>
             SelectablePois(parent)
-          ) || DisplayNoResults()}
+          )}
         </TabPanel>
       </TabContext>
     </>
   );
 
-  function DisplayNoResults() {
-    return !filteredAvailableFiles
-      ?.map((x: any) => x.childSelections)
-      ?.some() ? (
-      <>
-        <Typography sx={noResultsMessageMainStyles}>
-          No results found!
-        </Typography>
-        <Typography variant="caption">
-          Try changing your search or selected tags
-        </Typography>
-      </>
-    ) : (
-      <></>
-    );
-  }
+  // function DisplayNoResults() {
+  //   return !filteredAvailableFiles
+  //     ?.map((x: any) => x.childSelections)
+  //     ?.some() ? (
+  //     <>
+  //       <Typography sx={noResultsMessageMainStyles}>
+  //         No results found!
+  //       </Typography>
+  //       <Typography variant="caption">
+  //         Try changing your search or selected tags
+  //       </Typography>
+  //     </>
+  //   ) : (
+  //     <></>
+  //   );
+  // }
 
   function SelectablePois(parent: any) {
     return (
       <Box>
         {parent.childSelections?.length > 0 &&
-          parent.childSelections.map((child: any, index: number) => (
-            <Paper sx={poiStyles} key={index}>
-              <FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={getIsChildSelected(parent.name, child.name)}
-                      onClick={(e: any) => {
-                        onToggle(e.target.checked, parent.name, child.name);
-                      }}
-                    />
-                  }
-                  label={child.name}
-                ></FormControlLabel>
-              </FormControl>
-              <Box sx={tagChipContainerStyles}>
-                {child.editorGroups?.map((eg: string) => (
-                  <Chip
-                    label={formatName(eg)}
-                    size="small"
-                    color={GetChipColor(eg)}
-                  ></Chip>
-                ))}
-              </Box>
-            </Paper>
-          ))}
+          parent.childSelections.map((child: any, index: number) => {
+            const selected = getIsChildSelected(parent.name, child.name);
+
+            return (
+              <Paper sx={poiStyles(selected)} key={index}>
+                <FormControl>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selected}
+                        onClick={(e: any) => {
+                          onToggle(e.target.checked, parent.name, child.name);
+                        }}
+                      />
+                    }
+                    label={child.name}
+                  ></FormControlLabel>
+                </FormControl>
+                <Box sx={tagChipContainerStyles}>
+                  {child.editorGroups?.map((eg: string) => (
+                    <Chip
+                      // sx={}
+                      label={FormatName(eg)}
+                      size="small"
+                      color={GetChipColor(eg)}
+                      variant="filled"
+                    ></Chip>
+                  ))}
+                </Box>
+              </Paper>
+            );
+          })}
       </Box>
     );
   }
