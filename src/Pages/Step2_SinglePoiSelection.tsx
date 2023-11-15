@@ -8,7 +8,7 @@ import {
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import StorageKeys from "Services/StorageKeys";
-import { GetDirectoryFileHttp } from "Services/http/Directory";
+import { GetDirectoryFileHttp } from "Services/http/HttpFunctions";
 import useLocalStorage from "Services/useLocalStorage";
 import useSessionStorage from "Services/useSessionStorage";
 import { useEffect, useState } from "react";

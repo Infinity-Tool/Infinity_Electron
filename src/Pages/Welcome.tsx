@@ -16,7 +16,7 @@ import {
 import InfinityLogo from "Assets/InfinityLogo";
 import Discord from "Components/Discord";
 import { useState } from "react";
-import { useHttpContext } from "Services/http/BaseUrlContext";
+import { useHttpContext } from "Services/http/HttpContext";
 
 export default function Welcome() {
   const router = useNavigate();
@@ -92,7 +92,9 @@ export default function Welcome() {
             <Typography>•</Typography>
             <Typography variant="caption">Managed by Stallionsden</Typography>
             <Typography>•</Typography>
-            <Typography variant="caption">Developed by bent head</Typography>
+            <Typography variant="caption">
+              Developed by Alexander Trimble
+            </Typography>
           </Box>
         </Box>
         {devMode && (

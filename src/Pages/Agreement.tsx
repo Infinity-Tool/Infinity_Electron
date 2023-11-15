@@ -14,8 +14,8 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
-import { GetAgreementHttp } from "Services/http/Agreement";
-import { useHttpContext } from "Services/http/BaseUrlContext";
+import { GetAgreementHttp } from "Services/http/HttpFunctions";
+import { useHttpContext } from "Services/http/HttpContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -32,7 +32,7 @@ export default function Agreement() {
 
   //Functions
   const fetchUserAgreement = async () => {
-    GetAgreementHttp(baseUrl).then((res) => {
+    GetAgreementHttp(baseUrl).then((res: any) => {
       setTestArray(res.split("\n"));
       setUserAgreement(res);
     });

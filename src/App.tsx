@@ -9,7 +9,7 @@ import CitiesAndSettlements from "Pages/Step1_CitiesAndSettlements";
 import StandalonePois from "Pages/Step2_SinglePoiSelection";
 import Installation from "Pages/Installation";
 import Finished from "Pages/Finished";
-import { HttpContextProvider } from "Services/http/BaseUrlContext";
+import { HttpContextProvider } from "Services/http/HttpContext";
 
 export default function App() {
   return (
