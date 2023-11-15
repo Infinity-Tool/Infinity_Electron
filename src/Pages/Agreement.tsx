@@ -14,9 +14,8 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
-import StorageKeys from "Services/StorageKeys";
 import { GetAgreementHttp } from "Services/http/Agreement";
-import useSessionStorage from "Services/useSessionStorage";
+import { useHttpContext } from "Services/http/BaseUrlContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -25,7 +24,7 @@ export default function Agreement() {
   const [userAgreement, setUserAgreement]: any = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [testArray, setTestArray]: any = useState();
-  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
+  const { baseUrl } = useHttpContext();
 
   useEffect(() => {
     fetchUserAgreement();
@@ -33,7 +32,7 @@ export default function Agreement() {
 
   //Functions
   const fetchUserAgreement = async () => {
-    GetAgreementHttp(devMode).then((res) => {
+    GetAgreementHttp(baseUrl).then((res) => {
       setTestArray(res.split("\n"));
       setUserAgreement(res);
     });

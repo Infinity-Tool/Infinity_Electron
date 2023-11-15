@@ -1,10 +1,5 @@
-export const GetDirectoryFileHttp = async (devMode: any): Promise<any> => {
-  const devUrl =
-    "https://storage.cloud.google.com/infinity-compopack-dev/directory.json";
-  const prodUrl =
-    "https://infinity-tool.github.io/Infinity_Assets/directory.json";
-
-  const url = devMode ? devUrl : prodUrl;
+export const GetDirectoryFileHttp = async (baseUrl: string): Promise<any> => {
+  const url = `${baseUrl}/directory.json`;
 
   const response = await fetch(url, {
     cache: "no-cache",

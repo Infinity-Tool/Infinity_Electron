@@ -8,6 +8,7 @@ import {
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import StorageKeys from "Services/StorageKeys";
+import { useHttpContext } from "Services/http/BaseUrlContext";
 import { GetDirectoryFileHttp } from "Services/http/Directory";
 import useLocalStorage from "Services/useLocalStorage";
 import useSessionStorage from "Services/useSessionStorage";
@@ -21,6 +22,7 @@ export interface IUserSelection {
 
 export default function CitiesAndSettlements() {
   const router = useNavigate();
+  const { baseUrl } = useHttpContext();
   const [, setHost] = useLocalStorage(StorageKeys.host, null);
   const [availableFiles, setAvailableFiles]: any = useLocalStorage(
     StorageKeys.availableStep1Files,
@@ -30,11 +32,10 @@ export default function CitiesAndSettlements() {
     StorageKeys.step1Selection,
     []
   );
-  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
 
   //Effects
   useEffect(() => {
-    GetDirectoryFileHttp(devMode).then((res) => {
+    GetDirectoryFileHttp(baseUrl).then((res) => {
       setHost(res.host);
       setAvailableFiles(res.step_1);
     });
