@@ -8,9 +8,11 @@ import {
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
+import { useHttpContext } from "Services/http/HttpContext";
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
+  const { baseUrl } = useHttpContext();
 
   const currentSelection = props.currentSelection;
   const availableFiles = props.availableFiles;
@@ -114,12 +116,7 @@ export default function ListSelection(props: any) {
           </Box>
           <Box sx={imageContainerStyles}>
             {/* TODO: Remove hard-coded url, use configurable path */}
-            {"https://infinity-tool.github.io/Infinity_Assets/" + tas.image}
-            <img
-              src={
-                "https://infinity-tool.github.io/Infinity_Assets/" + tas.image
-              }
-            />
+            <img src={`${baseUrl}/${tas.image}`} />
           </Box>
         </Paper>
       ))}
