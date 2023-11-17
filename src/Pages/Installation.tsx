@@ -6,6 +6,7 @@ import {
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import StorageKeys from "Services/StorageKeys";
+import { useHttpContext } from "Services/http/HttpContext";
 import useLocalStorage from "Services/useLocalStorage";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -13,10 +14,7 @@ import { useNavigate } from "react-router";
 export default function Installation() {
   const { ipcRenderer } = window.require("electron");
   const router = useNavigate();
-  //TODO remove hard-coding
-  const [host] = useState(
-    "https://storage.googleapis.com/infinity-assets-dev/"
-  );
+  const { baseUrl } = useHttpContext();
   const [modsDirectory] = useLocalStorage(StorageKeys.modsDirectory, "");
   const [localPrefabsDirectory] = useLocalStorage(
     StorageKeys.localPrefabsDirectory,
@@ -40,8 +38,6 @@ export default function Installation() {
     const totalFiles = fileCount;
     const completedFiles = filesCompleted.length;
     const erroredFiles = filesErrored.length;
-
-    //return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles || 1) * 100;
     return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
   }, [filesCompleted]);
 
@@ -94,7 +90,7 @@ export default function Installation() {
             mod.destination.lastIndexOf("/") + 1
           );
           const installationFile = new InstallationFile(
-            `${host}${mod.source}`,
+            `${baseUrl}/${mod.source}`,
             `${modsDirectory}/${mod.destination}`,
             fileName
           );
@@ -106,7 +102,7 @@ export default function Installation() {
             localPrefab.destination.lastIndexOf("/") + 1
           );
           const installationFile = new InstallationFile(
-            `${host}${localPrefab.source}`,
+            `${baseUrl}/${localPrefab.source}`,
             `${localPrefabsDirectory}/${localPrefab.destination}`,
             fileName
           );

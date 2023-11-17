@@ -8,6 +8,7 @@ import {
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
 import StorageKeys from "Services/StorageKeys";
+import { useHttpContext } from "Services/http/HttpContext";
 import { GetDirectoryFileHttp } from "Services/http/HttpFunctions";
 import useLocalStorage from "Services/useLocalStorage";
 import useSessionStorage from "Services/useSessionStorage";
@@ -35,11 +36,12 @@ export default function StandalonePois() {
     StorageKeys.selectedTags,
     []
   );
-  const [devMode] = useSessionStorage(StorageKeys.devModeEnabled, false);
+
+  const { baseUrl } = useHttpContext();
 
   //Effects
   useEffect(() => {
-    GetDirectoryFileHttp(devMode).then((res) => {
+    GetDirectoryFileHttp(baseUrl).then((res) => {
       setHost(res.host);
       setAvailableFiles(res.step_2);
       setCurrentSelection((prev: any) => {
