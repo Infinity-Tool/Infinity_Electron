@@ -9,6 +9,9 @@ import {
 } from "@mui/material";
 import Loading from "./Loading";
 import { useHttpContext } from "Services/http/HttpContext";
+import Zoom from "react-medium-image-zoom";
+// import "react-medium-image-zoom/dist/styles.css";
+import "Assets/css/react-medium-image-zoom-overrides.css";
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -115,8 +118,9 @@ export default function ListSelection(props: any) {
             </Box>
           </Box>
           <Box sx={imageContainerStyles}>
-            {/* TODO: Remove hard-coded url, use configurable path */}
-            <img src={`${baseUrl}/${tas.image}`} />
+            <Zoom>
+              <img src={`${baseUrl}/${tas.image}`} />
+            </Zoom>
           </Box>
         </Paper>
       ))}
