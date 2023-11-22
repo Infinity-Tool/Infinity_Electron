@@ -64,7 +64,7 @@ export default function StandalonePois() {
     router(AppRoutes.citiesAndSettlements);
   };
   const onNextClick = async () => {
-    router(AppRoutes.installation);
+    router(AppRoutes.optionalMods);
   };
 
   const onToggle = (checked: boolean, parent: string, child: string) => {
@@ -124,12 +124,8 @@ export default function StandalonePois() {
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
-        <Button
-          variant="contained"
-          onClick={onNextClick}
-          disabled={currentSelection.length === 0}
-        >
-          Download & Install
+        <Button variant="contained" onClick={onNextClick}>
+          Next
         </Button>
       </Box>
     </Box>

@@ -118,11 +118,13 @@ export default function ListSelection(props: any) {
                 ))}
             </Box>
           </Box>
-          <Box sx={imageContainerStyles}>
-            <Zoom>
-              <img src={`${baseUrl}/${tas.image}`} />
-            </Zoom>
-          </Box>
+          {tas.image && (
+            <Box sx={imageContainerStyles}>
+              <Zoom>
+                <img src={`${baseUrl}/${tas.image}`} />
+              </Zoom>
+            </Box>
+          )}
         </Paper>
       ))}
       {availableFiles == null && <div>loading...</div>}

@@ -7,6 +7,7 @@ export enum AppRoutes {
   options = "/options",
   citiesAndSettlements = "/cities-and-settlements",
   singlePoiSelection = "/standalone-pois",
+  optionalMods = "/optional-mods",
   installation = "/installation",
   finished = "/finished",
 }
@@ -32,12 +33,16 @@ export const RoutesMeta: Record<AppRoutes, { title: string; value: number }> = {
     title: "Single POI Selection",
     value: 4,
   },
+  [AppRoutes.optionalMods]: {
+    title: "Optional Mods",
+    value: 5,
+  },
   [AppRoutes.installation]: {
     title: "Installation",
-    value: 5,
+    value: 6,
   },
   [AppRoutes.finished]: {
     title: "Finished",
-    value: 6,
+    value: 7,
   },
 };

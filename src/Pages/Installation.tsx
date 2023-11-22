@@ -38,9 +38,14 @@ export default function Installation() {
     StorageKeys.availableStep2Files,
     []
   );
+  const [availableStep3Files]: any = useLocalStorage(
+    StorageKeys.availableStep3Files,
+    []
+  );
   const [fileCount, setFileCount]: any = useState();
   const [step1Selection] = useLocalStorage(StorageKeys.step1Selection, []);
   const [step2Selection] = useLocalStorage(StorageKeys.step2Selection, []);
+  const [step3Selection] = useLocalStorage(StorageKeys.step3Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -55,8 +60,9 @@ export default function Installation() {
   const startDownloads = () => {
     const step1Files = buildFileLists(availableStep1Files, step1Selection);
     const step2Files = buildFileLists(availableStep2Files, step2Selection);
+    const step3Files = buildFileLists(availableStep3Files, step3Selection);
 
-    const combinedFileLists = [...step1Files, ...step2Files];
+    const combinedFileLists = [...step1Files, ...step2Files, ...step3Files];
 
     setFileCount(combinedFileLists.length);
 
