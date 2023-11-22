@@ -11,6 +11,7 @@ import Loading from "./Loading";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
 import "Assets/css/react-medium-image-zoom-overrides.css";
+import { removeZ } from "Services/Utils/NameFormatterUtils";
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -86,7 +87,7 @@ export default function ListSelection(props: any) {
                     }
                   />
                 }
-                label={tas.name}
+                label={removeZ(tas.name)}
               ></FormControlLabel>
               <Typography variant="caption">{tas.description}</Typography>
             </FormControl>
@@ -110,7 +111,7 @@ export default function ListSelection(props: any) {
                             }
                           />
                         }
-                        label={child.name}
+                        label={removeZ(child.name)}
                       ></FormControlLabel>
                     </FormControl>
                   </Box>

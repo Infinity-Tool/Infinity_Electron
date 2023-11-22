@@ -23,6 +23,7 @@ import { TabContext, TabPanel } from "@mui/lab";
 import { cloneDeep } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { removeZ } from "Services/Utils/NameFormatterUtils";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -227,7 +228,7 @@ export default function TabSelection(props: any) {
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
             <Tab label={"All"} value={"All"} />
             {filteredAvailableFiles?.map((tas: any, index: number) => (
-              <Tab label={tas.name} value={tas.name} />
+              <Tab label={removeZ(tas.name)} value={tas.name} />
             ))}
           </Tabs>
         </Box>
@@ -282,7 +283,7 @@ export default function TabSelection(props: any) {
                       }}
                     />
                   }
-                  label={child.name}
+                  label={removeZ(child.name)}
                 ></FormControlLabel>
               </FormControl>
               <Box sx={tagChipContainerStyles}>
