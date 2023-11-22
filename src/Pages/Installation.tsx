@@ -1,19 +1,29 @@
-import { Box, Button, LinearProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  LinearProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import Loading from "Components/Loading";
 import {
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
 } from "Services/CommonStyles";
 import { AppRoutes } from "Services/Constants";
+import { LoadingMessages } from "Services/LoadingMessages";
 import StorageKeys from "Services/StorageKeys";
 import { useHttpContext } from "Services/http/HttpContext";
 import useLocalStorage from "Services/useLocalStorage";
+import { get } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function Installation() {
   const { ipcRenderer } = window.require("electron");
   const router = useNavigate();
+  const theme = useTheme();
   const { baseUrl } = useHttpContext();
   const [modsDirectory] = useLocalStorage(StorageKeys.modsDirectory, "");
   const [localPrefabsDirectory] = useLocalStorage(
@@ -33,6 +43,7 @@ export default function Installation() {
   const [step2Selection] = useLocalStorage(StorageKeys.step2Selection, []);
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const downloadProgress = useMemo(() => {
     const totalFiles = fileCount;
@@ -116,10 +127,22 @@ export default function Installation() {
     return formattedInstallationFiles;
   };
 
+  const updateLoadingMessage = () => {
+    if (downloadProgress && downloadProgress < 100) {
+      const randomLoadingMessage =
+        LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
+      setLoadingMessage(randomLoadingMessage);
+
+      setTimeout(() => {
+        updateLoadingMessage();
+      }, 10000);
+    }
+  };
+
   // Effects
   useEffect(() => {
-    //alert("use effect");
     startDownloads();
+    updateLoadingMessage();
   }, []);
 
   useEffect(() => {
@@ -130,11 +153,9 @@ export default function Installation() {
 
   useEffect(() => {
     ipcRenderer.on("download-complete", (event: any, file: any) => {
-      console.log("[download-complete]", file);
       addToCompletedFiles(file);
     });
     ipcRenderer.on("download-error", (event: any, file: any) => {
-      console.log("[download-error]", file);
       addToErroredFiles(file);
     });
     return () => {
@@ -148,7 +169,7 @@ export default function Installation() {
   };
 
   const onCancelClick = (event: any) => {
-    // TODO
+    ipcRenderer.send("cancel-downloads");
   };
 
   const addToCompletedFiles = (file: string) => {
@@ -165,11 +186,17 @@ export default function Installation() {
     fontSize: "3rem",
     textAlign: "center",
   };
+  const loadingMessageStyles = {
+    my: theme.spacing(2),
+    width: "100%",
+    fontSize: "1.5rem",
+    textAlign: "center",
+  };
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Typography>TODO Zombie walking/running animation</Typography>
+        {/* <Typography>TODO Zombie walking/running animation</Typography> */}
 
         <Typography variant="h1" sx={percentDoneStyles}>
           {downloadProgress.toFixed(1) || 0}%
@@ -179,18 +206,12 @@ export default function Installation() {
           variant="determinate"
           value={downloadProgress ?? 0}
         ></LinearProgress>
-        {/* {downloadProgress >= 100 && (
-          <Typography variant="h3" color="success">
-            Done! 😎
-          </Typography>
-        )} */}
+
+        <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button onClick={onCancelClick}>Cancel</Button>
-        {/* <Button onClick={startDownloads} variant="contained">
-          Download
-        </Button> */}
       </Box>
     </Box>
   );

@@ -10,7 +10,6 @@ import {
 import Loading from "./Loading";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
-// import "react-medium-image-zoom/dist/styles.css";
 import "Assets/css/react-medium-image-zoom-overrides.css";
 
 export default function ListSelection(props: any) {
@@ -53,8 +52,9 @@ export default function ListSelection(props: any) {
       border: isSelected
         ? `1px solid ${theme.palette.primary.dark}`
         : "1px solid transparent",
-      // transform: isSelected ? "" : "scale(.96)",
-      // transition: "all .3s ease-in-out",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "start",
     };
   };
   const childContainerStyles = {
