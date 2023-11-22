@@ -102,31 +102,27 @@ export default function Installation() {
         const mods = foundEntry.mods;
         const localPrefabs = foundEntry.localPrefabs;
 
-        mods.forEach((mod: any) => {
-          const fileName = mod.destination.substring(
-            mod.destination.lastIndexOf("/") + 1
-          );
-          const installationFile = new InstallationFile(
-            `${baseUrl}/${mod.source}`,
-            `${modsDirectory}/${mod.destination}`,
-            fileName
-          );
-          formattedInstallationFiles.push(installationFile);
-        });
+        FormatAndAddModFiles(mods, formattedInstallationFiles);
+        FormatAndAddLocalPrefabFiles(localPrefabs, formattedInstallationFiles);
 
-        localPrefabs.forEach((localPrefab: any) => {
-          const fileName = localPrefab.destination.substring(
-            localPrefab.destination.lastIndexOf("/") + 1
-          );
-          const installationFile = new InstallationFile(
-            `${baseUrl}/${localPrefab.source}`,
-            `${localPrefabsDirectory}/${localPrefab.destination}`,
-            fileName
-          );
-          formattedInstallationFiles.push(installationFile);
-        });
-      } else {
-        // TODO display error?
+        if (selected.childSelections.length > 0) {
+          selected.childSelections.forEach((child: any) => {
+            const foundChildEntry = foundEntry.childSelections.find(
+              (availableChild: any) => child === availableChild.name
+            );
+
+            if (foundChildEntry) {
+              const mods = foundChildEntry.mods;
+              const localPrefabs = foundChildEntry.localPrefabs;
+
+              FormatAndAddModFiles(mods, formattedInstallationFiles);
+              FormatAndAddLocalPrefabFiles(
+                localPrefabs,
+                formattedInstallationFiles
+              );
+            }
+          });
+        }
       }
     });
 
@@ -221,6 +217,37 @@ export default function Installation() {
       </Box>
     </Box>
   );
+
+  function FormatAndAddLocalPrefabFiles(
+    localPrefabs: any,
+    formattedInstallationFiles: any
+  ) {
+    localPrefabs.forEach((localPrefab: any) => {
+      const fileName = localPrefab.destination.substring(
+        localPrefab.destination.lastIndexOf("/") + 1
+      );
+      const installationFile = new InstallationFile(
+        `${baseUrl}/${localPrefab.source}`,
+        `${localPrefabsDirectory}/${localPrefab.destination}`,
+        fileName
+      );
+      formattedInstallationFiles.push(installationFile);
+    });
+  }
+
+  function FormatAndAddModFiles(mods: any, formattedInstallationFiles: any) {
+    mods.forEach((mod: any) => {
+      const fileName = mod.destination.substring(
+        mod.destination.lastIndexOf("/") + 1
+      );
+      const installationFile = new InstallationFile(
+        `${baseUrl}/${mod.source}`,
+        `${modsDirectory}/${mod.destination}`,
+        fileName
+      );
+      formattedInstallationFiles.push(installationFile);
+    });
+  }
 }
 
 class InstallationFile {
