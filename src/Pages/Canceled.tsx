@@ -7,8 +7,7 @@ import {
 import { AppRoutes } from "Services/Constants";
 import { useNavigate } from "react-router";
 
-export default function Finished() {
-  // router
+export default function Canceled() {
   const router = useNavigate();
 
   const handleChangeSelection = () => {
@@ -23,8 +22,10 @@ export default function Finished() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Typography variant="h3">Installation Complete</Typography>
-        <Typography>Thank you for using Infinity!</Typography>
+        <Typography variant="h3">Installation Canceled ☹️</Typography>
+        <Typography>
+          Note: Some files may have been downloaded to your selected folders.
+        </Typography>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={handleChangeSelection}>Change Selection</Button>

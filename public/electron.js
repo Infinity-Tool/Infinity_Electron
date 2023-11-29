@@ -88,17 +88,6 @@ ipcMain.on("open-discord", () => {
   shell.openExternal("https://discord.gg/magolis-compopack");
 });
 
-ipcMain.on("queue-files-for-download", async (event, files) => {
-  console.log("[ELECTRON] queue-files-for-download", files);
-  const queue = async.queue(queueNew, 3);
-  queue.drain = async (file) => {
-    // console.log("[ELECTRON] queue-drain");
-    // event.reply("download-queue-drain");
-    await queueNew(file);
-  };
-  queue.push(files);
-});
-
 const queueNew = async (file) =>
   electronDl
     .download(window, file.url, file.properties)
@@ -110,3 +99,16 @@ const queueNew = async (file) =>
     .catch((err) => {
       window.webContents.send("download-error", file.properties.fileName);
     });
+
+const queue = async.queue(queueNew, 3);
+
+ipcMain.on("queue-files-for-download", async (event, files) => {
+  queue.drain = async (file) => {
+    await queueNew(file);
+  };
+  queue.push(files);
+});
+
+ipcMain.on("download-cancel", async (event) => {
+  await queue.kill();
+});

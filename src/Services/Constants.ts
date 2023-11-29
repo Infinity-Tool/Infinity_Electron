@@ -10,6 +10,7 @@ export enum AppRoutes {
   optionalMods = "/optional-mods",
   installation = "/installation",
   finished = "/finished",
+  canceled = "/canceled",
 }
 
 export const RoutesMeta: Record<AppRoutes, { title: string; value: number }> = {
@@ -44,5 +45,9 @@ export const RoutesMeta: Record<AppRoutes, { title: string; value: number }> = {
   [AppRoutes.finished]: {
     title: "Finished",
     value: 7,
+  },
+  [AppRoutes.canceled]: {
+    title: "Canceled",
+    value: 8,
   },
 };

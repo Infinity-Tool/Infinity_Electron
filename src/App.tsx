@@ -11,6 +11,7 @@ import Installation from "Pages/Installation";
 import Finished from "Pages/Finished";
 import { HttpContextProvider } from "Services/http/HttpContext";
 import OptionalMods from "Pages/Step3_OptionalMods";
+import Canceled from "Pages/Canceled";
 
 export default function App() {
   return (
@@ -31,7 +32,7 @@ export default function App() {
           <Route path={AppRoutes.options} element={<Options />} />
           <Route path={AppRoutes.installation} element={<Installation />} />
           <Route path={AppRoutes.finished} element={<Finished />} />
-          {/* <Route path="*" element={<Welcome />} /> */}
+          <Route path={AppRoutes.canceled} element={<Canceled />} />
         </Route>
       </Routes>
     </HttpContextProvider>

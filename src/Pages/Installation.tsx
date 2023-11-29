@@ -5,7 +5,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import Loading from "Components/Loading";
+import ConfirmationDialog from "Components/ConfirmationDialog";
 import {
   pageContainerStyles,
   pageContentStyles,
@@ -16,7 +16,6 @@ import { LoadingMessages } from "Services/LoadingMessages";
 import StorageKeys from "Services/StorageKeys";
 import { useHttpContext } from "Services/http/HttpContext";
 import useLocalStorage from "Services/useLocalStorage";
-import { get } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -49,6 +48,9 @@ export default function Installation() {
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [loadingMessage, setLoadingMessage] = useState("");
+
+  const [confirmBackOpen, setConfirmBackOpen] = useState(false);
+  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
 
   const downloadProgress = useMemo(() => {
     const totalFiles = fileCount;
@@ -149,7 +151,7 @@ export default function Installation() {
 
   useEffect(() => {
     if (downloadProgress >= 100) {
-      router(AppRoutes.finished);
+      navigateFinished();
     }
   }, [downloadProgress]);
 
@@ -167,11 +169,25 @@ export default function Installation() {
   }, [ipcRenderer]);
 
   const onBackClick = (event: any) => {
-    router(AppRoutes.citiesAndSettlements);
+    setConfirmBackOpen(true);
   };
 
   const onCancelClick = (event: any) => {
-    ipcRenderer.send("cancel-downloads");
+    setConfirmCancelOpen(true);
+  };
+
+  const cancelInstallAndGoBack = () => {
+    ipcRenderer.send("download-cancel");
+    router(AppRoutes.citiesAndSettlements);
+  };
+
+  const cancelInstallationAndGoCanceledPage = () => {
+    ipcRenderer.send("download-cancel");
+    router(AppRoutes.canceled);
+  };
+
+  const navigateFinished = () => {
+    router(AppRoutes.finished);
   };
 
   const addToCompletedFiles = (file: string) => {
@@ -196,26 +212,49 @@ export default function Installation() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
-        {/* <Typography>TODO Zombie walking/running animation</Typography> */}
+    <>
+      <Box sx={pageContainerStyles}>
+        <Box sx={pageContentStyles}>
+          {/* <Typography>TODO Zombie walking/running animation</Typography> */}
 
-        <Typography variant="h1" sx={percentDoneStyles}>
-          {downloadProgress.toFixed(1) || 0}%
-        </Typography>
+          <Typography variant="h1" sx={percentDoneStyles}>
+            {downloadProgress.toFixed(1) || 0}%
+          </Typography>
 
-        <LinearProgress
-          variant="determinate"
-          value={downloadProgress ?? 0}
-        ></LinearProgress>
+          <LinearProgress
+            variant="determinate"
+            value={downloadProgress ?? 0}
+          ></LinearProgress>
 
-        <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+          <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+        </Box>
+        <Box sx={pageFooterStyles}>
+          <Button onClick={onBackClick}>Back</Button>
+          <Button onClick={onCancelClick}>Cancel</Button>
+        </Box>
       </Box>
-      <Box sx={pageFooterStyles}>
-        <Button onClick={onBackClick}>Back</Button>
-        <Button onClick={onCancelClick}>Cancel</Button>
-      </Box>
-    </Box>
+
+      {/* Back Dialog */}
+      <ConfirmationDialog
+        open={confirmBackOpen}
+        onCancel={() => {
+          setConfirmBackOpen(false);
+        }}
+        onConfirm={() => cancelInstallAndGoBack()}
+        promptTitle={"Are you sure you want to go back to selection?"}
+        promptDescription={"This will cancel the installation."}
+      />
+
+      {/* Cancel Dialog */}
+      <ConfirmationDialog
+        open={confirmCancelOpen}
+        onCancel={() => {
+          setConfirmCancelOpen(false);
+        }}
+        onConfirm={() => cancelInstallationAndGoCanceledPage()}
+        promptTitle={"Are you sure you want to cancel the installation?"}
+      />
+    </>
   );
 
   function FormatAndAddLocalPrefabFiles(
