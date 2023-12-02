@@ -14,7 +14,9 @@ import { useLocation } from "react-router";
 
 export default function InstallTimeline() {
   const location = useLocation();
-  const routesArray = Object.values(AppRoutes);
+  const routesArray = Object.values(AppRoutes).filter(
+    (r) => r !== AppRoutes.canceled
+  );
 
   const currentRouteMeta = useMemo(
     () => RoutesMeta[(location.pathname ?? AppRoutes.welcome) as AppRoutes],
@@ -32,9 +34,7 @@ export default function InstallTimeline() {
   };
 
   //Styles
-  const timelineContainerStyles = {
-    height: "100%",
-  };
+  const timelineContainerStyles = {};
   const timelineItemStyles = {
     [`& .${timelineItemClasses.root}:before`]: {
       flex: 0,
@@ -44,7 +44,10 @@ export default function InstallTimeline() {
   const connectorStyles = {
     opacity: 0.3,
   };
-  const timelineContentStyles = { color: "text.secondary" };
+  const timelineContentStyles = {
+    color: "text.secondary",
+    textWrap: "nowrap",
+  };
 
   return (
     <Paper sx={timelineContainerStyles}>

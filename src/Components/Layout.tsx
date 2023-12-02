@@ -8,8 +8,7 @@ export default function Layout() {
   const layoutContainerStyles = {
     display: "flex",
     flexDirection: "row",
-    height: "100vh",
-    width: "100vw",
+    // alignItems: "stretch",
   };
 
   return (
