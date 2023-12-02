@@ -88,6 +88,11 @@ ipcMain.on("open-discord", () => {
   shell.openExternal("https://discord.gg/magolis-compopack");
 });
 
+ipcMain.on("open-patreon", () => {
+  const { shell } = require("electron");
+  shell.openExternal("https://www.patreon.com/Compopack");
+});
+
 const queueNew = async (file) =>
   electronDl
     .download(window, file.url, file.properties)

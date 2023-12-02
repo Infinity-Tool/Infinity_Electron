@@ -14,7 +14,7 @@ import {
   pageFooterStyles,
 } from "Services/CommonStyles";
 import InfinityLogo from "Assets/InfinityLogo";
-import Discord from "Components/Discord";
+import DiscordButton from "Components/DiscordButton";
 import { useState } from "react";
 import { useHttpContext } from "Services/http/HttpContext";
 
@@ -108,7 +108,7 @@ export default function Welcome() {
         )}
       </Box>
       <Box sx={pageFooterStyles}>
-        <Discord />
+        <DiscordButton />
         <Button
           variant="contained"
           color="primary"
