@@ -28,7 +28,7 @@ export default function StandalonePois() {
   );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
     StorageKeys.step2Selection,
-    []
+    null
   );
   const [availableTags, setAvailableTags]: any = useState([]);
   const [selectedTags, setSelectedTags]: any = useLocalStorage(
@@ -44,7 +44,7 @@ export default function StandalonePois() {
       setHost(res.host);
       setAvailableFiles(res.step_2);
       setCurrentSelection((prev: any) => {
-        return prev.length > 0
+        return prev != null
           ? prev
           : res.step_2.map((x: any) => ({
               name: x.name,

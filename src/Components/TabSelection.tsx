@@ -18,12 +18,13 @@ import {
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { TabContext, TabPanel } from "@mui/lab";
-import { cloneDeep } from "lodash";
+import { cloneDeep, filter } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -38,6 +39,13 @@ export default function TabSelection(props: any) {
     setSelectedTags,
     onToggle,
   } = props;
+
+  const parentRef: any = useRef();
+  const rowVirtualizer = useVirtualizer({
+    count: 10000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50,
+  });
 
   const getIsChildSelected = (
     parentFileName: string,
@@ -93,6 +101,24 @@ export default function TabSelection(props: any) {
       return file;
     });
   }, [availableFiles, selectedTags, search]);
+
+  const panelFileList = useMemo(() => {
+    return filteredAvailableFiles.concat({
+      name: "All",
+      childSelections: filteredAvailableFiles.flatMap(
+        (x: any) => x.childSelections
+      ),
+    });
+  }, [filteredAvailableFiles]);
+
+  const availableTabs = useMemo(() => {
+    const tabs = [];
+
+    tabs.push("All");
+    availableFiles?.forEach((file: any) => tabs.push(file.name));
+
+    return tabs ?? [];
+  }, [availableFiles]);
 
   const GetChipColor = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -224,30 +250,23 @@ export default function TabSelection(props: any) {
       {filteredAvailableFiles == null && <Loading />}
 
       <TabContext value={currentTab}>
+        {/* Tabs */}
         <Box sx={tabRowstyles}>
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
-            <Tab label={"All"} value={"All"} />
-            {filteredAvailableFiles?.map((tas: any, index: number) => (
-              <Tab label={removeZ(tas.name)} value={tas.name} />
+            {availableTabs?.map((tabName: any, index: number) => (
+              <Tab label={removeZ(tabName)} value={tabName} />
             ))}
           </Tabs>
         </Box>
-        {filteredAvailableFiles?.map((parent: any, index: number) => (
+
+        {/* Tab Panels */}
+        {panelFileList?.map((parent: any, index: number) => (
           <TabPanel value={parent.name} key={parent.name + index}>
             {parent.childSelections.length > 0
-              ? SelectablePois(parent, index)
+              ? SelectablePoi(parent, index)
               : DisplayNoResults()}
           </TabPanel>
         ))}
-        <TabPanel value={"All"}>
-          {filteredAvailableFiles?.some(
-            (parent: any) => parent.childSelections.length > 0
-          )
-            ? filteredAvailableFiles.map((parent: any, index: number) =>
-                SelectablePois(parent, index)
-              )
-            : DisplayNoResults()}
-        </TabPanel>
       </TabContext>
     </>
   );
@@ -265,9 +284,9 @@ export default function TabSelection(props: any) {
     );
   }
 
-  function SelectablePois(parent: any, index: number) {
+  function SelectablePoi(parent: any, index: number) {
     return (
-      <Box key={index}>
+      <Box key={index} ref={parentRef}>
         {parent.childSelections.map((child: any, index: number) => {
           const selected = getIsChildSelected(parent.name, child.name);
 
