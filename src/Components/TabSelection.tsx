@@ -24,7 +24,6 @@ import { cloneDeep, filter } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
-import { useVirtualizer } from "@tanstack/react-virtual";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -39,13 +38,6 @@ export default function TabSelection(props: any) {
     setSelectedTags,
     onToggle,
   } = props;
-
-  const parentRef: any = useRef();
-  const rowVirtualizer = useVirtualizer({
-    count: 10000,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 50,
-  });
 
   const getIsChildSelected = (
     parentFileName: string,
@@ -286,7 +278,7 @@ export default function TabSelection(props: any) {
 
   function SelectablePoi(parent: any, index: number) {
     return (
-      <Box key={index} ref={parentRef}>
+      <Box key={index}>
         {parent.childSelections.map((child: any, index: number) => {
           const selected = getIsChildSelected(parent.name, child.name);
 
