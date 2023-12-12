@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
 import { useHttpContext } from "Services/http/HttpContext";
+import Zoom from "react-medium-image-zoom";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -151,15 +152,6 @@ export default function TabSelection(props: any) {
 
   const tabRowstyles = { borderBottom: 1, borderColor: "divider" };
 
-  const poiStyles = (selected: boolean): any => ({
-    paddingY: theme.spacing(1),
-    paddingX: theme.spacing(2),
-    marginY: theme.spacing(1),
-    border: `1px solid ${
-      selected ? theme.palette.primary.dark : theme.palette.divider
-    }`,
-  });
-
   const tagChipContainerStyles = {
     display: "flex",
     gap: theme.spacing(1),
@@ -279,6 +271,30 @@ export default function TabSelection(props: any) {
   }
 
   function SelectablePoi(parent: any, index: number) {
+    const poiStyles = (selected: boolean): any => ({
+      paddingY: theme.spacing(1),
+      paddingX: theme.spacing(2),
+      marginY: theme.spacing(1),
+      border: `1px solid ${
+        selected ? theme.palette.primary.dark : theme.palette.divider
+      }`,
+    });
+
+    const imageListStyles = {
+      display: "flex",
+      gap: theme.spacing(1),
+    };
+
+    const imageContainerStyles = {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      "& img": {
+        maxHeight: "200px",
+        maxWidth: "200px",
+      },
+    };
+
     return (
       <Box key={index}>
         {parent.childSelections.map((child: any, index: number) => {
@@ -299,13 +315,17 @@ export default function TabSelection(props: any) {
                   label={removeZ(child.name)}
                 ></FormControlLabel>
               </FormControl>
-              <Box>
+              <Box sx={imageListStyles}>
                 {child.images?.map((img: string) => (
-                  <img
-                    src={baseUrl + "/" + img}
-                    alt={child.name}
-                    style={{ width: "100%" }}
-                  ></img>
+                  <Box sx={imageContainerStyles}>
+                    <Zoom>
+                      <img
+                        src={baseUrl + "/" + img}
+                        alt={child.name}
+                        style={{ width: "100%" }}
+                      ></img>
+                    </Zoom>
+                  </Box>
                 ))}
               </Box>
               <Box sx={tagChipContainerStyles}>
