@@ -18,17 +18,19 @@ import {
   useTheme,
 } from "@mui/material";
 import Loading from "./Loading";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { TabContext, TabPanel } from "@mui/lab";
-import { cloneDeep, filter } from "lodash";
+import { cloneDeep } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
+import { useHttpContext } from "Services/http/HttpContext";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
   const [search, setSearch]: any = useState("");
+  const { baseUrl } = useHttpContext();
 
   const {
     currentSelection,
@@ -282,7 +284,7 @@ export default function TabSelection(props: any) {
         {parent.childSelections.map((child: any, index: number) => {
           const selected = getIsChildSelected(parent.name, child.name);
 
-          return (
+          const poi = (
             <Paper sx={poiStyles(selected)} key={index}>
               <FormControl>
                 <FormControlLabel
@@ -297,6 +299,15 @@ export default function TabSelection(props: any) {
                   label={removeZ(child.name)}
                 ></FormControlLabel>
               </FormControl>
+              <Box>
+                {child.images?.map((img: string) => (
+                  <img
+                    src={baseUrl + "/" + img}
+                    alt={child.name}
+                    style={{ width: "100%" }}
+                  ></img>
+                ))}
+              </Box>
               <Box sx={tagChipContainerStyles}>
                 {child.editorGroups?.map((eg: string) => (
                   <Chip
@@ -309,6 +320,8 @@ export default function TabSelection(props: any) {
               </Box>
             </Paper>
           );
+
+          return poi;
         })}
       </Box>
     );
