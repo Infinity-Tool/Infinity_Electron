@@ -15,9 +15,9 @@ let window;
 function createWindow() {
   // Create the browser window.
   window = new BrowserWindow({
-    width: 800,
+    width: 900,
     minWidth: 800,
-    height: 600,
+    height: 700,
     minHeight: 600,
     // icon: path.join(__dirname, "/src/Assets/InfinityLogo.ico"),
     icon: path.join(app.getAppPath(), "/src/Assets/InfinityLogo.ico"),

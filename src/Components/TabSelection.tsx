@@ -26,6 +26,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
+import { Virtuoso } from "react-virtuoso";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -295,9 +296,61 @@ export default function TabSelection(props: any) {
       },
     };
 
+    const count = parent.childSelections.length;
+
     return (
-      <Box key={index}>
-        {parent.childSelections.map((child: any, index: number) => {
+      <Virtuoso
+        key={index}
+        style={{ height: "400px" }}
+        totalCount={count}
+        itemContent={(index) => {
+          const child = parent.childSelections[index];
+          const selected = getIsChildSelected(parent.name, child.name);
+
+          return (
+            <Paper sx={poiStyles(selected)} key={index}>
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selected}
+                      onClick={(e: any) => {
+                        onToggle(e.target.checked, parent.name, child.name);
+                      }}
+                    />
+                  }
+                  label={removeZ(child.name)}
+                ></FormControlLabel>
+              </FormControl>
+              <Typography>{child.description}</Typography>
+              <Box sx={imageListStyles}>
+                {child.images?.map((img: string) => (
+                  <Box sx={imageContainerStyles}>
+                    <Zoom>
+                      <img
+                        src={baseUrl + "/" + img}
+                        alt={child.name}
+                        style={{ width: "100%" }}
+                      ></img>
+                    </Zoom>
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={tagChipContainerStyles}>
+                {child.editorGroups?.map((eg: string) => (
+                  <Chip
+                    label={FormatName(eg)}
+                    size="small"
+                    color={GetChipColor(eg)}
+                    variant="filled"
+                  ></Chip>
+                ))}
+              </Box>
+            </Paper>
+          );
+        }}
+      >
+        {/* {parent.childSelections.map((child: any, index: number) => {
           const selected = getIsChildSelected(parent.name, child.name);
 
           const poi = (
@@ -342,8 +395,8 @@ export default function TabSelection(props: any) {
           );
 
           return poi;
-        })}
-      </Box>
+        })} */}
+      </Virtuoso>
     );
   }
 }

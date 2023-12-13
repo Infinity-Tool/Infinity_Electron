@@ -121,7 +121,7 @@ export default function ListSelection(props: any) {
           {tas.image && (
             <Box sx={imageContainerStyles}>
               <Zoom>
-                <img src={`${baseUrl}/${tas.image}`} />
+                <img src={`${baseUrl}/${tas.image}`} alt="" />
               </Zoom>
             </Box>
           )}
