@@ -27,6 +27,7 @@ import { removeZ } from "Services/Utils/NameFormatterUtils";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
 import { Virtuoso } from "react-virtuoso";
+import { noUnderlineTextFieldStyles } from "Services/CommonStyles";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -296,6 +297,12 @@ export default function TabSelection(props: any) {
       },
     };
 
+    const detailsContainerStyles = {
+      display: "flex",
+      gap: theme.spacing(1),
+      marginY: theme.spacing(1),
+    };
+
     const count = parent.childSelections.length;
 
     return (
@@ -323,6 +330,7 @@ export default function TabSelection(props: any) {
                 ></FormControlLabel>
               </FormControl>
               <Typography>{child.description}</Typography>
+
               <Box sx={imageListStyles}>
                 {child.images?.map((img: string) => (
                   <Box sx={imageContainerStyles}>
@@ -345,58 +353,41 @@ export default function TabSelection(props: any) {
                     variant="filled"
                   ></Chip>
                 ))}
+              </Box>
+              <Box sx={detailsContainerStyles}>
+                <TextField
+                  label="Repeat Distance"
+                  value={child.themeRepeatDistance}
+                  disabled={true}
+                  variant="standard"
+                  sx={noUnderlineTextFieldStyles}
+                />
+                <TextField
+                  label="Duplicate Repeat Distance"
+                  value={child.duplicateRepeatDistance}
+                  disabled={true}
+                  variant="standard"
+                  sx={noUnderlineTextFieldStyles}
+                />
+                <TextField
+                  label="Tags"
+                  value={child.tags?.join(", ")}
+                  disabled={true}
+                  variant="standard"
+                  sx={noUnderlineTextFieldStyles}
+                />
+                <TextField
+                  label="Theme Tags"
+                  value={child.themeTags?.join(", ")}
+                  disabled={true}
+                  variant="standard"
+                  sx={noUnderlineTextFieldStyles}
+                />
               </Box>
             </Paper>
           );
         }}
-      >
-        {/* {parent.childSelections.map((child: any, index: number) => {
-          const selected = getIsChildSelected(parent.name, child.name);
-
-          const poi = (
-            <Paper sx={poiStyles(selected)} key={index}>
-              <FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selected}
-                      onClick={(e: any) => {
-                        onToggle(e.target.checked, parent.name, child.name);
-                      }}
-                    />
-                  }
-                  label={removeZ(child.name)}
-                ></FormControlLabel>
-              </FormControl>
-              <Box sx={imageListStyles}>
-                {child.images?.map((img: string) => (
-                  <Box sx={imageContainerStyles}>
-                    <Zoom>
-                      <img
-                        src={baseUrl + "/" + img}
-                        alt={child.name}
-                        style={{ width: "100%" }}
-                      ></img>
-                    </Zoom>
-                  </Box>
-                ))}
-              </Box>
-              <Box sx={tagChipContainerStyles}>
-                {child.editorGroups?.map((eg: string) => (
-                  <Chip
-                    label={FormatName(eg)}
-                    size="small"
-                    color={GetChipColor(eg)}
-                    variant="filled"
-                  ></Chip>
-                ))}
-              </Box>
-            </Paper>
-          );
-
-          return poi;
-        })} */}
-      </Virtuoso>
+      ></Virtuoso>
     );
   }
 }

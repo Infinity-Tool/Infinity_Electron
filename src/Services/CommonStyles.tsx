@@ -53,3 +53,15 @@ export const headerContainerStyles = {
   gap: "1rem",
   mb: "1.5rem",
 };
+
+export const noUnderlineTextFieldStyles = {
+  "& .MuiInput-underline:before": {
+    borderBottom: "none",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottom: "none",
+  },
+  "& .MuiInput-underline:hover": {
+    borderBottom: "none",
+  },
+};
