@@ -121,12 +121,8 @@ export default function TabSelection(props: any) {
     return tabs ?? [];
   }, [availableFiles]);
 
-  const GetChipColor = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      return "primary";
-    } else {
-      return "default";
-    }
+  const GetChipVariant = (selected: boolean) => {
+    return selected ? "filled" : "outlined";
   };
 
   // Styles
@@ -294,11 +290,19 @@ export default function TabSelection(props: any) {
       border: `1px solid ${
         selected ? theme.palette.primary.dark : theme.palette.divider
       }`,
+      display: "flex",
+      justifyContent: "space-between",
     });
+
+    const poiInfoStyles = {
+      maxWidth: "66%",
+    };
 
     const imageListStyles = {
       display: "flex",
       gap: theme.spacing(1),
+      flexWrap: "nowrap",
+      overflowX: "auto",
     };
 
     const imageContainerStyles = {
@@ -306,8 +310,9 @@ export default function TabSelection(props: any) {
       justifyContent: "end",
       alignItems: "center",
       "& img": {
-        maxHeight: "200px",
-        maxWidth: "200px",
+        height: "100px",
+        maxWidth: "300px",
+        width: "auto",
       },
     };
 
@@ -322,33 +327,44 @@ export default function TabSelection(props: any) {
 
           return (
             <Paper sx={poiStyles(selected)} key={index}>
-              <FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={selected}
-                      onClick={(e: any) => {
-                        onToggle(e.target.checked, parent.name, child.name);
-                      }}
-                    />
-                  }
-                  label={removeZ(child.name)}
-                ></FormControlLabel>
-              </FormControl>
-              <IconButton>
-                <FontAwesomeIcon
-                  icon={faInfoCircle}
-                  color={theme.palette.text.secondary}
-                  onClick={(e) => {
-                    setInfoDialogState({
-                      open: true,
-                      poi: child,
-                    });
-                  }}
-                />
-              </IconButton>
-              <Typography>{child.description}</Typography>
-
+              <Box sx={poiInfoStyles}>
+                <FormControl>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={selected}
+                        onClick={(e: any) => {
+                          onToggle(e.target.checked, parent.name, child.name);
+                        }}
+                      />
+                    }
+                    label={removeZ(child.name)}
+                  ></FormControlLabel>
+                </FormControl>
+                <IconButton>
+                  <FontAwesomeIcon
+                    icon={faInfoCircle}
+                    color={theme.palette.text.secondary}
+                    onClick={(e) => {
+                      setInfoDialogState({
+                        open: true,
+                        poi: child,
+                      });
+                    }}
+                  />
+                </IconButton>
+                <Typography>{child.description}</Typography>
+                <Box sx={tagChipContainerStyles}>
+                  {child.editorGroups?.map((eg: string) => (
+                    <Chip
+                      label={FormatName(eg)}
+                      size="small"
+                      color="default"
+                      variant={GetChipVariant(selected)}
+                    ></Chip>
+                  ))}
+                </Box>
+              </Box>
               <Box sx={imageListStyles}>
                 {child.images?.map((img: string) => (
                   <Box sx={imageContainerStyles}>
@@ -360,16 +376,6 @@ export default function TabSelection(props: any) {
                       ></img>
                     </Zoom>
                   </Box>
-                ))}
-              </Box>
-              <Box sx={tagChipContainerStyles}>
-                {child.editorGroups?.map((eg: string) => (
-                  <Chip
-                    label={FormatName(eg)}
-                    size="small"
-                    color={GetChipColor(eg)}
-                    variant="filled"
-                  ></Chip>
                 ))}
               </Box>
             </Paper>
