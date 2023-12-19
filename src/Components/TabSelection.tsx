@@ -22,18 +22,22 @@ import { useMemo, useState } from "react";
 import { TabContext, TabPanel } from "@mui/lab";
 import { cloneDeep } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { removeZ } from "Services/Utils/NameFormatterUtils";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
 import { Virtuoso } from "react-virtuoso";
-import { noUnderlineTextFieldStyles } from "Services/CommonStyles";
+import PoiInfoDialog from "./PoiInfoDialog";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState("All");
   const [search, setSearch]: any = useState("");
   const { baseUrl } = useHttpContext();
+  const [infoDialogState, setInfoDialogState]: any = useState({
+    open: false,
+    poi: null,
+  });
 
   const {
     currentSelection,
@@ -256,6 +260,14 @@ export default function TabSelection(props: any) {
           </TabPanel>
         ))}
       </TabContext>
+
+      {/* Info Popover */}
+      {
+        <PoiInfoDialog
+          dialogState={infoDialogState}
+          setDialogState={setInfoDialogState}
+        />
+      }
     </>
   );
 
@@ -273,6 +285,8 @@ export default function TabSelection(props: any) {
   }
 
   function SelectablePoi(parent: any, index: number) {
+    const count = parent.childSelections.length;
+
     const poiStyles = (selected: boolean): any => ({
       paddingY: theme.spacing(1),
       paddingX: theme.spacing(2),
@@ -289,21 +303,13 @@ export default function TabSelection(props: any) {
 
     const imageContainerStyles = {
       display: "flex",
-      justifyContent: "center",
+      justifyContent: "end",
       alignItems: "center",
       "& img": {
         maxHeight: "200px",
         maxWidth: "200px",
       },
     };
-
-    const detailsContainerStyles = {
-      display: "flex",
-      gap: theme.spacing(1),
-      marginY: theme.spacing(1),
-    };
-
-    const count = parent.childSelections.length;
 
     return (
       <Virtuoso
@@ -329,6 +335,18 @@ export default function TabSelection(props: any) {
                   label={removeZ(child.name)}
                 ></FormControlLabel>
               </FormControl>
+              <IconButton>
+                <FontAwesomeIcon
+                  icon={faInfoCircle}
+                  color={theme.palette.text.secondary}
+                  onClick={(e) => {
+                    setInfoDialogState({
+                      open: true,
+                      poi: child,
+                    });
+                  }}
+                />
+              </IconButton>
               <Typography>{child.description}</Typography>
 
               <Box sx={imageListStyles}>
@@ -353,36 +371,6 @@ export default function TabSelection(props: any) {
                     variant="filled"
                   ></Chip>
                 ))}
-              </Box>
-              <Box sx={detailsContainerStyles}>
-                <TextField
-                  label="Repeat Distance"
-                  value={child.themeRepeatDistance}
-                  disabled={true}
-                  variant="standard"
-                  sx={noUnderlineTextFieldStyles}
-                />
-                <TextField
-                  label="Duplicate Repeat Distance"
-                  value={child.duplicateRepeatDistance}
-                  disabled={true}
-                  variant="standard"
-                  sx={noUnderlineTextFieldStyles}
-                />
-                <TextField
-                  label="Tags"
-                  value={child.tags?.join(", ")}
-                  disabled={true}
-                  variant="standard"
-                  sx={noUnderlineTextFieldStyles}
-                />
-                <TextField
-                  label="Theme Tags"
-                  value={child.themeTags?.join(", ")}
-                  disabled={true}
-                  variant="standard"
-                  sx={noUnderlineTextFieldStyles}
-                />
               </Box>
             </Paper>
           );

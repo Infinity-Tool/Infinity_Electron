@@ -1,5 +1,3 @@
-import { useTheme } from "@emotion/react";
-
 export const pageContainerStyles = {
   display: "flex",
   flexDirection: "column",
@@ -64,4 +62,8 @@ export const noUnderlineTextFieldStyles = {
   "& .MuiInput-underline:hover": {
     borderBottom: "none",
   },
+};
+
+export const dialogStyles = {
+  padding: "2rem",
 };
