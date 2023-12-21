@@ -23,11 +23,16 @@ import { TabContext, TabPanel } from "@mui/lab";
 import { cloneDeep } from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { removeZ } from "Services/Utils/NameFormatterUtils";
+import { ProperCase, RemoveZ } from "Services/Utils/NameFormatterUtils";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
 import { Virtuoso } from "react-virtuoso";
 import PoiInfoDialog from "./PoiInfoDialog";
+import {
+  imageContainerStyles,
+  imageListStyles,
+  poiStyles,
+} from "Services/CommonStyles";
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -76,12 +81,6 @@ export default function TabSelection(props: any) {
     } else {
       setSelectedTags(event.target.value);
     }
-  };
-
-  const FormatName = (tag: string) => {
-    return tag.replace("_", " ").replace(/\w\S*/g, (txt: string) => {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
   };
 
   const filteredAvailableFiles = useMemo(() => {
@@ -156,7 +155,7 @@ export default function TabSelection(props: any) {
 
   const tagChipContainerStyles = {
     display: "flex",
-    gap: theme.spacing(1),
+    gap: theme.spacing(0.5),
   };
 
   const noResultsMessageTitleStyles = {
@@ -228,7 +227,7 @@ export default function TabSelection(props: any) {
               .map((tag: string, i: number) => (
                 <MenuItem key={tag} value={tag}>
                   <Checkbox checked={selectedTags.indexOf(tag) > -1} />
-                  <ListItemText primary={FormatName(tag)} />
+                  <ListItemText primary={ProperCase(tag)} />
                 </MenuItem>
               ))}
           </Select>
@@ -242,7 +241,7 @@ export default function TabSelection(props: any) {
         <Box sx={tabRowstyles}>
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
             {availableTabs?.map((tabName: any, index: number) => (
-              <Tab label={removeZ(tabName)} value={tabName} />
+              <Tab label={RemoveZ(tabName)} value={tabName} />
             ))}
           </Tabs>
         </Box>
@@ -283,37 +282,8 @@ export default function TabSelection(props: any) {
   function SelectablePoi(parent: any, index: number) {
     const count = parent.childSelections.length;
 
-    const poiStyles = (selected: boolean): any => ({
-      paddingY: theme.spacing(1),
-      paddingX: theme.spacing(2),
-      marginY: theme.spacing(1),
-      border: `1px solid ${
-        selected ? theme.palette.primary.dark : theme.palette.divider
-      }`,
-      display: "flex",
-      justifyContent: "space-between",
-    });
-
     const poiInfoStyles = {
       maxWidth: "66%",
-    };
-
-    const imageListStyles = {
-      display: "flex",
-      gap: theme.spacing(1),
-      flexWrap: "nowrap",
-      overflowX: "auto",
-    };
-
-    const imageContainerStyles = {
-      display: "flex",
-      justifyContent: "end",
-      alignItems: "center",
-      "& img": {
-        height: "100px",
-        maxWidth: "300px",
-        width: "auto",
-      },
     };
 
     return (
@@ -326,7 +296,7 @@ export default function TabSelection(props: any) {
           const selected = getIsChildSelected(parent.name, child.name);
 
           return (
-            <Paper sx={poiStyles(selected)} key={index}>
+            <Paper sx={poiStyles(theme, selected)} key={index}>
               <Box sx={poiInfoStyles}>
                 <FormControl>
                   <FormControlLabel
@@ -338,29 +308,30 @@ export default function TabSelection(props: any) {
                         }}
                       />
                     }
-                    label={removeZ(child.name)}
+                    label={RemoveZ(child.name)}
                   ></FormControlLabel>
                 </FormControl>
-                <IconButton>
+                <IconButton
+                  onClick={(e) => {
+                    setInfoDialogState({
+                      open: true,
+                      poi: child,
+                    });
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={faInfoCircle}
                     color={theme.palette.text.secondary}
-                    onClick={(e) => {
-                      setInfoDialogState({
-                        open: true,
-                        poi: child,
-                      });
-                    }}
                   />
                 </IconButton>
                 <Typography>{child.description}</Typography>
                 <Box sx={tagChipContainerStyles}>
                   {child.editorGroups?.map((eg: string) => (
                     <Chip
-                      label={FormatName(eg)}
+                      label={ProperCase(eg)}
                       size="small"
                       color="default"
-                      variant={GetChipVariant(selected)}
+                      variant={GetChipVariant(selectedTags.includes(eg))}
                     ></Chip>
                   ))}
                 </Box>

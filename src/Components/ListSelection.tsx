@@ -3,6 +3,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   Paper,
   Typography,
   useTheme,
@@ -11,16 +12,32 @@ import Loading from "./Loading";
 import { useHttpContext } from "Services/http/HttpContext";
 import Zoom from "react-medium-image-zoom";
 import "Assets/css/react-medium-image-zoom-overrides.css";
-import { removeZ } from "Services/Utils/NameFormatterUtils";
+import { RemoveZ } from "Services/Utils/NameFormatterUtils";
+import {
+  imageContainerStyles,
+  imageListStyles,
+  poiStyles,
+} from "Services/CommonStyles";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
+import PoiInfoDialog from "./PoiInfoDialog";
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
   const { baseUrl } = useHttpContext();
+  const [infoDialogState, setInfoDialogState]: any = useState({
+    open: false,
+    poi: null,
+  });
 
-  const currentSelection = props.currentSelection;
-  const availableFiles = props.availableFiles;
-  const onParentCheckToggle = props.onParentCheckToggle;
-  const onChildCheckToggle = props.onChildCheckToggle;
+  const {
+    currentSelection,
+    availableFiles,
+    onParentCheckToggle,
+    onChildCheckToggle,
+    showDetails,
+  } = props;
 
   const getIsSelected = (fileName: string): boolean => {
     return currentSelection.some((x: any) => x.name === fileName);
@@ -61,73 +78,112 @@ export default function ListSelection(props: any) {
   const childContainerStyles = {
     paddingLeft: "2rem",
   };
-  const imageContainerStyles = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    "& img": {
-      maxHeight: "200px",
-      maxWidth: "200px",
-    },
-  };
 
   return (
-    <Box sx={modListContainer}>
-      {availableFiles == null && <Loading />}
-      {availableFiles?.map((tas: any, index: number) => (
-        <Paper sx={getModListItemStyles(tas.name)} key={index}>
-          <Box>
-            <FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={getIsSelected(tas.name)}
-                    onClick={(e: any) =>
-                      onParentCheckToggle(e.target.checked, tas.name)
-                    }
-                  />
-                }
-                label={removeZ(tas.name)}
-              ></FormControlLabel>
-              <Typography variant="caption">{tas.description}</Typography>
-            </FormControl>
-
-            <Box sx={childContainerStyles}>
-              {tas.childSelections?.length > 0 &&
-                tas.childSelections.map((child: any) => (
-                  <Box>
-                    <FormControl>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            disabled={!getIsSelected(tas.name)}
-                            checked={getIsChildSelected(tas.name, child.name)}
-                            onClick={(e: any) =>
-                              onChildCheckToggle(
-                                e.target.checked,
-                                tas.name,
-                                child.name
-                              )
-                            }
-                          />
-                        }
-                        label={removeZ(child.name)}
-                      ></FormControlLabel>
-                    </FormControl>
-                  </Box>
-                ))}
-            </Box>
-          </Box>
-          {tas.image && (
-            <Box sx={imageContainerStyles}>
-              <Zoom>
-                <img src={`${baseUrl}/${tas.image}`} alt="" />
-              </Zoom>
-            </Box>
-          )}
-        </Paper>
-      ))}
-      {availableFiles == null && <div>loading...</div>}
-    </Box>
+    <>
+      <Box sx={modListContainer}>
+        {availableFiles == null && <Loading />}
+        {availableFiles?.map((tas: any, index: number) => {
+          return (
+            <Paper sx={getModListItemStyles(tas.name)} key={index}>
+              <Box>
+                <Box>
+                  <FormControl>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={getIsSelected(tas.name)}
+                          onClick={(e: any) =>
+                            onParentCheckToggle(e.target.checked, tas.name)
+                          }
+                        />
+                      }
+                      label={RemoveZ(tas.name)}
+                    ></FormControlLabel>
+                    <Typography variant="caption">{tas.description}</Typography>
+                  </FormControl>
+                  {tas.image && (
+                    <Box sx={imageContainerStyles}>
+                      <Zoom>
+                        <img src={`${baseUrl}/${tas.image}`} alt="" />
+                      </Zoom>
+                    </Box>
+                  )}
+                </Box>
+                <Box sx={childContainerStyles}>
+                  {tas.childSelections?.length > 0 &&
+                    tas.childSelections.map((child: any) => {
+                      const selected = getIsChildSelected(tas.name, child.name);
+                      return (
+                        <Paper
+                          elevation={3}
+                          sx={poiStyles(theme, selected)}
+                          key={index}
+                        >
+                          <FormControl>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  disabled={!getIsSelected(tas.name)}
+                                  checked={selected}
+                                  onClick={(e: any) =>
+                                    onChildCheckToggle(
+                                      e.target.checked,
+                                      tas.name,
+                                      child.name
+                                    )
+                                  }
+                                />
+                              }
+                              label={RemoveZ(child.name)}
+                            ></FormControlLabel>
+                          </FormControl>
+                          {showDetails && (
+                            <IconButton
+                              onClick={(e) => {
+                                setInfoDialogState({
+                                  open: true,
+                                  poi: child,
+                                });
+                              }}
+                            >
+                              <FontAwesomeIcon
+                                icon={faInfoCircle}
+                                color={theme.palette.text.secondary}
+                              />
+                            </IconButton>
+                          )}
+                          <Typography>{child.description}</Typography>
+                          <Box sx={imageListStyles}>
+                            {child.images?.map((img: string) => (
+                              <Box sx={imageContainerStyles}>
+                                <Zoom>
+                                  <img
+                                    src={baseUrl + "/" + img}
+                                    alt={child.name}
+                                    style={{ width: "100%" }}
+                                  ></img>
+                                </Zoom>
+                              </Box>
+                            ))}
+                          </Box>
+                        </Paper>
+                      );
+                    })}
+                </Box>
+              </Box>
+            </Paper>
+          );
+        })}
+        {availableFiles == null && <div>loading...</div>}
+      </Box>
+      {/* Info Popover */}
+      {
+        <PoiInfoDialog
+          dialogState={infoDialogState}
+          setDialogState={setInfoDialogState}
+        />
+      }
+    </>
   );
 }

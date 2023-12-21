@@ -104,6 +104,7 @@ export default function Step3_OptionalMods(props: any) {
             availableFiles={availableFiles}
             onParentCheckToggle={onParentCheckToggle}
             onChildCheckToggle={onChildCheckToggle}
+            showDetails={false}
           />
         </Box>
         <Box sx={pageFooterStyles}>

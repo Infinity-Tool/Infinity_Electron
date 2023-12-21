@@ -6,6 +6,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { dialogStyles } from "Services/CommonStyles";
+import { RemoveZ } from "Services/Utils/NameFormatterUtils";
 
 export default function PoiInfoDialog(props: any) {
   const { dialogState, setDialogState } = props;
@@ -32,7 +33,7 @@ export default function PoiInfoDialog(props: any) {
     >
       {poi && (
         <DialogContent sx={dialogContentStyles}>
-          <Typography variant="h4">{poi?.name}</Typography>
+          <Typography variant="h4">{RemoveZ(poi?.name)}</Typography>
           <Typography>{poi.description}</Typography>
           {poi?.repeatDistance && (
             <TextField

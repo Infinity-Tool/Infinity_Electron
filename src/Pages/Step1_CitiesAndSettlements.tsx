@@ -110,6 +110,7 @@ export default function CitiesAndSettlements() {
           availableFiles={availableFiles}
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
+          showDetails={true}
         />
       </Box>
       <Box sx={pageFooterStyles}>
