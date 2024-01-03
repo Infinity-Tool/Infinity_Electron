@@ -35,6 +35,22 @@ export default function PoiInfoDialog(props: any) {
         <DialogContent sx={dialogContentStyles}>
           <Typography variant="h4">{RemoveZ(poi?.name)}</Typography>
           <Typography>{poi.description}</Typography>
+          {poi?.sleeperMin && poi?.sleeperMax && (
+            <TextField
+              label="Sleeper Counts"
+              value={`Min:${poi?.sleeperMin} Max:${poi?.sleeperMax}`}
+              disabled={true}
+              fullWidth
+            />
+          )}
+          {poi?.prefabSize && (
+            <TextField
+              label="Prefab Size"
+              value={poi?.prefabSize}
+              disabled={true}
+              fullWidth
+            />
+          )}
           {poi?.repeatDistance && (
             <TextField
               label="Repeat Distance"
