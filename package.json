@@ -1,7 +1,7 @@
 {
   "title": "Infinity",
   "description": "A 7 Days to Die mod and custom prefab manager and installer",
-  "version": "0.50",
+  "version": "0.5.0",
   "keywords": [
     "electron",
     "boilerplate",
@@ -96,6 +96,7 @@
     "@mui/lab": "^5.0.0-alpha.159",
     "@mui/material": "^5.15.3",
     "async": "^3.2.5",
+    "axios": "^1.6.5",
     "electron-debug": "^3.2.0",
     "electron-dl": "^3.5.1",
     "electron-log": "^4.4.8",
@@ -104,6 +105,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-medium-image-zoom": "^5.1.9",
+    "react-query": "^3.39.3",
     "react-router": "^6.21.1",
     "react-router-dom": "^6.16.0",
     "react-virtuoso": "^4.6.2"
@@ -180,8 +182,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Infinity",
+    "appId": "Infinity.Compopack.Installer",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

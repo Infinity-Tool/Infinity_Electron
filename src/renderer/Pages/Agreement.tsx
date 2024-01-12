@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Components/Loading';
 import {
@@ -16,27 +16,13 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import { useHttpContext } from '../Services/http/HttpContext';
-import { GetAgreementHttp } from '../Services/http/HttpFunctions';
+import { AgreementQuery } from '../Services/http/HttpFunctions';
+import Error from '../Components/Error';
 
 export default function Agreement() {
   const router = useNavigate();
-  const [userAgreement, setUserAgreement]: any = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
-  const [testArray, setTestArray]: any = useState();
-  const { baseUrl } = useHttpContext();
-
-  useEffect(() => {
-    fetchUserAgreement();
-  }, []);
-
-  //Functions
-  const fetchUserAgreement = async () => {
-    GetAgreementHttp(baseUrl).then((res: any) => {
-      setTestArray(res.split('\n'));
-      setUserAgreement(res);
-    });
-  };
+  const agreementQuery = AgreementQuery();
 
   const handleBack = () => {
     router(AppRoutes.welcome);
@@ -50,7 +36,6 @@ export default function Agreement() {
     color: 'text.secondary',
     my: '1rem',
     p: '1rem',
-    // height: "60vh",
     overflow: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -62,15 +47,18 @@ export default function Agreement() {
       <Box sx={pageContentStyles}>
         <Typography variant="h5">Agreement</Typography>
 
+        {agreementQuery.isLoading && <Loading />}
+        {agreementQuery.isError && (
+          <Error
+            message={'There was a problem loading the user agreement.'}
+            retryFn={() => agreementQuery.refetch()}
+          />
+        )}
+
         <Paper sx={agreementContainerStyles}>
-          {/* {userAgreement ? <Typography>{userAgreement}</Typography> : <Loading />} */}
-          {testArray ? (
-            testArray.map((p: string) => (
-              <Typography variant="caption">{p}</Typography>
-            ))
-          ) : (
-            <Loading />
-          )}
+          {agreementQuery.data
+            ?.split('\n')
+            .map((p: string) => <Typography variant="caption">{p}</Typography>)}
         </Paper>
         <FormGroup>
           <FormControlLabel
@@ -92,7 +80,7 @@ export default function Agreement() {
           variant="contained"
           color="primary"
           onClick={handleNext}
-          disabled={!agreementChecked || userAgreement == null}
+          disabled={!agreementChecked || agreementQuery.isLoading == null}
         >
           Next
         </Button>

@@ -1,5 +1,4 @@
 import { Box, Button, Typography } from '@mui/material';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ListSelection from '../Components/ListSelection';
 import {
@@ -10,9 +9,10 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import StorageKeys from '../Services/StorageKeys';
-import { useHttpContext } from '../Services/http/HttpContext';
-import { GetDirectoryFileHttp } from '../Services/http/HttpFunctions';
 import useLocalStorage from '../Services/useLocalStorage';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import Loading from '../Components/Loading';
+import Error from '../Components/Error';
 
 export interface IUserSelection {
   name: string;
@@ -21,24 +21,28 @@ export interface IUserSelection {
 
 export default function CitiesAndSettlements() {
   const router = useNavigate();
-  const { baseUrl } = useHttpContext();
-  const [, setHost] = useLocalStorage(StorageKeys.host, null);
-  const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    StorageKeys.availableStep1Files,
-    [],
-  );
+  // const { baseUrl } = useHttpContext();
+  // const [, setHost] = useLocalStorage(StorageKeys.host, null);
+  // const [availableFiles, setAvailableFiles]: any = useLocalStorage(
+  //   StorageKeys.availableStep1Files,
+  //   [],
+  // );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
     StorageKeys.step1Selection,
     [],
   );
 
-  //Effects
-  useEffect(() => {
-    GetDirectoryFileHttp(baseUrl).then((res) => {
-      setHost(res.host);
-      setAvailableFiles(res.step_1);
-    });
-  }, []);
+  // //Effects
+  // useEffect(() => {
+  //   GetDirectoryFileHttp(baseUrl).then((res) => {
+  //     setHost(res.host);
+  //     setAvailableFiles(res.step_1);
+  //   });
+  // }, []);
+
+  const directoryQuery = GetDirectoryFileQuery();
+
+  const availableFiles = directoryQuery.data?.step_1;
 
   //Functions
   const onBackClick = (event: any) => {
@@ -49,7 +53,7 @@ export default function CitiesAndSettlements() {
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
-    console.log('checked', checked, 'fileName', fileName);
+    // console.log('checked', checked, 'fileName', fileName);
     if (checked) {
       const newSelection = [...currentSelection];
       newSelection.push({ name: fileName, childSelections: [] });
@@ -105,6 +109,11 @@ export default function CitiesAndSettlements() {
           </Button>
         </Box>
 
+        {directoryQuery.isLoading && <Loading />}
+        {directoryQuery.isError && (
+          <Error message={'There was a problem loading the list of mods.'} />
+        )}
+
         <ListSelection
           currentSelection={currentSelection}
           availableFiles={availableFiles}
@@ -115,11 +124,7 @@ export default function CitiesAndSettlements() {
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
-        <Button
-          variant="contained"
-          onClick={onNextClick}
-          // disabled={currentSelection.length === 0}
-        >
+        <Button variant="contained" onClick={onNextClick}>
           Next
         </Button>
       </Box>

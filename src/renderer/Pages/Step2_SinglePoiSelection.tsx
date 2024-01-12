@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TabSelection from '../Components/TabSelection';
 import {
@@ -10,9 +10,10 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import StorageKeys from '../Services/StorageKeys';
-import { useHttpContext } from '../Services/http/HttpContext';
-import { GetDirectoryFileHttp } from '../Services/http/HttpFunctions';
 import useLocalStorage from '../Services/useLocalStorage';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import Loading from '../Components/Loading';
+import Error from '../Components/Error';
 
 export interface IUserSelection {
   name: string;
@@ -21,42 +22,35 @@ export interface IUserSelection {
 
 export default function StandalonePois() {
   const router = useNavigate();
-  const [, setHost] = useLocalStorage(StorageKeys.host, null);
-  const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    StorageKeys.availableStep2Files,
-    [],
-  );
+  const directoryQuery = GetDirectoryFileQuery();
+  const availableFiles = directoryQuery.data?.step_2;
+  const availableTags = directoryQuery.data?.editorGroups;
+
   const [currentSelection, setCurrentSelection] = useLocalStorage(
     StorageKeys.step2Selection,
     null,
   );
-  const [availableTags, setAvailableTags]: any = useState([]);
   const [selectedTags, setSelectedTags]: any = useLocalStorage(
     StorageKeys.selectedTags,
     [],
   );
 
-  const { baseUrl } = useHttpContext();
-
-  //Effects
+  // TODO put logic into query when SelectionContext is implemented
   useEffect(() => {
-    GetDirectoryFileHttp(baseUrl).then((res) => {
-      setHost(res.host);
-      setAvailableFiles(res.step_2);
+    if (directoryQuery.isSuccess) {
       setCurrentSelection((prev: any) => {
         return prev != null
           ? prev
-          : res.step_2.map((x: any) => ({
+          : directoryQuery.data.step_2.map((x: any) => ({
               name: x.name,
               childSelections: x.childSelections.map((y: any) => y.name),
             }));
       });
-      setAvailableTags(res.editorGroups);
       setSelectedTags((prev: any) => {
-        return prev.length > 0 ? prev : res.editorGroups;
+        return prev.length > 0 ? prev : directoryQuery.data.editorGroups;
       });
-    });
-  }, []);
+    }
+  }, [directoryQuery.isSuccess]);
 
   //Functions
   const onBackClick = (event: any) => {
@@ -109,6 +103,11 @@ export default function StandalonePois() {
             Clear Selection
           </Button>
         </Box>
+
+        {directoryQuery.isLoading && <Loading />}
+        {directoryQuery.isError && (
+          <Error message={'There was a problem loading the list of mods.'} />
+        )}
 
         {availableFiles && availableTags && (
           <TabSelection

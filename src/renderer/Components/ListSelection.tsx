@@ -4,18 +4,18 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
+  ImageList,
   Paper,
   Typography,
   useTheme,
 } from '@mui/material';
 import Zoom from 'react-medium-image-zoom';
-import Loading from './Loading';
-// import '../css/react-medium-image-zoom-overrides.css';
 import '../Assets/css/react-medium-image-zoom-overrides.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import PoiInfoDialog from './PoiInfoDialog';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import Loading from './Loading';
+import PoiInfoDialog from './PoiInfoDialog';
 import {
   imageContainerStyles,
   poiStyles,
@@ -59,39 +59,33 @@ export default function ListSelection(props: any) {
   };
 
   //Styles
-  // const modListContainer = {
-  //   display: 'flex',
-  //   flexDirection: 'column',
-  //   gap: '1rem',
-  // };
-  // const getModListItemStyles = (file: string) => {
-  //   const isSelected = getIsSelected(file);
-  //   return {
-  //     padding: '1rem',
-  //     border: isSelected
-  //       ? `1px solid ${theme.palette.primary.dark}`
-  //       : '1px solid transparent',
-  //     display: 'flex',
-  //     justifyContent: 'space-between',
-  //     alignItems: 'start',
-  //   };
-  // };
-  // const childContainerStyles = {
-  //   paddingLeft: '2rem',
-  // };
+  const modListContainer = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  };
+  const getModListItemStyles = (file: string) => {
+    const isSelected = getIsSelected(file);
+    return {
+      padding: '1rem',
+      border: isSelected
+        ? `1px solid ${theme.palette.primary.dark}`
+        : '1px solid transparent',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'start',
+    };
+  };
+  const childContainerStyles = {
+    paddingLeft: '2rem',
+  };
 
   return (
     <>
-      <Box
-      //sx={modListContainer}
-      >
-        {availableFiles == null && <Loading />}
+      <Box sx={modListContainer}>
         {availableFiles?.map((tas: any, index: number) => {
           return (
-            <Paper
-              //sx={getModListItemStyles(tas.name)}
-              key={index}
-            >
+            <Paper sx={getModListItemStyles(tas.name)} key={index}>
               <Box>
                 <Box>
                   <FormControl>
@@ -116,9 +110,7 @@ export default function ListSelection(props: any) {
                     </Box>
                   )}
                 </Box>
-                <Box
-                //sx={childContainerStyles}
-                >
+                <Box sx={childContainerStyles}>
                   {tas.childSelections?.length > 0 &&
                     tas.childSelections.map((child: any) => {
                       const selected = getIsChildSelected(tas.name, child.name);
@@ -164,15 +156,15 @@ export default function ListSelection(props: any) {
                           <Typography>{child.description}</Typography>
                           <Box sx={imageListStyles}>
                             {child.images?.map((img: string) => (
-                              <Box sx={imageContainerStyles}>
+                              <ImageList sx={imageContainerStyles}>
                                 <Zoom>
                                   <img
                                     src={baseUrl + '/' + img}
                                     alt={child.name}
                                     style={{ width: '100%' }}
-                                  ></img>
+                                  />
                                 </Zoom>
-                              </Box>
+                              </ImageList>
                             ))}
                           </Box>
                         </Paper>
@@ -183,15 +175,12 @@ export default function ListSelection(props: any) {
             </Paper>
           );
         })}
-        {availableFiles == null && <div>loading...</div>}
       </Box>
       {/* Info Popover */}
-      {
-        <PoiInfoDialog
-          dialogState={infoDialogState}
-          setDialogState={setInfoDialogState}
-        />
-      }
+      <PoiInfoDialog
+        dialogState={infoDialogState}
+        setDialogState={setInfoDialogState}
+      />
     </>
   );
 }

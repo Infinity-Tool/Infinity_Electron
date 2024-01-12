@@ -1,5 +1,4 @@
 import { Box, Typography, Button } from '@mui/material';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ListSelection from '../Components/ListSelection';
 import {
@@ -10,30 +9,19 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import StorageKeys from '../Services/StorageKeys';
-import { useHttpContext } from '../Services/http/HttpContext';
-import { GetDirectoryFileHttp } from '../Services/http/HttpFunctions';
 import useLocalStorage from '../Services/useLocalStorage';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import Loading from '../Components/Loading';
+import Error from '../Components/Error';
 
 export default function Step3_OptionalMods(props: any) {
   const router = useNavigate();
-  const { baseUrl } = useHttpContext();
-  const [, setHost] = useLocalStorage(StorageKeys.host, null);
-  const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-    StorageKeys.availableStep3Files,
-    [],
-  );
   const [currentSelection, setCurrentSelection] = useLocalStorage(
     StorageKeys.step3Selection,
     [],
   );
-
-  //Effects
-  useEffect(() => {
-    GetDirectoryFileHttp(baseUrl).then((res) => {
-      setHost(res.host);
-      setAvailableFiles(res.step_3);
-    });
-  }, []);
+  const directoryQuery = GetDirectoryFileQuery();
+  const availableFiles = directoryQuery.data?.step_3;
 
   //Functions
   const onBackClick = (event: any) => {
@@ -84,36 +72,39 @@ export default function Step3_OptionalMods(props: any) {
   };
 
   return (
-    <>
-      <Box sx={pageContainerStyles}>
-        <Box sx={pageContentStyles}>
-          <Box sx={headerContainerStyles}>
-            <Box>
-              <Typography variant="h1">Optional Mods</Typography>
-              <Typography variant="caption">
-                Menu options, custom POIs with blocks, quest-related mods, etc.
-              </Typography>
-            </Box>
-            <Button onClick={() => setCurrentSelection([])}>
-              Clear Selection
-            </Button>
+    <Box sx={pageContainerStyles}>
+      <Box sx={pageContentStyles}>
+        <Box sx={headerContainerStyles}>
+          <Box>
+            <Typography variant="h1">Optional Mods</Typography>
+            <Typography variant="caption">
+              Menu options, custom POIs with blocks, quest-related mods, etc.
+            </Typography>
           </Box>
-
-          <ListSelection
-            currentSelection={currentSelection}
-            availableFiles={availableFiles}
-            onParentCheckToggle={onParentCheckToggle}
-            onChildCheckToggle={onChildCheckToggle}
-            showDetails={false}
-          />
-        </Box>
-        <Box sx={pageFooterStyles}>
-          <Button onClick={onBackClick}>Back</Button>
-          <Button variant="contained" onClick={onNextClick}>
-            Download & Install
+          <Button onClick={() => setCurrentSelection([])}>
+            Clear Selection
           </Button>
         </Box>
+
+        {directoryQuery.isLoading && <Loading />}
+        {directoryQuery.isError && (
+          <Error message={'There was a problem loading the list of mods.'} />
+        )}
+
+        <ListSelection
+          currentSelection={currentSelection}
+          availableFiles={availableFiles}
+          onParentCheckToggle={onParentCheckToggle}
+          onChildCheckToggle={onChildCheckToggle}
+          showDetails={false}
+        />
       </Box>
-    </>
+      <Box sx={pageFooterStyles}>
+        <Button onClick={onBackClick}>Back</Button>
+        <Button variant="contained" onClick={onNextClick}>
+          Download & Install
+        </Button>
+      </Box>
+    </Box>
   );
 }
