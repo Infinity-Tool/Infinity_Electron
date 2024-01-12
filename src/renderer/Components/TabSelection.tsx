@@ -248,7 +248,11 @@ export default function TabSelection(props: any) {
 
         {/* Tab Panels */}
         {panelFileList?.map((parent: any, index: number) => (
-          <TabPanel value={parent.name} key={parent.name + index}>
+          <TabPanel
+            value={parent.name}
+            key={parent.name + index}
+            sx={{ height: '100%' }}
+          >
             {parent.childSelections.length > 0
               ? SelectablePoi(parent, index)
               : DisplayNoResults()}
@@ -289,7 +293,7 @@ export default function TabSelection(props: any) {
     return (
       <Virtuoso
         key={index}
-        style={{ height: '400px' }}
+        style={{ height: '100%' }}
         totalCount={count}
         itemContent={(index) => {
           const child = parent.childSelections[index];

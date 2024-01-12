@@ -64,6 +64,7 @@ export default function ListSelection(props: any) {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+    height: '100%',
   };
   const getModListItemStyles = (file: string) => {
     const isSelected = getIsSelected(file);
@@ -85,7 +86,7 @@ export default function ListSelection(props: any) {
     <>
       <Box sx={modListContainer}>
         <Virtuoso
-          style={{ height: '400px' }}
+          style={{ height: '100%' }}
           totalCount={availableFiles.length}
           // eslint-disable-next-line react/no-unstable-nested-components
           itemContent={(index) => {

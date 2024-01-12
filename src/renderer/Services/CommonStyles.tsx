@@ -10,6 +10,8 @@ export const pageContainerStyles = {
 
 export const pageContentStyles = {
   flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
   overflow: 'auto',
   width: '100%',
   p: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem' },
