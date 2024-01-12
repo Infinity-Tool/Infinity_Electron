@@ -5,12 +5,16 @@ import {
   FormControl,
   FormControlLabel,
   IconButton,
+  ImageList,
+  ImageListItem,
   InputLabel,
+  List,
   ListItemText,
   MenuItem,
   OutlinedInput,
   Paper,
   Select,
+  Stack,
   Tab,
   Tabs,
   TextField,
@@ -145,7 +149,7 @@ export default function TabSelection(props: any) {
     } else if (selectedCount === availableTags.length) {
       return 'All Selected';
     } else if (selectedCount > 2) {
-      return selectedCount + ' selected';
+      return `${selectedCount} selected`;
     } else {
       return selected.join(', ');
     }
@@ -340,19 +344,20 @@ export default function TabSelection(props: any) {
                   ))}
                 </Box>
               </Box>
-              <Box sx={imageListStyles}>
+              <ImageList rowHeight={100} cols={100}>
                 {child.images?.map((img: string) => (
-                  <Box sx={imageContainerStyles}>
+                  <ImageListItem>
                     <Zoom>
                       <img
-                        src={baseUrl + '/' + img}
+                        src={`${baseUrl}/${img}`}
                         alt={child.name}
-                        style={{ width: '100%' }}
+                        style={{ maxHeight: '90px' }}
+                        loading="lazy"
                       ></img>
                     </Zoom>
-                  </Box>
+                  </ImageListItem>
                 ))}
-              </Box>
+              </ImageList>
             </Paper>
           );
         }}

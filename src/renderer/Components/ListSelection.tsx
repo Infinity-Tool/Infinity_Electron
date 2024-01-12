@@ -87,7 +87,7 @@ export default function ListSelection(props: any) {
       <Box sx={modListContainer}>
         <Virtuoso
           style={{ height: '100%' }}
-          totalCount={availableFiles.length}
+          totalCount={availableFiles?.length}
           // eslint-disable-next-line react/no-unstable-nested-components
           itemContent={(index) => {
             const parent = availableFiles[index];
