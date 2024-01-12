@@ -70,24 +70,6 @@ export const dialogStyles = {
   padding: '2rem',
 };
 
-export const imageListStyles = {
-  display: 'flex',
-  gap: '1rem',
-  flexWrap: 'nowrap',
-  overflowX: 'auto',
-};
-
-export const imageContainerStyles = {
-  display: 'flex',
-  justifyContent: 'end',
-  alignItems: 'center',
-  '& img': {
-    height: '100px',
-    maxWidth: '300px',
-    width: 'auto',
-  },
-};
-
 export const poiStyles = (theme: any, selected: boolean): any => ({
   paddingY: theme.spacing(1),
   paddingX: theme.spacing(2),

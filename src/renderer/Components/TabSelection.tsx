@@ -32,11 +32,7 @@ import { Virtuoso } from 'react-virtuoso';
 import PoiInfoDialog from './PoiInfoDialog';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { ProperCase, RemoveZ } from '../Services/Utils/NameFormatterUtils';
-import {
-  poiStyles,
-  imageListStyles,
-  imageContainerStyles,
-} from '../Services/CommonStyles';
+import { poiStyles } from '../Services/CommonStyles';
 
 export default function TabSelection(props: any) {
   const theme = useTheme();

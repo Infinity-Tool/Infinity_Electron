@@ -5,6 +5,7 @@ import {
   FormControlLabel,
   IconButton,
   ImageList,
+  ImageListItem,
   Paper,
   Typography,
   useTheme,
@@ -14,13 +15,8 @@ import '../Assets/css/react-medium-image-zoom-overrides.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import Loading from './Loading';
 import PoiInfoDialog from './PoiInfoDialog';
-import {
-  imageContainerStyles,
-  poiStyles,
-  imageListStyles,
-} from '../Services/CommonStyles';
+import { poiStyles } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/Utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { Virtuoso } from 'react-virtuoso';
@@ -76,17 +72,22 @@ export default function ListSelection(props: any) {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'start',
+      maxWidth: '100%',
+      overflowX: 'auto',
+      marginBottom: '1rem',
     };
   };
   const childContainerStyles = {
     paddingLeft: '2rem',
+  };
+  const poiInfoStyles = {
+    maxWidth: '66%',
   };
 
   return (
     <>
       <Box sx={modListContainer}>
         <Virtuoso
-          style={{ height: '100%' }}
           totalCount={availableFiles?.length}
           // eslint-disable-next-line react/no-unstable-nested-components
           itemContent={(index) => {
@@ -96,7 +97,7 @@ export default function ListSelection(props: any) {
             return (
               <Paper sx={getModListItemStyles(parent.name)} key={index}>
                 <Box>
-                  <Box>
+                  <Box sx={poiInfoStyles}>
                     <FormControl>
                       <FormControlLabel
                         control={
@@ -113,12 +114,16 @@ export default function ListSelection(props: any) {
                         {parent.description}
                       </Typography>
                     </FormControl>
+
                     {parent.image && (
-                      <Box sx={imageContainerStyles}>
-                        <Zoom>
-                          <img src={`${baseUrl}/${parent.image}`} alt="" />
-                        </Zoom>
-                      </Box>
+                      <Zoom>
+                        <img
+                          src={`${baseUrl}/${parent.image}`}
+                          alt=""
+                          loading="lazy"
+                          style={{ maxHeight: '90px' }}
+                        />
+                      </Zoom>
                     )}
                   </Box>
                   <Box sx={childContainerStyles}>
@@ -168,19 +173,20 @@ export default function ListSelection(props: any) {
                               </IconButton>
                             )}
                             <Typography>{child.description}</Typography>
-                            <Box sx={imageListStyles}>
+                            <ImageList rowHeight={100} cols={100}>
                               {child.images?.map((img: string) => (
-                                <ImageList sx={imageContainerStyles}>
+                                <ImageListItem>
                                   <Zoom>
                                     <img
-                                      src={baseUrl + '/' + img}
+                                      src={`${baseUrl}/${img}`}
                                       alt={child.name}
-                                      style={{ width: '100%' }}
+                                      style={{ maxHeight: '90px' }}
+                                      loading="lazy"
                                     />
                                   </Zoom>
-                                </ImageList>
+                                </ImageListItem>
                               ))}
-                            </Box>
+                            </ImageList>
                           </Paper>
                         );
                       })}
