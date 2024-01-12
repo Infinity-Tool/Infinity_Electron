@@ -23,6 +23,7 @@ import {
 } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/Utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
+import { Virtuoso } from 'react-virtuoso';
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -83,98 +84,111 @@ export default function ListSelection(props: any) {
   return (
     <>
       <Box sx={modListContainer}>
-        {availableFiles?.map((tas: any, index: number) => {
-          return (
-            <Paper sx={getModListItemStyles(tas.name)} key={index}>
-              <Box>
+        <Virtuoso
+          style={{ height: '400px' }}
+          totalCount={availableFiles.length}
+          // eslint-disable-next-line react/no-unstable-nested-components
+          itemContent={(index) => {
+            const parent = availableFiles[index];
+            const selected = getIsSelected(parent.name);
+
+            return (
+              <Paper sx={getModListItemStyles(parent.name)} key={index}>
                 <Box>
-                  <FormControl>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={getIsSelected(tas.name)}
-                          onClick={(e: any) =>
-                            onParentCheckToggle(e.target.checked, tas.name)
-                          }
-                        />
-                      }
-                      label={RemoveZ(tas.name)}
-                    />
-                    <Typography variant="caption">{tas.description}</Typography>
-                  </FormControl>
-                  {tas.image && (
-                    <Box sx={imageContainerStyles}>
-                      <Zoom>
-                        <img src={`${baseUrl}/${tas.image}`} alt="" />
-                      </Zoom>
-                    </Box>
-                  )}
-                </Box>
-                <Box sx={childContainerStyles}>
-                  {tas.childSelections?.length > 0 &&
-                    tas.childSelections.map((child: any) => {
-                      const selected = getIsChildSelected(tas.name, child.name);
-                      return (
-                        <Paper
-                          elevation={3}
-                          sx={poiStyles(theme, selected)}
-                          key={index}
-                        >
-                          <FormControl>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  disabled={!getIsSelected(tas.name)}
-                                  checked={selected}
-                                  onClick={(e: any) =>
-                                    onChildCheckToggle(
-                                      e.target.checked,
-                                      tas.name,
-                                      child.name,
-                                    )
-                                  }
-                                />
-                              }
-                              label={RemoveZ(child.name)}
-                            />
-                          </FormControl>
-                          {showDetails && (
-                            <IconButton
-                              onClick={(e) => {
-                                setInfoDialogState({
-                                  open: true,
-                                  poi: child,
-                                });
-                              }}
-                            >
-                              <FontAwesomeIcon
-                                icon={faInfoCircle}
-                                color={theme.palette.text.secondary}
-                              />
-                            </IconButton>
-                          )}
-                          <Typography>{child.description}</Typography>
-                          <Box sx={imageListStyles}>
-                            {child.images?.map((img: string) => (
-                              <ImageList sx={imageContainerStyles}>
-                                <Zoom>
-                                  <img
-                                    src={baseUrl + '/' + img}
-                                    alt={child.name}
-                                    style={{ width: '100%' }}
+                  <Box>
+                    <FormControl>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={selected}
+                            onClick={(e: any) =>
+                              onParentCheckToggle(e.target.checked, parent.name)
+                            }
+                          />
+                        }
+                        label={RemoveZ(parent.name)}
+                      />
+                      <Typography variant="caption">
+                        {parent.description}
+                      </Typography>
+                    </FormControl>
+                    {parent.image && (
+                      <Box sx={imageContainerStyles}>
+                        <Zoom>
+                          <img src={`${baseUrl}/${parent.image}`} alt="" />
+                        </Zoom>
+                      </Box>
+                    )}
+                  </Box>
+                  <Box sx={childContainerStyles}>
+                    {parent.childSelections?.length > 0 &&
+                      parent.childSelections.map((child: any) => {
+                        const selected = getIsChildSelected(
+                          parent.name,
+                          child.name,
+                        );
+                        return (
+                          <Paper
+                            elevation={3}
+                            sx={poiStyles(theme, selected)}
+                            key={index}
+                          >
+                            <FormControl>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    disabled={!getIsSelected(parent.name)}
+                                    checked={selected}
+                                    onClick={(e: any) =>
+                                      onChildCheckToggle(
+                                        e.target.checked,
+                                        parent.name,
+                                        child.name,
+                                      )
+                                    }
                                   />
-                                </Zoom>
-                              </ImageList>
-                            ))}
-                          </Box>
-                        </Paper>
-                      );
-                    })}
+                                }
+                                label={RemoveZ(child.name)}
+                              />
+                            </FormControl>
+                            {showDetails && (
+                              <IconButton
+                                onClick={(e) => {
+                                  setInfoDialogState({
+                                    open: true,
+                                    poi: child,
+                                  });
+                                }}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faInfoCircle}
+                                  color={theme.palette.text.secondary}
+                                />
+                              </IconButton>
+                            )}
+                            <Typography>{child.description}</Typography>
+                            <Box sx={imageListStyles}>
+                              {child.images?.map((img: string) => (
+                                <ImageList sx={imageContainerStyles}>
+                                  <Zoom>
+                                    <img
+                                      src={baseUrl + '/' + img}
+                                      alt={child.name}
+                                      style={{ width: '100%' }}
+                                    />
+                                  </Zoom>
+                                </ImageList>
+                              ))}
+                            </Box>
+                          </Paper>
+                        );
+                      })}
+                  </Box>
                 </Box>
-              </Box>
-            </Paper>
-          );
-        })}
+              </Paper>
+            );
+          }}
+        />
       </Box>
       {/* Info Popover */}
       <PoiInfoDialog
