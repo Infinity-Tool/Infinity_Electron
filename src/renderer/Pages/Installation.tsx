@@ -16,36 +16,30 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { LoadingMessages } from '../Services/LoadingMessages';
-import StorageKeys from '../Services/StorageKeys';
-import useLocalStorage from '../Services/useLocalStorage';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function Installation() {
   const router = useNavigate();
   const theme = useTheme();
-  // const { ipcRenderer } = window.require('electron');
   const { ipcRenderer } = window.electron;
   const { baseUrl } = useHttpContext();
-  const [modsDirectory] = useLocalStorage(StorageKeys.modsDirectory, '');
-  const [localPrefabsDirectory] = useLocalStorage(
-    StorageKeys.localPrefabsDirectory,
-    '',
-  );
-  const [availableStep1Files]: any = useLocalStorage(
-    StorageKeys.availableStep1Files,
-    [],
-  );
-  const [availableStep2Files]: any = useLocalStorage(
-    StorageKeys.availableStep2Files,
-    [],
-  );
-  const [availableStep3Files]: any = useLocalStorage(
-    StorageKeys.availableStep3Files,
-    [],
-  );
+  const directory = GetDirectoryFileQuery();
+  const availableStep0Files = directory.data?.step_0;
+  const availableStep1Files = directory.data?.step_1;
+  const availableStep2Files = directory.data?.step_2;
+  const availableStep3Files = directory.data?.step_3;
+  const availableStep4Files = directory.data?.step_4;
   const [fileCount, setFileCount]: any = useState();
-  const [step1Selection] = useLocalStorage(StorageKeys.step1Selection, []);
-  const [step2Selection] = useLocalStorage(StorageKeys.step2Selection, []);
-  const [step3Selection] = useLocalStorage(StorageKeys.step3Selection, []);
+  const {
+    cleanInstall,
+    modsDirectory,
+    localPrefabsDirectory,
+    step1Selection,
+    step2Selection,
+    step3Selection,
+    step4Selection,
+  } = useSelectionContext();
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -61,11 +55,25 @@ export default function Installation() {
   }, [filesCompleted]);
 
   const startDownloads = () => {
+    const step0Files = buildFileLists(
+      availableStep0Files,
+      availableStep0Files.map((a: any) => ({
+        name: a.name,
+        childSelections: a.childSelections.map((b: any) => b.name),
+      })),
+    );
     const step1Files = buildFileLists(availableStep1Files, step1Selection);
     const step2Files = buildFileLists(availableStep2Files, step2Selection);
     const step3Files = buildFileLists(availableStep3Files, step3Selection);
+    const step4Files = buildFileLists(availableStep4Files, step4Selection);
 
-    const combinedFileLists = [...step1Files, ...step2Files, ...step3Files];
+    const combinedFileLists = [
+      ...step0Files,
+      ...step1Files,
+      ...step2Files,
+      ...step3Files,
+      ...step4Files,
+    ];
 
     setFileCount(combinedFileLists.length);
 

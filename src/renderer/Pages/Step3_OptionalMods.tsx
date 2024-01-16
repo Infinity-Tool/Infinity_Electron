@@ -8,18 +8,14 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import StorageKeys from '../Services/StorageKeys';
-import useLocalStorage from '../Services/useLocalStorage';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function Step3_OptionalMods(props: any) {
   const router = useNavigate();
-  const [currentSelection, setCurrentSelection] = useLocalStorage(
-    StorageKeys.step3Selection,
-    [],
-  );
+  const { step3Selection, setStep3Selection } = useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
   const availableFiles = directoryQuery.data?.step_3;
 
@@ -33,11 +29,11 @@ export default function Step3_OptionalMods(props: any) {
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
     if (checked) {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step3Selection];
       newSelection.push({ name: fileName, childSelections: [] });
-      setCurrentSelection(newSelection);
+      setStep3Selection(newSelection);
     } else {
-      setCurrentSelection((prev: any) => {
+      setStep3Selection((prev: any) => {
         return prev.filter((x: any) => x.name !== fileName);
       });
     }
@@ -49,16 +45,16 @@ export default function Step3_OptionalMods(props: any) {
     childFileName: string,
   ) => {
     if (checked) {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step3Selection];
       const index = newSelection.findIndex(
         (x: any) => x.name === parentFileName,
       );
       if (index > -1) {
         newSelection[index].childSelections.push(childFileName);
       }
-      setCurrentSelection(newSelection);
+      setStep3Selection(newSelection);
     } else {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step3Selection];
       const index = newSelection.findIndex(
         (x: any) => x.name === parentFileName,
       );
@@ -67,7 +63,7 @@ export default function Step3_OptionalMods(props: any) {
           index
         ].childSelections.filter((x: any) => x !== childFileName);
       }
-      setCurrentSelection(newSelection);
+      setStep3Selection(newSelection);
     }
   };
 
@@ -81,9 +77,7 @@ export default function Step3_OptionalMods(props: any) {
               Menu options, custom POIs with blocks, quest-related mods, etc.
             </Typography>
           </Box>
-          <Button onClick={() => setCurrentSelection([])}>
-            Clear Selection
-          </Button>
+          <Button onClick={() => setStep3Selection([])}>Clear Selection</Button>
         </Box>
 
         {directoryQuery.isLoading && <Loading />}
@@ -92,7 +86,7 @@ export default function Step3_OptionalMods(props: any) {
         )}
 
         <ListSelection
-          currentSelection={currentSelection}
+          currentSelection={step3Selection}
           availableFiles={availableFiles}
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
