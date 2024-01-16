@@ -9,9 +9,9 @@ enum StorageKeys {
   moddedInstall = 'moddedInstall',
   step1Selection = 'step1Selection',
   step2Selection = 'step2Selection',
+  step2SelectedTags = 'step2SelectedTags',
   step3Selection = 'step3Selection',
   step4Selection = 'step4Selection',
-  selectedTags = 'selectedTags',
   devModeEnabled = 'devModeEnabled',
   devModeKey = 'devModeKey',
 }

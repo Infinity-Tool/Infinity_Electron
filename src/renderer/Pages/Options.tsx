@@ -150,6 +150,7 @@ export default function Options() {
     display: 'flex',
     flexDirection: 'row',
     gap: theme.spacing(4),
+    mt: theme.spacing(4),
     mb: theme.spacing(8),
     px: theme.spacing(4),
   };
@@ -162,7 +163,8 @@ export default function Options() {
     border: `2px solid ${
       selected ? theme.palette.primary.main : 'transparent'
     }`,
-    transform: selected ? 'scale(1.1)' : 'scale(1)',
+    color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
+    transform: selected ? 'scale(1.05)' : 'scale(.95)',
     transition: 'all 0.2s ease-in-out',
     flex: 1,
     cursor: 'pointer',

@@ -9,11 +9,10 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import StorageKeys from '../Services/StorageKeys';
-import useLocalStorage from '../Services/useLocalStorage';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export interface IUserSelection {
   name: string;
@@ -23,22 +22,19 @@ export interface IUserSelection {
 export default function StandalonePois() {
   const router = useNavigate();
   const directoryQuery = GetDirectoryFileQuery();
+  const {
+    step2Selection,
+    setStep2Selection,
+    step2SelectedTags,
+    setStep2SelectedTags,
+  } = useSelectionContext();
   const availableFiles = directoryQuery.data?.step_2;
   const availableTags = directoryQuery.data?.editorGroups;
-
-  const [currentSelection, setCurrentSelection] = useLocalStorage(
-    StorageKeys.step2Selection,
-    null,
-  );
-  const [selectedTags, setSelectedTags]: any = useLocalStorage(
-    StorageKeys.selectedTags,
-    [],
-  );
 
   // TODO put logic into query when SelectionContext is implemented
   useEffect(() => {
     if (directoryQuery.isSuccess) {
-      setCurrentSelection((prev: any) => {
+      setStep2Selection((prev: any) => {
         return prev != null
           ? prev
           : directoryQuery.data.step_2.map((x: any) => ({
@@ -46,7 +42,7 @@ export default function StandalonePois() {
               childSelections: x.childSelections.map((y: any) => y.name),
             }));
       });
-      setSelectedTags((prev: any) => {
+      setStep2SelectedTags((prev: any) => {
         return prev.length > 0 ? prev : directoryQuery.data.editorGroups;
       });
     }
@@ -61,35 +57,33 @@ export default function StandalonePois() {
   };
 
   const onToggle = (checked: boolean, parent: string, child: string) => {
-    const parentIndex = currentSelection.findIndex(
-      (x: any) => x.name === parent,
-    );
+    const parentIndex = step2Selection.findIndex((x: any) => x.name === parent);
     // checked
     if (checked) {
       // check if parent is in current selection, if so add child to it
       if (parentIndex > -1) {
-        const newSelection = [...currentSelection];
+        const newSelection = [...step2Selection];
         newSelection[parentIndex].childSelections.push(child);
-        setCurrentSelection(newSelection);
+        setStep2Selection(newSelection);
       } else {
         // if not, add parent to current selection with child
-        const newSelection = [...currentSelection];
+        const newSelection = [...step2Selection];
         newSelection.push({ name: parent, childSelections: [child] });
-        setCurrentSelection(newSelection);
+        setStep2Selection(newSelection);
       }
     }
     // unchecked
     else {
       // check if parent is in current selection, but now has no children, if so remove it
       if (parentIndex > -1) {
-        const newSelection = [...currentSelection];
+        const newSelection = [...step2Selection];
         newSelection[parentIndex].childSelections = newSelection[
           parentIndex
         ].childSelections.filter((x: any) => x !== child);
         if (newSelection[parentIndex].childSelections.length === 0) {
           newSelection.splice(parentIndex, 1);
         }
-        setCurrentSelection(newSelection);
+        setStep2Selection(newSelection);
       }
     }
   };
@@ -99,9 +93,7 @@ export default function StandalonePois() {
       <Box sx={pageContentStyles}>
         <Box sx={headerContainerStyles}>
           <Typography variant="h1">Single POI Selection</Typography>
-          <Button onClick={() => setCurrentSelection([])}>
-            Clear Selection
-          </Button>
+          <Button onClick={() => setStep2Selection([])}>Clear Selection</Button>
         </Box>
 
         {directoryQuery.isLoading && <Loading />}
@@ -111,12 +103,12 @@ export default function StandalonePois() {
 
         {availableFiles && availableTags && (
           <TabSelection
-            currentSelection={currentSelection}
+            currentSelection={step2Selection}
             availableFiles={availableFiles}
             onToggle={onToggle}
             availableTags={availableTags}
-            selectedTags={selectedTags}
-            setSelectedTags={setSelectedTags}
+            selectedTags={step2SelectedTags}
+            setSelectedTags={setStep2SelectedTags}
           />
         )}
       </Box>

@@ -21,6 +21,9 @@ export class Selection {
   public step2Selection: any[] = [];
   public setStep2Selection: any;
 
+  public step2SelectedTags: any[] = [];
+  public setStep2SelectedTags: any;
+
   public step3Selection: any[] = [];
   public setStep3Selection: any;
 
@@ -67,6 +70,10 @@ export const SelectionContextProvider = ({ children }: any): any => {
     StorageKeys.step2Selection,
     [],
   );
+  const [step2SelectedTags, setStep2SelectedTags] = useLocalStorage(
+    StorageKeys.step2SelectedTags,
+    [],
+  );
   const [step3Selection, setStep3Selection] = useLocalStorage(
     StorageKeys.step3Selection,
     [],
@@ -89,6 +96,8 @@ export const SelectionContextProvider = ({ children }: any): any => {
     setStep1Selection,
     step2Selection,
     setStep2Selection,
+    step2SelectedTags: step2SelectedTags,
+    setStep2SelectedTags: setStep2SelectedTags,
     step3Selection,
     setStep3Selection,
     step4Selection,

@@ -221,3 +221,10 @@ ipcMain.on('queue-files-for-download', async (event, files) => {
 ipcMain.on('download-cancel', async (event) => {
   await queue.kill();
 });
+
+// ipcMain.on('clear-path', async (event, path) => {
+//   // Check if path is valid.
+//   // If not, return a failed event
+
+//   // Loop through all files and folder in the given path.
+// });
