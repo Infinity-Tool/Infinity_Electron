@@ -16,6 +16,7 @@ import Installation from './Pages/Installation';
 import CitiesAndSettlements from './Pages/Step1_CitiesAndSettlements';
 import StandalonePois from './Pages/Step2_SinglePoiSelection';
 import OptionalMods from './Pages/Step3_OptionalMods';
+import { SelectionContextProvider } from './Services/SelectionContext';
 
 export function AppContext(props: any) {
   const theme = createTheme(GetTheme());
@@ -23,12 +24,14 @@ export function AppContext(props: any) {
 
   return (
     <HttpContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {props.children}
-        </ThemeProvider>
-      </QueryClientProvider>
+      <SelectionContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {props.children}
+          </ThemeProvider>
+        </QueryClientProvider>
+      </SelectionContextProvider>
     </HttpContextProvider>
   );
 }

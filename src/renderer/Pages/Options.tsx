@@ -9,8 +9,10 @@ import {
   FormGroup,
   FormHelperText,
   IconButton,
+  Paper,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,23 +25,24 @@ import { AppRoutes } from '../Services/Constants';
 import StorageKeys from '../Services/StorageKeys';
 import { IsOkayPath } from '../Services/Utils/PathValidatorUtils';
 import useLocalStorage from '../Services/useLocalStorage';
+import { useSelectionContext } from '../Services/SelectionContext';
+import { text } from 'node:stream/consumers';
 
 export default function Options() {
-  // const { ipcRenderer } = window.require('electron');
   const { ipcRenderer } = window.electron;
   const router = useNavigate();
-  const [cleanInstall, setCleanInstall] = useLocalStorage(
-    StorageKeys.cleanInstall,
-    false,
-  );
-  const [modsPath, setModsPath] = useLocalStorage(
-    StorageKeys.modsDirectory,
-    '',
-  );
-  const [localPrefabsPath, setLocalPrefabsPath] = useLocalStorage(
-    StorageKeys.localPrefabsDirectory,
-    '',
-  );
+  const theme = useTheme();
+  const {
+    cleanInstall,
+    setCleanInstall,
+    modsDirectory,
+    setModsDirectory,
+    moddedInstall,
+    setModdedInstall,
+    localPrefabsDirectory,
+    setLocalPrefabsDirectory,
+  } = useSelectionContext();
+
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
   const [localModsError, setLocalModsError] = useState(false);
   const hasErrors = localPrefabsError || localModsError;
@@ -58,12 +61,12 @@ export default function Options() {
   }, [ipcRenderer]);
 
   const onModsPathChange = (value: string) => {
-    setModsPath(value);
+    setModsDirectory(value);
     setLocalModsError(false);
   };
 
   const onLocalPrefabsPathChange = (value: string) => {
-    setLocalPrefabsPath(value);
+    setLocalPrefabsDirectory(value);
     setLocalPrefabsError(false);
   };
 
@@ -103,32 +106,28 @@ export default function Options() {
   };
 
   const onBackClick = () => {
-    console.log('Back');
     router(AppRoutes.welcome);
   };
 
   const onNextClick = () => {
     if (Validate()) {
-      SaveSettings();
       router(AppRoutes.citiesAndSettlements);
     } else {
-      // todo display error message?
+      // todo throw toast/display error?
     }
   };
   const Validate = (): boolean => {
     let valid = true;
-    if (!IsOkayPath(localPrefabsPath)) {
+    if (!IsOkayPath(localPrefabsDirectory)) {
       valid = false;
       setLocalPrefabsError(true);
     }
-    if (!IsOkayPath(modsPath)) {
+    if (!IsOkayPath(modsDirectory)) {
       valid = false;
       setLocalModsError(true);
     }
     return valid;
   };
-
-  const SaveSettings = () => {};
 
   //Styles
   const formControlStyles = {
@@ -147,34 +146,58 @@ export default function Options() {
     gap: '2rem',
     flexDirection: 'column',
   };
+  const installationTypeContainerStyles = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.spacing(4),
+    mb: theme.spacing(8),
+    px: theme.spacing(4),
+  };
+
+  const installationTypeStyles = (selected: boolean) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: theme.spacing(2),
+    border: `2px solid ${
+      selected ? theme.palette.primary.main : 'transparent'
+    }`,
+    transform: selected ? 'scale(1.1)' : 'scale(1)',
+    transition: 'all 0.2s ease-in-out',
+    flex: 1,
+    cursor: 'pointer',
+    textAlign: 'center',
+  });
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
+        <Box sx={installationTypeContainerStyles}>
+          <Paper
+            onClick={() => setModdedInstall(true)}
+            sx={installationTypeStyles(moddedInstall)}
+          >
+            <Typography variant="h5">Modded (Recommended)</Typography>
+            <Typography>
+              Adds support for custom Towns & Settlements, blah blah blah and
+              much more.
+            </Typography>
+          </Paper>
+          <Paper
+            onClick={() => setModdedInstall(false)}
+            sx={installationTypeStyles(!moddedInstall)}
+          >
+            <Typography variant="h5">Vanilla</Typography>
+            <Typography>Add custom POIs to vanilla towns.</Typography>
+          </Paper>
+        </Box>
+
         <Box sx={formContainerStyles}>
-          <FormGroup sx={formControlStyles}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={cleanInstall}
-                  onChange={(e) => setCleanInstall(e.target.checked)}
-                  sx={checkBoxStyles}
-                />
-              }
-              label="Clean Install"
-            />
-
-            <FormHelperText sx={warningTextStyles}>
-              <strong>WARNING</strong> This will wipe all files from your
-              selected folders. We recommend backing up your folders.
-            </FormHelperText>
-          </FormGroup>
-
           <FormControl>
             <TextField
               label="LocalPrefabs Folder"
               id="localPrefabs-folder-path"
-              value={localPrefabsPath || ''}
+              value={localPrefabsDirectory || ''}
               onChange={(event) => onLocalPrefabsPathChange(event.target.value)}
               error={localPrefabsError}
               InputProps={{
@@ -193,7 +216,7 @@ export default function Options() {
             <TextField
               label="Mods Folder"
               id="mods-folder-path"
-              value={modsPath || ''}
+              value={modsDirectory || ''}
               error={localModsError}
               onChange={(event) => onModsPathChange(event.target.value)}
               InputProps={{
@@ -207,6 +230,24 @@ export default function Options() {
               }}
             />
           </FormControl>
+
+          <FormGroup sx={formControlStyles}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={cleanInstall}
+                  onChange={(e) => setCleanInstall(e.target.checked)}
+                  sx={checkBoxStyles}
+                />
+              }
+              label="Clean Install"
+            />
+
+            <FormHelperText sx={warningTextStyles}>
+              <strong>WARNING</strong> This will wipe all files from your
+              selected folders. We recommend backing up your folders.
+            </FormHelperText>
+          </FormGroup>
         </Box>
         <Typography variant="caption" color="error">
           {hasErrors && 'Please provide valid file paths.'}

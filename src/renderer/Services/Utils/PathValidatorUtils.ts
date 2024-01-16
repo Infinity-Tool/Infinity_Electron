@@ -1,8 +1,8 @@
-const folderKeyWords = ["7days", "prefabs", "mods", "die", "7d"];
-const blacklistKeyworks = ["system32", "c:/windows"]; //TODO
+const folderKeyWords = ['7days', 'prefabs', 'mods', 'die', '7d'];
+const blacklistKeyworks = ['system32', 'c:/windows']; //TODO
 
-export const IsOkayPath = (path: string): boolean => {
-  if (path == null || path === "") return false;
+export const IsOkayPath = (path: string | null): boolean => {
+  if (path == null || path === '') return false;
 
   const lowerCasePath = path.toLowerCase();
   var isValidPath = folderKeyWords.some((word) => lowerCasePath.includes(word));

@@ -8,11 +8,10 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import StorageKeys from '../Services/StorageKeys';
-import useLocalStorage from '../Services/useLocalStorage';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export interface IUserSelection {
   name: string;
@@ -21,27 +20,8 @@ export interface IUserSelection {
 
 export default function CitiesAndSettlements() {
   const router = useNavigate();
-  // const { baseUrl } = useHttpContext();
-  // const [, setHost] = useLocalStorage(StorageKeys.host, null);
-  // const [availableFiles, setAvailableFiles]: any = useLocalStorage(
-  //   StorageKeys.availableStep1Files,
-  //   [],
-  // );
-  const [currentSelection, setCurrentSelection] = useLocalStorage(
-    StorageKeys.step1Selection,
-    [],
-  );
-
-  // //Effects
-  // useEffect(() => {
-  //   GetDirectoryFileHttp(baseUrl).then((res) => {
-  //     setHost(res.host);
-  //     setAvailableFiles(res.step_1);
-  //   });
-  // }, []);
-
+  const { step1Selection, setStep1Selection }: any = useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
-
   const availableFiles = directoryQuery.data?.step_1;
 
   //Functions
@@ -55,11 +35,11 @@ export default function CitiesAndSettlements() {
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
     // console.log('checked', checked, 'fileName', fileName);
     if (checked) {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step1Selection];
       newSelection.push({ name: fileName, childSelections: [] });
-      setCurrentSelection(newSelection);
+      setStep1Selection(newSelection);
     } else {
-      setCurrentSelection((prev: any) => {
+      setStep1Selection((prev: any) => {
         return prev.filter((x: any) => x.name !== fileName);
       });
     }
@@ -71,16 +51,16 @@ export default function CitiesAndSettlements() {
     childFileName: string,
   ) => {
     if (checked) {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step1Selection];
       const index = newSelection.findIndex(
         (x: any) => x.name === parentFileName,
       );
       if (index > -1) {
         newSelection[index].childSelections.push(childFileName);
       }
-      setCurrentSelection(newSelection);
+      setStep1Selection(newSelection);
     } else {
-      const newSelection = [...currentSelection];
+      const newSelection = [...step1Selection];
       const index = newSelection.findIndex(
         (x: any) => x.name === parentFileName,
       );
@@ -89,7 +69,7 @@ export default function CitiesAndSettlements() {
           index
         ].childSelections.filter((x: any) => x !== childFileName);
       }
-      setCurrentSelection(newSelection);
+      setStep1Selection(newSelection);
     }
   };
 
@@ -104,9 +84,7 @@ export default function CitiesAndSettlements() {
               Add entire cities to your world and
             </Typography>
           </Box>
-          <Button onClick={() => setCurrentSelection([])}>
-            Clear Selection
-          </Button>
+          <Button onClick={() => setStep1Selection([])}>Clear Selection</Button>
         </Box>
 
         {directoryQuery.isLoading && <Loading />}
@@ -115,7 +93,7 @@ export default function CitiesAndSettlements() {
         )}
 
         <ListSelection
-          currentSelection={currentSelection}
+          currentSelection={step1Selection}
           availableFiles={availableFiles}
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
