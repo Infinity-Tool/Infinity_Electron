@@ -10,14 +10,22 @@ import {
 } from '@mui/lab';
 import { Paper } from '@mui/material';
 // import { useLocation } from 'react-router';
-import { AppRoutes, RoutesMeta } from '../Services/Constants';
+import { AppRoutes, RoutesMeta, installFlow } from '../Services/Constants';
 import { useLocation } from 'react-router-dom';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function InstallTimeline() {
   const location = useLocation();
-  const routesArray = Object.values(AppRoutes).filter(
-    (r) => r !== AppRoutes.canceled,
-  );
+  const { moddedInstall } = useSelectionContext();
+  const routesArray = Object.values(AppRoutes)
+    .filter((r) => r !== AppRoutes.canceled)
+    .filter((r) => {
+      const routeMeta = RoutesMeta[r];
+
+      return moddedInstall
+        ? routeMeta.installFlow !== installFlow.vanilla
+        : routeMeta.installFlow !== installFlow.modded;
+    });
 
   const currentRouteMeta = useMemo(
     () => RoutesMeta[(location.pathname ?? AppRoutes.welcome) as AppRoutes],
@@ -37,6 +45,8 @@ export default function InstallTimeline() {
   //Styles
   const timelineContainerStyles = {};
   const timelineItemStyles = {
+    width: '220px',
+
     [`& .${timelineItemClasses.root}:before`]: {
       flex: 0,
       padding: 0,

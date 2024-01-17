@@ -16,6 +16,7 @@ import electronDl from 'electron-dl';
 import async from 'async';
 import { resolveHtmlPath } from './util';
 import MenuBuilder from './menu';
+import { Mutex } from 'async-mutex';
 
 class AppUpdater {
   constructor() {
@@ -26,7 +27,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
+const mutex = new Mutex();
 // ipcMain.on('ipc-example', async (event, arg) => {
 //   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
 //   console.log(msgTemplate(arg));
@@ -189,8 +190,7 @@ const queueNew = async (file: any) => {
   if (mainWindow === null || mainWindow === undefined) {
     return Promise.reject();
   }
-
-  return electronDl
+  await electronDl
     .download(mainWindow, file.url, file.properties)
     .then((dl) => {
       // console.debug('[ELECTRON] download-complete', file.properties.fileName);
@@ -207,13 +207,16 @@ const queueNew = async (file: any) => {
     });
 };
 
-const queue = async.queue(queueNew, 1);
+// const queue = async.queue(async (task) => queueNew(task), 4);
+
+const queue = async.queue(async (task) => {
+  await mutex.runExclusive(async () => {
+    return queueNew(task);
+  });
+}, 3);
 
 ipcMain.on('queue-files-for-download', async (event, files) => {
-  console.log('event', event);
-  // queue.drain = async (file: any) => {
-  //   await queueNew(file);
-  // };
+  // console.log('event', event);
   queue.drain();
   queue.push(files);
 });
