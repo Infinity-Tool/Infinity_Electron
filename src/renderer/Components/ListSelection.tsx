@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Checkbox,
   FormControl,
@@ -6,7 +9,6 @@ import {
   IconButton,
   ImageList,
   ImageListItem,
-  Paper,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -14,7 +16,7 @@ import Zoom from 'react-medium-image-zoom';
 import '../Assets/css/react-medium-image-zoom-overrides.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
 import { poiStyles } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/Utils/NameFormatterUtils';
@@ -59,29 +61,33 @@ export default function ListSelection(props: any) {
   const modListContainer = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem',
+    gap: theme.spacing(2),
     height: '100%',
   };
   const getModListItemStyles = (file: string) => {
     const isSelected = getIsSelected(file);
     return {
-      padding: '1rem',
+      // padding: '1rem',
       border: isSelected
         ? `1px solid ${theme.palette.primary.dark}`
         : '1px solid transparent',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'start',
-      maxWidth: '100%',
-      overflowX: 'auto',
-      marginBottom: '1rem',
+      // display: 'flex',
+      // justifyContent: 'space-between',
+      // alignItems: 'start',
+      // maxWidth: '100%',
+      // overflowX: 'auto',
+      my: theme.spacing(2),
     };
   };
   const childContainerStyles = {
-    paddingLeft: '2rem',
+    // paddingLeft: '2rem',
   };
   const poiInfoStyles = {
     maxWidth: '66%',
+  };
+  const parentTitleStyles = {
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
   };
 
   return (
@@ -93,22 +99,36 @@ export default function ListSelection(props: any) {
           itemContent={(index) => {
             const parent = availableFiles[index];
             const selected = getIsSelected(parent.name);
+            const toggle = (e: any) => {
+              onParentCheckToggle(!selected, parent.name);
+            };
+            const hasChildren = parent.childSelections?.length > 0;
 
             return (
-              <Paper sx={getModListItemStyles(parent.name)} key={index}>
-                <Box>
+              <Accordion
+                expanded={selected && hasChildren}
+                sx={getModListItemStyles(parent.name)}
+                // CollapseProps={{ unmountOnExit: true }}
+                TransitionProps={{ unmountOnExit: true }}
+              >
+                <AccordionSummary
+                  key={index}
+                  expandIcon={
+                    hasChildren && (
+                      <IconButton onClick={toggle}>
+                        <FontAwesomeIcon icon={faChevronDown} />
+                      </IconButton>
+                    )
+                  }
+                >
                   <Box sx={poiInfoStyles}>
                     <FormControl>
                       <FormControlLabel
                         control={
-                          <Checkbox
-                            checked={selected}
-                            onClick={(e: any) =>
-                              onParentCheckToggle(e.target.checked, parent.name)
-                            }
-                          />
+                          <Checkbox checked={selected} onClick={toggle} />
                         }
                         label={RemoveZ(parent.name)}
+                        slotProps={{ typography: { sx: parentTitleStyles } }}
                       />
                       <Typography variant="caption">
                         {parent.description}
@@ -126,6 +146,8 @@ export default function ListSelection(props: any) {
                       </Zoom>
                     )}
                   </Box>
+                </AccordionSummary>
+                <AccordionDetails>
                   <Box sx={childContainerStyles}>
                     {parent.childSelections?.length > 0 &&
                       parent.childSelections.map((child: any) => {
@@ -134,11 +156,7 @@ export default function ListSelection(props: any) {
                           child.name,
                         );
                         return (
-                          <Paper
-                            elevation={3}
-                            sx={poiStyles(theme, selected)}
-                            key={index}
-                          >
+                          <Box sx={poiStyles(theme, selected)} key={index}>
                             <FormControl>
                               <FormControlLabel
                                 control={
@@ -187,12 +205,12 @@ export default function ListSelection(props: any) {
                                 </ImageListItem>
                               ))}
                             </ImageList>
-                          </Paper>
+                          </Box>
                         );
                       })}
                   </Box>
-                </Box>
-              </Paper>
+                </AccordionDetails>
+              </Accordion>
             );
           }}
         />
