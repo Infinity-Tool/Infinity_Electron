@@ -8,13 +8,11 @@ import {
   ImageList,
   ImageListItem,
   InputLabel,
-  List,
   ListItemText,
   MenuItem,
   OutlinedInput,
   Paper,
   Select,
-  Stack,
   Tab,
   Tabs,
   TextField,
@@ -102,19 +100,19 @@ export default function TabSelection(props: any) {
     });
   }, [availableFiles, selectedTags, search]);
 
-  const panelFileList = useMemo(() => {
-    return filteredAvailableFiles.concat({
-      name: 'All',
-      childSelections: filteredAvailableFiles.flatMap(
-        (x: any) => x.childSelections,
-      ),
-    });
-  }, [filteredAvailableFiles]);
+  // const panelFileList = useMemo(() => {
+  //   return filteredAvailableFiles.concat({
+  //     name: 'All',
+  //     childSelections: filteredAvailableFiles.flatMap(
+  //       (x: any) => x.childSelections,
+  //     ),
+  //   });
+  // }, [filteredAvailableFiles]);
 
   const availableTabs = useMemo(() => {
     const tabs = [];
 
-    tabs.push('All');
+    // tabs.push('All');
     availableFiles?.forEach((file: any) => tabs.push(file.name));
 
     return tabs ?? [];
@@ -247,26 +245,26 @@ export default function TabSelection(props: any) {
         </Box>
 
         {/* Tab Panels */}
-        {panelFileList?.map((parent: any, index: number) => (
+        {filteredAvailableFiles?.map((parent: any, index: number) => (
           <TabPanel
             value={parent.name}
             key={parent.name + index}
             sx={{ height: '100%' }}
           >
+            <Typography color={'error'}>{parent.name}</Typography>
             {parent.childSelections.length > 0
               ? SelectablePoi(parent, index)
               : DisplayNoResults()}
           </TabPanel>
         ))}
+        <TabPanel value={'All'} sx={{ height: '100%' }}></TabPanel>
       </TabContext>
 
       {/* Info Popover */}
-      {
-        <PoiInfoDialog
-          dialogState={infoDialogState}
-          setDialogState={setInfoDialogState}
-        />
-      }
+      <PoiInfoDialog
+        dialogState={infoDialogState}
+        setDialogState={setInfoDialogState}
+      />
     </>
   );
 

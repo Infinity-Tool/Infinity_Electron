@@ -17,6 +17,7 @@ import CitiesAndSettlements from './Pages/Step1_CitiesAndSettlements';
 import StandalonePois from './Pages/Step2_SinglePoiSelection';
 import OptionalMods from './Pages/Step3_OptionalMods';
 import { SelectionContextProvider } from './Services/SelectionContext';
+import Step4_VanillaPois from './Pages/Step4_VanillaPois';
 
 export function AppContext(props: any) {
   const theme = createTheme(GetTheme());
@@ -51,6 +52,10 @@ export default function App() {
             <Route
               path={AppRoutes.singlePoiSelection}
               element={<StandalonePois />}
+            />
+            <Route
+              path={AppRoutes.vanillaPois}
+              element={<Step4_VanillaPois />}
             />
             <Route path={AppRoutes.optionalMods} element={<OptionalMods />} />
             <Route path={AppRoutes.options} element={<Options />} />

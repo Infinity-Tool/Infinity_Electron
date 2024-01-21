@@ -19,30 +19,30 @@ export interface IUserSelection {
   childSelections: string[];
 }
 
-export default function StandalonePois() {
+export default function Step4_VanillaPois() {
   const router = useNavigate();
   const directoryQuery = GetDirectoryFileQuery();
   const {
-    step2Selection,
-    setStep2Selection,
-    step2SelectedTags,
-    setStep2SelectedTags,
+    step4Selection,
+    setStep4Selection,
+    step4SelectedTags,
+    setStep4SelectedTags,
   } = useSelectionContext();
-  const availableFiles = directoryQuery.data?.step_2;
-  const availableTags = directoryQuery.data?.step_2_tags;
+  const availableFiles = directoryQuery.data?.step_4;
+  const availableTags = directoryQuery.data?.step_4_tags;
 
   // TODO put logic into query when SelectionContext is implemented
   useEffect(() => {
     if (directoryQuery.isSuccess) {
-      setStep2Selection((prev: any) => {
+      setStep4Selection((prev: any) => {
         return prev != null
           ? prev
-          : directoryQuery.data.step_2.map((x: any) => ({
+          : directoryQuery.data.step_4.map((x: any) => ({
               name: x.name,
               childSelections: x.childSelections.map((y: any) => y.name),
             }));
       });
-      setStep2SelectedTags((prev: any) => {
+      setStep4SelectedTags((prev: any) => {
         return prev.length > 0 ? prev : availableTags;
       });
     }
@@ -50,40 +50,40 @@ export default function StandalonePois() {
 
   //Functions
   const onBackClick = (event: any) => {
-    router(AppRoutes.citiesAndSettlements);
+    router(AppRoutes.options);
   };
   const onNextClick = async () => {
-    router(AppRoutes.optionalMods);
+    router(AppRoutes.installation);
   };
 
   const onToggle = (checked: boolean, parent: string, child: string) => {
-    const parentIndex = step2Selection.findIndex((x: any) => x.name === parent);
+    const parentIndex = step4Selection.findIndex((x: any) => x.name === parent);
     // checked
     if (checked) {
       // check if parent is in current selection, if so add child to it
       if (parentIndex > -1) {
-        const newSelection = [...step2Selection];
+        const newSelection = [...step4Selection];
         newSelection[parentIndex].childSelections.push(child);
-        setStep2Selection(newSelection);
+        setStep4Selection(newSelection);
       } else {
         // if not, add parent to current selection with child
-        const newSelection = [...step2Selection];
+        const newSelection = [...step4Selection];
         newSelection.push({ name: parent, childSelections: [child] });
-        setStep2Selection(newSelection);
+        setStep4Selection(newSelection);
       }
     }
     // unchecked
     else {
       // check if parent is in current selection, but now has no children, if so remove it
       if (parentIndex > -1) {
-        const newSelection = [...step2Selection];
+        const newSelection = [...step4Selection];
         newSelection[parentIndex].childSelections = newSelection[
           parentIndex
         ].childSelections.filter((x: any) => x !== child);
         if (newSelection[parentIndex].childSelections.length === 0) {
           newSelection.splice(parentIndex, 1);
         }
-        setStep2Selection(newSelection);
+        setStep4Selection(newSelection);
       }
     }
   };
@@ -93,10 +93,10 @@ export default function StandalonePois() {
       <Box sx={pageContentStyles}>
         <Box sx={headerContainerStyles}>
           <Box>
-            <Typography variant="h1">Single POI Selection</Typography>
+            <Typography variant="h1">Vanilla Poi Selection</Typography>
             <Typography variant="caption">TODO Description</Typography>
           </Box>
-          <Button onClick={() => setStep2Selection([])}>Clear Selection</Button>
+          <Button onClick={() => setStep4Selection([])}>Clear Selection</Button>
         </Box>
 
         {directoryQuery.isLoading && <Loading />}
@@ -106,19 +106,19 @@ export default function StandalonePois() {
 
         {availableFiles && availableTags && (
           <TabSelection
-            currentSelection={step2Selection}
+            currentSelection={step4Selection}
             availableFiles={availableFiles}
             onToggle={onToggle}
             availableTags={availableTags}
-            selectedTags={step2SelectedTags}
-            setSelectedTags={setStep2SelectedTags}
+            selectedTags={step4SelectedTags}
+            setSelectedTags={setStep4SelectedTags}
           />
         )}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
-          Next
+          Download & Install
         </Button>
       </Box>
     </Box>

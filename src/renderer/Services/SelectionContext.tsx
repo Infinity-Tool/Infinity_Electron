@@ -2,9 +2,14 @@ import { Context, createContext, useContext } from 'react';
 import StorageKeys from './StorageKeys';
 import useLocalStorage from './useLocalStorage';
 
+export enum InstallMethod {
+  overwrite = 'overwrite',
+  cleanInstall = 'cleanInstall',
+  missingFilesOnly = 'missingFilesOnly',
+}
 export class Selection {
-  public cleanInstall: boolean = false;
-  public setCleanInstall: any;
+  public installMethod: InstallMethod = InstallMethod.overwrite;
+  public setInstallMethod: any;
 
   public moddedInstall: boolean = false;
   public setModdedInstall: any;
@@ -29,6 +34,9 @@ export class Selection {
 
   public step4Selection: any[] = [];
   public setStep4Selection: any;
+
+  public step4SelectedTags: any[] = [];
+  public setStep4SelectedTags: any;
 }
 
 export const selectionContext = createContext(new Selection());
@@ -46,9 +54,9 @@ export const useSelectionContext = () => {
 };
 
 export const SelectionContextProvider = ({ children }: any): any => {
-  const [cleanInstall, setCleanInstall] = useLocalStorage(
-    StorageKeys.cleanInstall,
-    false,
+  const [installMethod, setInstallMethod] = useLocalStorage(
+    StorageKeys.installMethod,
+    InstallMethod.overwrite,
   );
   const [moddedInstall, setModdedInstall] = useLocalStorage(
     StorageKeys.moddedInstall,
@@ -82,10 +90,14 @@ export const SelectionContextProvider = ({ children }: any): any => {
     StorageKeys.step4Selection,
     [],
   );
+  const [step4SelectedTags, setStep4SelectedTags] = useLocalStorage(
+    StorageKeys.step4SelectedTags,
+    [],
+  );
 
   const selection: Selection = {
-    cleanInstall,
-    setCleanInstall,
+    installMethod,
+    setInstallMethod,
     moddedInstall,
     setModdedInstall,
     modsDirectory,
@@ -102,6 +114,8 @@ export const SelectionContextProvider = ({ children }: any): any => {
     setStep3Selection,
     step4Selection,
     setStep4Selection,
+    step4SelectedTags: step4SelectedTags,
+    setStep4SelectedTags: setStep4SelectedTags,
   };
 
   return (

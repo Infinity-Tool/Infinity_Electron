@@ -32,7 +32,8 @@ export default function Installation() {
   const availableStep4Files = directory.data?.step_4;
   const [fileCount, setFileCount]: any = useState();
   const {
-    cleanInstall,
+    moddedInstall,
+    installMethod,
     modsDirectory,
     localPrefabsDirectory,
     step1Selection,
@@ -51,33 +52,36 @@ export default function Installation() {
     const totalFiles = fileCount;
     const completedFiles = filesCompleted.length;
     const erroredFiles = filesErrored.length;
-    return ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
+    const percent =
+      ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
+    return percent ?? 0;
   }, [filesCompleted]);
 
   const startDownloads = () => {
-    const step0Files = buildFileLists(
-      availableStep0Files,
-      availableStep0Files.map((a: any) => ({
-        name: a.name,
-        childSelections: a.childSelections.map((b: any) => b.name),
-      })),
-    );
-    const step1Files = buildFileLists(availableStep1Files, step1Selection);
-    const step2Files = buildFileLists(availableStep2Files, step2Selection);
-    const step3Files = buildFileLists(availableStep3Files, step3Selection);
-    const step4Files = buildFileLists(availableStep4Files, step4Selection);
+    let allFiles = [];
 
-    const combinedFileLists = [
-      ...step0Files,
-      ...step1Files,
-      ...step2Files,
-      ...step3Files,
-      ...step4Files,
-    ];
+    if (moddedInstall) {
+      const step0Files = buildFileLists(
+        availableStep0Files,
+        availableStep0Files.map((a: any) => ({
+          name: a.name,
+          childSelections: a.childSelections.map((b: any) => b.name),
+        })),
+      );
+      const step1Files = buildFileLists(availableStep1Files, step1Selection);
+      const step2Files = buildFileLists(availableStep2Files, step2Selection);
+      const step3Files = buildFileLists(availableStep3Files, step3Selection);
+      // allFiles.push(...step0Files, ...step1Files, ...step2Files, ...step3Files);
+      allFiles = [...step0Files, ...step1Files, ...step2Files, ...step3Files];
+    } else {
+      const step4Files = buildFileLists(availableStep4Files, step4Selection);
+      // allFiles.push(...step4Files);
+      allFiles = [...step4Files];
+    }
 
-    setFileCount(combinedFileLists.length);
+    setFileCount(allFiles.length);
 
-    const filesPreppedForDownload = combinedFileLists.map((file: any) => {
+    const filesPreppedForDownload = allFiles.map((file: any) => {
       const directoryWithoutFileName = file.destination.substring(
         0,
         file.destination.lastIndexOf('/'),
@@ -190,7 +194,8 @@ export default function Installation() {
 
   const cancelInstallAndGoBack = () => {
     ipcRenderer.sendMessage('download-cancel');
-    router(AppRoutes.citiesAndSettlements);
+    if (moddedInstall) router(AppRoutes.citiesAndSettlements);
+    else router(AppRoutes.vanillaPois);
   };
 
   const cancelInstallationAndGoCanceledPage = () => {

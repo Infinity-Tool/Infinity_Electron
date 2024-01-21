@@ -22,19 +22,19 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import StorageKeys from '../Services/StorageKeys';
 import { IsOkayPath } from '../Services/Utils/PathValidatorUtils';
-import useLocalStorage from '../Services/useLocalStorage';
-import { useSelectionContext } from '../Services/SelectionContext';
-import { text } from 'node:stream/consumers';
+import {
+  InstallMethod,
+  useSelectionContext,
+} from '../Services/SelectionContext';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
   const router = useNavigate();
   const theme = useTheme();
   const {
-    cleanInstall,
-    setCleanInstall,
+    installMethod,
+    setInstallMethod,
     modsDirectory,
     setModsDirectory,
     moddedInstall,
@@ -74,15 +74,15 @@ export default function Options() {
   const HandleFolderSelected = () => {
     ipcRenderer.on('selected-directory', (event: any, path: any) => {
       const { folderType } = event;
-      console.log(
-        'selected-directory',
-        'event',
-        event,
-        'path',
-        path,
-        'folderType',
-        folderType,
-      );
+      // console.log(
+      //   'selected-directory',
+      //   'event',
+      //   event,
+      //   'path',
+      //   path,
+      //   'folderType',
+      //   folderType,
+      // );
       if (!event.canceled && event.filePaths?.length > 0) {
         const filePath = event.filePaths[0];
         switch (folderType) {
@@ -111,7 +111,8 @@ export default function Options() {
 
   const onNextClick = () => {
     if (Validate()) {
-      router(AppRoutes.citiesAndSettlements);
+      if (moddedInstall) router(AppRoutes.citiesAndSettlements);
+      else router(AppRoutes.vanillaPois);
     } else {
       // todo throw toast/display error?
     }
@@ -135,11 +136,6 @@ export default function Options() {
   };
   const checkBoxStyles = {
     '& .MuiSvgIcon-root': { fontSize: '2rem' },
-  };
-  const warningTextStyles = {
-    color: 'warning.main',
-    opacity: cleanInstall ? 1 : 0,
-    cursor: cleanInstall ? 'text' : 'default',
   };
   const formContainerStyles = {
     display: 'flex',
@@ -170,6 +166,15 @@ export default function Options() {
     cursor: 'pointer',
     textAlign: 'center',
   });
+
+  const installationMethodContainerStyles = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.spacing(2),
+    mt: theme.spacing(2),
+    mb: theme.spacing(4),
+    px: theme.spacing(2),
+  };
 
   return (
     <Box sx={pageContainerStyles}>
@@ -233,8 +238,53 @@ export default function Options() {
             />
           </FormControl>
 
-          <FormGroup sx={formControlStyles}>
-            <FormControlLabel
+          <Box sx={installationMethodContainerStyles}>
+            <Paper
+              onClick={() => setInstallMethod(InstallMethod.overwrite)}
+              sx={installationTypeStyles(
+                installMethod === InstallMethod.overwrite,
+              )}
+            >
+              <Typography variant="h5">Overwrite (Recommended)</Typography>
+              <Typography>
+                Installs newly-selected files and overwrites existing files. No
+                files will be deleted.
+              </Typography>
+            </Paper>
+            <Paper
+              onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
+              sx={installationTypeStyles(
+                installMethod === InstallMethod.missingFilesOnly,
+              )}
+            >
+              <Typography variant="h5">Missing Files Only</Typography>
+              <Typography>
+                Only download missing files which is a faster install.
+              </Typography>
+              <Typography color="warning" variant="caption">
+                If newer files are available, they will not be downloaded. Only
+                recommended if your last selection was recent.
+              </Typography>
+            </Paper>
+            <Paper
+              onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
+              sx={installationTypeStyles(
+                installMethod === InstallMethod.cleanInstall,
+              )}
+            >
+              <Typography variant="h5">Clean Install</Typography>
+              <Typography>
+                Wipe out target folders and fully install all selected files.
+              </Typography>
+              <Typography color="warning" variant="caption">
+                WARNING: This will delete the entire contents of the paths
+                specified above!
+              </Typography>
+            </Paper>
+          </Box>
+
+          {/* <FormGroup sx={formControlStyles}> */}
+          {/* <FormControlLabel
               control={
                 <Checkbox
                   checked={cleanInstall}
@@ -248,8 +298,8 @@ export default function Options() {
             <FormHelperText sx={warningTextStyles}>
               <strong>WARNING</strong> This will wipe all files from your
               selected folders. We recommend backing up your folders.
-            </FormHelperText>
-          </FormGroup>
+            </FormHelperText> */}
+          {/* </FormGroup> */}
         </Box>
         <Typography variant="caption" color="error">
           {hasErrors && 'Please provide valid file paths.'}
