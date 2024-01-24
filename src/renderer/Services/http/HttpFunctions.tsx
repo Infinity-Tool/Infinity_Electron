@@ -17,7 +17,7 @@ const fetchOptions: any = {
 export const AgreementQuery = (): UseQueryResult<any, unknown> => {
   const { baseUrl } = useHttpContext();
   const query = useQuery(
-    'agreement',
+    `${baseUrl}_agreement`,
     () => {
       const url = `${baseUrl}/user_agreement.txt`;
       return axios.get(url).then((res) => res.data);
@@ -34,7 +34,7 @@ export const AgreementQuery = (): UseQueryResult<any, unknown> => {
 export const GetDirectoryFileQuery = (): UseQueryResult<any, unknown> => {
   const { baseUrl } = useHttpContext();
   const query = useQuery(
-    'directory',
+    `${baseUrl}_directory`,
     () => {
       const url = `${baseUrl}/directory.json`;
       return axios.get(url, fetchOptions).then((res) => res.data);
@@ -47,3 +47,29 @@ export const GetDirectoryFileQuery = (): UseQueryResult<any, unknown> => {
 
   return query;
 };
+
+export const GetAnnouncementQuery = (
+  announcementType: AnnouncementType,
+): UseQueryResult<any, unknown> => {
+  const { baseUrl } = useHttpContext();
+  const query = useQuery(
+    `${baseUrl}_announcement_${announcementType}`,
+    () => {
+      const url = `${baseUrl}/Announcements/${announcementType}.txt`;
+      return axios.get(url).then((res) => res.data);
+    },
+    {
+      staleTime: Infinity,
+      retry: false,
+    },
+  );
+
+  return query;
+};
+
+export const enum AnnouncementType {
+  error = 'error',
+  info = 'info',
+  success = 'success',
+  warning = 'warning',
+}

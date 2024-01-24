@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Checkbox,
   Chip,
   FormControl,
@@ -49,6 +50,7 @@ export default function TabSelection(props: any) {
     selectedTags,
     setSelectedTags,
     onToggle,
+    selectAll,
   } = props;
 
   const getIsChildSelected = (
@@ -95,26 +97,43 @@ export default function TabSelection(props: any) {
 
         return containsTag && containsSearch;
       });
-
       return file;
     });
   }, [availableFiles, selectedTags, search]);
 
-  // const panelFileList = useMemo(() => {
-  //   return filteredAvailableFiles.concat({
-  //     name: 'All',
-  //     childSelections: filteredAvailableFiles.flatMap(
-  //       (x: any) => x.childSelections,
-  //     ),
-  //   });
-  // }, [filteredAvailableFiles]);
+  const panelFileList = useMemo(() => {
+    const tabs: TabContent[] = filteredAvailableFiles.map((category: any) => ({
+      tabName: category.name,
+      parentName: category.name,
+      tabFiles: category.childSelections.map((file: any) => ({
+        parent: category.name,
+        ...file,
+      })),
+    }));
+
+    // concat "All" tab which is all files
+    tabs.push({
+      tabName: 'All',
+      parentName: null,
+      tabFiles: filteredAvailableFiles.flatMap((x: any) =>
+        x.childSelections.map((file: any) => ({
+          parent: x.name,
+          ...file,
+        })),
+      ),
+    });
+
+    return tabs;
+  }, [filteredAvailableFiles]);
 
   const availableTabs = useMemo(() => {
     const tabs = [];
-
-    // tabs.push('All');
-    availableFiles?.forEach((file: any) => tabs.push(file.name));
-
+    tabs.push('All');
+    availableFiles
+      ?.filter(
+        (file: any) => file.name.toLowerCase() !== '_Required'.toLowerCase(),
+      )
+      .forEach((file: any) => tabs.push(file.name));
     return tabs ?? [];
   }, [availableFiles]);
 
@@ -245,19 +264,28 @@ export default function TabSelection(props: any) {
         </Box>
 
         {/* Tab Panels */}
-        {filteredAvailableFiles?.map((parent: any, index: number) => (
+        {panelFileList?.map((tabContent: TabContent, index: number) => (
           <TabPanel
-            value={parent.name}
-            key={parent.name + index}
+            value={tabContent.tabName}
+            key={tabContent.tabName}
             sx={{ height: '100%' }}
           >
-            <Typography color={'error'}>{parent.name}</Typography>
-            {parent.childSelections.length > 0
-              ? SelectablePoi(parent, index)
+            {tabContent?.parentName && (
+              <Button
+                onClick={() => {
+                  const parentName = tabContent.parentName;
+                  selectAll(parentName);
+                }}
+              >
+                Select All
+              </Button>
+            )}
+            {tabContent.tabFiles.length > 0
+              ? VirtualTabFileList(tabContent.tabFiles, index)
               : DisplayNoResults()}
           </TabPanel>
         ))}
-        <TabPanel value={'All'} sx={{ height: '100%' }}></TabPanel>
+        {/* <TabPanel value={'All'} sx={{ height: '100%' }}></TabPanel> */}
       </TabContext>
 
       {/* Info Popover */}
@@ -281,9 +309,8 @@ export default function TabSelection(props: any) {
     );
   }
 
-  function SelectablePoi(parent: any, index: number) {
-    const count = parent.childSelections.length;
-
+  function VirtualTabFileList(tabFiles: TabFile[], index: number) {
+    const count = tabFiles.length;
     const poiInfoStyles = {
       maxWidth: '66%',
     };
@@ -294,8 +321,8 @@ export default function TabSelection(props: any) {
         style={{ height: '100%' }}
         totalCount={count}
         itemContent={(index) => {
-          const child = parent.childSelections[index];
-          const selected = getIsChildSelected(parent.name, child.name);
+          const tabFile: TabFile = tabFiles[index];
+          const selected = getIsChildSelected(tabFile.parent, tabFile.name);
 
           return (
             <Paper sx={poiStyles(theme, selected)} key={index}>
@@ -306,18 +333,22 @@ export default function TabSelection(props: any) {
                       <Checkbox
                         checked={selected}
                         onClick={(e: any) => {
-                          onToggle(e.target.checked, parent.name, child.name);
+                          onToggle(
+                            e.target.checked,
+                            tabFile.parent,
+                            tabFile.name,
+                          );
                         }}
                       />
                     }
-                    label={RemoveZ(child.name)}
+                    label={RemoveZ(tabFile.name)}
                   ></FormControlLabel>
                 </FormControl>
                 <IconButton
                   onClick={(e) => {
                     setInfoDialogState({
                       open: true,
-                      poi: child,
+                      poi: tabFile,
                     });
                   }}
                 >
@@ -326,9 +357,9 @@ export default function TabSelection(props: any) {
                     color={theme.palette.text.secondary}
                   />
                 </IconButton>
-                <Typography>{child.description}</Typography>
+                <Typography>{tabFile.description}</Typography>
                 <Box sx={tagChipContainerStyles}>
-                  {child.editorGroups?.map((eg: string) => (
+                  {tabFile.editorGroups?.map((eg: string) => (
                     <Chip
                       label={ProperCase(eg)}
                       size="small"
@@ -339,12 +370,12 @@ export default function TabSelection(props: any) {
                 </Box>
               </Box>
               <ImageList rowHeight={100} cols={100}>
-                {child.images?.map((img: string) => (
+                {tabFile.images?.map((img: string) => (
                   <ImageListItem>
                     <Zoom>
                       <img
                         src={`${baseUrl}/${img}`}
-                        alt={child.name}
+                        alt={tabFile.name}
                         style={{ maxHeight: '90px' }}
                         loading="lazy"
                       ></img>

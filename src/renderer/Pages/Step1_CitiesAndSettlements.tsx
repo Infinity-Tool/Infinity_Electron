@@ -73,6 +73,27 @@ export default function CitiesAndSettlements() {
     }
   };
 
+  const selectAll = (parentName: string) => {
+    const parent = availableFiles.find((x: any) => x.name === parentName);
+    setStep1Selection((prev: any) => {
+      const newSelection = [...prev];
+      const parentIndex = newSelection.findIndex(
+        (x: any) => x.name === parentName,
+      );
+      if (parentIndex > -1) {
+        newSelection[parentIndex].childSelections = parent.childSelections.map(
+          (x: any) => x.name,
+        );
+      } else {
+        newSelection.push({
+          name: parentName,
+          childSelections: parent.childSelections.map((x: any) => x.name),
+        });
+      }
+      return newSelection;
+    });
+  };
+
   return (
     <Box sx={pageContainerStyles}>
       {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
@@ -98,6 +119,7 @@ export default function CitiesAndSettlements() {
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
           showDetails={true}
+          selectAll={selectAll}
         />
       </Box>
       <Box sx={pageFooterStyles}>

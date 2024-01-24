@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -37,6 +38,7 @@ export default function ListSelection(props: any) {
     onParentCheckToggle,
     onChildCheckToggle,
     showDetails,
+    selectAll,
   } = props;
 
   const getIsSelected = (fileName: string): boolean => {
@@ -148,6 +150,11 @@ export default function ListSelection(props: any) {
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
+                  {selectAll && (
+                    <Button onClick={() => selectAll(parent.name)}>
+                      Select All
+                    </Button>
+                  )}
                   <Box sx={childContainerStyles}>
                     {parent.childSelections?.length > 0 &&
                       parent.childSelections.map((child: any) => {

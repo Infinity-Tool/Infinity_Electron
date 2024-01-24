@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   FormControl,
@@ -17,6 +19,11 @@ import {
 } from '../Services/CommonStyles';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { useNavigate } from 'react-router-dom';
+import {
+  AnnouncementType,
+  GetAnnouncementQuery,
+} from '../Services/http/HttpFunctions';
+import Announcements from '../Components/Announcements';
 
 export default function Welcome() {
   const router = useNavigate();
@@ -72,6 +79,7 @@ export default function Welcome() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
+        <Announcements />
         <Box sx={logoContainerStyles} onClick={onLogoClick}>
           <InfinityLogo devMode={devMode} />
         </Box>

@@ -165,6 +165,8 @@ export default function Options() {
     flex: 1,
     cursor: 'pointer',
     textAlign: 'center',
+    // filter to mute all color
+    filter: selected ? 'none' : 'grayscale(100%)',
   });
 
   const installationMethodContainerStyles = {
@@ -174,6 +176,10 @@ export default function Options() {
     mt: theme.spacing(2),
     mb: theme.spacing(4),
     px: theme.spacing(2),
+  };
+
+  const warningStyles = {
+    color: theme.palette.warning.main,
   };
 
   return (
@@ -238,73 +244,80 @@ export default function Options() {
             />
           </FormControl>
 
-          <Box sx={installationMethodContainerStyles}>
-            <Paper
-              onClick={() => setInstallMethod(InstallMethod.overwrite)}
-              sx={installationTypeStyles(
-                installMethod === InstallMethod.overwrite,
-              )}
-            >
-              <Typography variant="h5">Overwrite (Recommended)</Typography>
-              <Typography>
-                Installs newly-selected files and overwrites existing files. No
-                files will be deleted.
+          {moddedInstall && (
+            <Box>
+              <Typography color="error" variant="h4">
+                NOT IMPLEMENTED
               </Typography>
-            </Paper>
-            <Paper
-              onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
-              sx={installationTypeStyles(
-                installMethod === InstallMethod.missingFilesOnly,
-              )}
-            >
-              <Typography variant="h5">Missing Files Only</Typography>
-              <Typography>
-                Only download missing files which is a faster install.
-              </Typography>
-              <Typography color="warning" variant="caption">
-                If newer files are available, they will not be downloaded. Only
-                recommended if your last selection was recent.
-              </Typography>
-            </Paper>
-            <Paper
-              onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
-              sx={installationTypeStyles(
-                installMethod === InstallMethod.cleanInstall,
-              )}
-            >
-              <Typography variant="h5">Clean Install</Typography>
-              <Typography>
-                Wipe out target folders and fully install all selected files.
-              </Typography>
-              <Typography color="warning" variant="caption">
-                WARNING: This will delete the entire contents of the paths
-                specified above!
-              </Typography>
-            </Paper>
-          </Box>
-
-          {/* <FormGroup sx={formControlStyles}> */}
-          {/* <FormControlLabel
-              control={
-                <Checkbox
-                  checked={cleanInstall}
-                  onChange={(e) => setCleanInstall(e.target.checked)}
-                  sx={checkBoxStyles}
+              <FormGroup sx={formControlStyles}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      // checked={cleanInstall}
+                      // onChange={(e) => setCleanInstall(e.target.checked)}
+                      sx={checkBoxStyles}
+                    />
+                  }
+                  label="Hide all trader selections (Usually for those who play with overhauls)"
                 />
-              }
-              label="Clean Install"
-            />
-
-            <FormHelperText sx={warningTextStyles}>
-              <strong>WARNING</strong> This will wipe all files from your
-              selected folders. We recommend backing up your folders.
-            </FormHelperText> */}
-          {/* </FormGroup> */}
+              </FormGroup>
+            </Box>
+          )}
+          <Typography variant="caption" color="error">
+            {hasErrors && 'Please provide valid file paths.'}
+          </Typography>
         </Box>
-        <Typography variant="caption" color="error">
-          {hasErrors && 'Please provide valid file paths.'}
+
+        {/* Installation Type */}
+        <Typography color="error" variant="h4">
+          NOT IMPLEMENTED
         </Typography>
+        <Box sx={installationMethodContainerStyles}>
+          <Paper
+            onClick={() => setInstallMethod(InstallMethod.overwrite)}
+            sx={installationTypeStyles(
+              installMethod === InstallMethod.overwrite,
+            )}
+          >
+            <Typography variant="h5">Overwrite (Recommended)</Typography>
+            <Typography>
+              Installs newly-selected files and overwrites existing files. No
+              files will be deleted.
+            </Typography>
+          </Paper>
+          <Paper
+            onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
+            sx={installationTypeStyles(
+              installMethod === InstallMethod.missingFilesOnly,
+            )}
+          >
+            <Typography variant="h5">Quick Install</Typography>
+            <Typography>
+              Only download missing files which is a faster installation.
+            </Typography>
+            <Typography sx={warningStyles} variant="caption">
+              WARNING: If newer files are available, they will not be
+              downloaded. Only recommended if your last installation was recent.
+            </Typography>
+          </Paper>
+          <Paper
+            onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
+            sx={installationTypeStyles(
+              installMethod === InstallMethod.cleanInstall,
+            )}
+          >
+            <Typography variant="h5">Clean Install</Typography>
+            <Typography>
+              Wipe out target folders and fully install all files from scratch.
+            </Typography>
+            <Typography sx={warningStyles} variant="caption">
+              WARNING: This will delete the entire contents of the paths
+              specified above!
+            </Typography>
+          </Paper>
+        </Box>
       </Box>
+
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>

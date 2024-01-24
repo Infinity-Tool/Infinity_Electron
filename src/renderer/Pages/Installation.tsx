@@ -74,7 +74,11 @@ export default function Installation() {
       // allFiles.push(...step0Files, ...step1Files, ...step2Files, ...step3Files);
       allFiles = [...step0Files, ...step1Files, ...step2Files, ...step3Files];
     } else {
+      const requiredStep4Files = { name: '_Required', childSelections: [] };
+      const newStep4Selection = step4Selection.concat(requiredStep4Files);
+      console.log('newStep4Selection', newStep4Selection);
       const step4Files = buildFileLists(availableStep4Files, step4Selection);
+      console.log('step4Files', step4Files);
       // allFiles.push(...step4Files);
       allFiles = [...step4Files];
     }

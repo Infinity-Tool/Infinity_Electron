@@ -88,6 +88,27 @@ export default function Step4_VanillaPois() {
     }
   };
 
+  const selectAll = (parentName: string) => {
+    const parent = availableFiles.find((x: any) => x.name === parentName);
+    setStep4Selection((prev: any) => {
+      const newSelection = [...prev];
+      const parentIndex = newSelection.findIndex(
+        (x: any) => x.name === parentName,
+      );
+      if (parentIndex > -1) {
+        newSelection[parentIndex].childSelections = parent.childSelections.map(
+          (x: any) => x.name,
+        );
+      } else {
+        newSelection.push({
+          name: parentName,
+          childSelections: parent.childSelections.map((x: any) => x.name),
+        });
+      }
+      return newSelection;
+    });
+  };
+
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
@@ -112,6 +133,7 @@ export default function Step4_VanillaPois() {
             availableTags={availableTags}
             selectedTags={step4SelectedTags}
             setSelectedTags={setStep4SelectedTags}
+            selectAll={selectAll}
           />
         )}
       </Box>
