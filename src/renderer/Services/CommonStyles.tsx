@@ -1,21 +1,4 @@
-export const pageContainerStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100vh',
-  overflow: 'hidden',
-  gap: '2rem',
-  width: { xs: '100%', sm: '90%', md: '80%', lg: '75%', xl: '70%' },
-  mx: 'auto',
-};
-
-export const pageContentStyles = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'auto',
-  width: '100%',
-  p: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem' },
-
+export const scrollBarStyles = {
   //Scrollbar styles
   '&::-webkit-scrollbar': {
     width: '18px',
@@ -36,6 +19,26 @@ export const pageContentStyles = {
     },
     borderRadius: '999px',
   },
+};
+
+export const pageContainerStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100vh',
+  overflow: 'hidden',
+  gap: '0.5rem',
+  width: { xs: '100%', sm: '90%', md: '80%', lg: '75%', xl: '70%' },
+  mx: 'auto',
+};
+
+export const pageContentStyles = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'auto',
+  width: '100%',
+  p: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem' },
+  // ...scrollBarStyles,
 };
 
 export const pageFooterStyles = {

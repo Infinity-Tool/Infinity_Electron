@@ -127,14 +127,17 @@ export default function TabSelection(props: any) {
   }, [filteredAvailableFiles]);
 
   const availableTabs = useMemo(() => {
-    const tabs = [];
-    tabs.push('All');
-    availableFiles
+    const tabs = availableFiles
       ?.filter(
         (file: any) => file.name.toLowerCase() !== '_Required'.toLowerCase(),
       )
-      .forEach((file: any) => tabs.push(file.name));
-    return tabs ?? [];
+      .map((file: any) => file.name)
+      .sort();
+
+    // concat "All" tab which is all files to the begingging of the array
+    tabs.unshift('All');
+
+    return tabs;
   }, [availableFiles]);
 
   const GetChipVariant = (selected: boolean) => {

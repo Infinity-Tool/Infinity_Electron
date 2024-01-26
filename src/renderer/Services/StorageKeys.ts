@@ -15,6 +15,7 @@ enum StorageKeys {
   step4SelectedTags = 'step4SelectedTags',
   devModeEnabled = 'devModeEnabled',
   devModeKey = 'devModeKey',
+  dismissedAlerts = 'dismissedAlerts',
 }
 
 export default StorageKeys;

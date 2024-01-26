@@ -115,7 +115,9 @@ export default function StandalonePois() {
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Single POI Selection</Typography>
-            <Typography variant="caption">TODO Description</Typography>
+            <Typography variant="caption">
+              Add individual custom Points of Interest to your world.
+            </Typography>
           </Box>
           <Button onClick={() => setStep2Selection([])}>Clear Selection</Button>
         </Box>

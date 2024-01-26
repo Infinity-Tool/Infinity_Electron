@@ -11,6 +11,7 @@ export enum AppRoutes {
   singlePoiSelection = '/standalone-pois',
   optionalMods = '/optional-mods',
   vanillaPois = '/vanilla-pois',
+  preInstallation = '/pre-installation',
   installation = '/installation',
   finished = '/finished',
   canceled = '/canceled',
@@ -65,19 +66,24 @@ export const RoutesMeta: Record<
     value: 3,
     installFlow: installFlow.vanilla,
   },
+  [AppRoutes.preInstallation]: {
+    title: 'Install Options',
+    value: 6,
+    installFlow: installFlow.any,
+  },
   [AppRoutes.installation]: {
     title: 'Installation',
-    value: 6,
+    value: 7,
     installFlow: installFlow.any,
   },
   [AppRoutes.finished]: {
     title: 'Finished',
-    value: 7,
+    value: 8,
     installFlow: installFlow.any,
   },
   [AppRoutes.canceled]: {
     title: 'Canceled',
-    value: 8,
+    value: 9,
     installFlow: installFlow.any,
   },
 };

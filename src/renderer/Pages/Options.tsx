@@ -33,8 +33,6 @@ export default function Options() {
   const router = useNavigate();
   const theme = useTheme();
   const {
-    installMethod,
-    setInstallMethod,
     modsDirectory,
     setModsDirectory,
     moddedInstall,
@@ -169,19 +167,6 @@ export default function Options() {
     filter: selected ? 'none' : 'grayscale(100%)',
   });
 
-  const installationMethodContainerStyles = {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(2),
-    mt: theme.spacing(2),
-    mb: theme.spacing(4),
-    px: theme.spacing(2),
-  };
-
-  const warningStyles = {
-    color: theme.palette.warning.main,
-  };
-
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
@@ -266,55 +251,6 @@ export default function Options() {
           <Typography variant="caption" color="error">
             {hasErrors && 'Please provide valid file paths.'}
           </Typography>
-        </Box>
-
-        {/* Installation Type */}
-        <Typography color="error" variant="h4">
-          NOT IMPLEMENTED
-        </Typography>
-        <Box sx={installationMethodContainerStyles}>
-          <Paper
-            onClick={() => setInstallMethod(InstallMethod.overwrite)}
-            sx={installationTypeStyles(
-              installMethod === InstallMethod.overwrite,
-            )}
-          >
-            <Typography variant="h5">Overwrite (Recommended)</Typography>
-            <Typography>
-              Installs newly-selected files and overwrites existing files. No
-              files will be deleted.
-            </Typography>
-          </Paper>
-          <Paper
-            onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
-            sx={installationTypeStyles(
-              installMethod === InstallMethod.missingFilesOnly,
-            )}
-          >
-            <Typography variant="h5">Quick Install</Typography>
-            <Typography>
-              Only download missing files which is a faster installation.
-            </Typography>
-            <Typography sx={warningStyles} variant="caption">
-              WARNING: If newer files are available, they will not be
-              downloaded. Only recommended if your last installation was recent.
-            </Typography>
-          </Paper>
-          <Paper
-            onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
-            sx={installationTypeStyles(
-              installMethod === InstallMethod.cleanInstall,
-            )}
-          >
-            <Typography variant="h5">Clean Install</Typography>
-            <Typography>
-              Wipe out target folders and fully install all files from scratch.
-            </Typography>
-            <Typography sx={warningStyles} variant="caption">
-              WARNING: This will delete the entire contents of the paths
-              specified above!
-            </Typography>
-          </Paper>
         </Box>
       </Box>
 

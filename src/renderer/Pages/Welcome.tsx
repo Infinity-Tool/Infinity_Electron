@@ -19,10 +19,6 @@ import {
 } from '../Services/CommonStyles';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  AnnouncementType,
-  GetAnnouncementQuery,
-} from '../Services/http/HttpFunctions';
 import Announcements from '../Components/Announcements';
 
 export default function Welcome() {

@@ -22,7 +22,9 @@ export default function CitiesAndSettlements() {
   const router = useNavigate();
   const { step1Selection, setStep1Selection }: any = useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
-  const availableFiles = directoryQuery.data?.step_1;
+  const availableFiles = directoryQuery.data?.step_1?.sort((a: any, b: any) =>
+    a.name.localeCompare(b.name),
+  );
 
   //Functions
   const onBackClick = (event: any) => {
@@ -102,7 +104,7 @@ export default function CitiesAndSettlements() {
           <Box>
             <Typography variant="h1">Cities & Settlements</Typography>
             <Typography variant="caption">
-              Add entire cities to your world and
+              Add entirely new custom settlements to your world.
             </Typography>
           </Box>
           <Button onClick={() => setStep1Selection([])}>Clear Selection</Button>

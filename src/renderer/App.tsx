@@ -18,6 +18,7 @@ import StandalonePois from './Pages/Step2_SinglePoiSelection';
 import OptionalMods from './Pages/Step3_OptionalMods';
 import { SelectionContextProvider } from './Services/SelectionContext';
 import Step4_VanillaPois from './Pages/Step4_VanillaPois';
+import PreInstallationOptions from './Pages/PreInstallationOptions';
 
 export function AppContext(props: any) {
   const theme = createTheme(GetTheme());
@@ -59,6 +60,10 @@ export default function App() {
             />
             <Route path={AppRoutes.optionalMods} element={<OptionalMods />} />
             <Route path={AppRoutes.options} element={<Options />} />
+            <Route
+              path={AppRoutes.preInstallation}
+              element={<PreInstallationOptions />}
+            />
             <Route path={AppRoutes.installation} element={<Installation />} />
             <Route path={AppRoutes.finished} element={<Finished />} />
             <Route path={AppRoutes.canceled} element={<Canceled />} />

@@ -17,14 +17,16 @@ export default function Step3_OptionalMods(props: any) {
   const router = useNavigate();
   const { step3Selection, setStep3Selection } = useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
-  const availableFiles = directoryQuery.data?.step_3;
+  const availableFiles = directoryQuery.data?.step_3?.sort((a: any, b: any) =>
+    a.name.localeCompare(b.name),
+  );
 
   //Functions
   const onBackClick = (event: any) => {
     router(AppRoutes.singlePoiSelection);
   };
   const onNextClick = async () => {
-    router(AppRoutes.installation);
+    router(AppRoutes.preInstallation);
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
@@ -74,7 +76,8 @@ export default function Step3_OptionalMods(props: any) {
           <Box>
             <Typography variant="h1">Optional Mods</Typography>
             <Typography variant="caption">
-              Menu options, custom POIs with blocks, quest-related mods, etc.
+              Add more menu options, new POIs with custom blocks, quest-related
+              mods, and more.
             </Typography>
           </Box>
           <Button onClick={() => setStep3Selection([])}>Clear Selection</Button>
@@ -96,7 +99,7 @@ export default function Step3_OptionalMods(props: any) {
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
-          Download & Install
+          Next
         </Button>
       </Box>
     </Box>

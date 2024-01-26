@@ -53,7 +53,7 @@ export default function Step4_VanillaPois() {
     router(AppRoutes.options);
   };
   const onNextClick = async () => {
-    router(AppRoutes.installation);
+    router(AppRoutes.preInstallation);
   };
 
   const onToggle = (checked: boolean, parent: string, child: string) => {
@@ -115,7 +115,9 @@ export default function Step4_VanillaPois() {
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Vanilla Poi Selection</Typography>
-            <Typography variant="caption">TODO Description</Typography>
+            <Typography variant="caption">
+              Add individual custom Points of Interest to your world.
+            </Typography>
           </Box>
           <Button onClick={() => setStep4Selection([])}>Clear Selection</Button>
         </Box>
@@ -139,7 +141,13 @@ export default function Step4_VanillaPois() {
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
-        <Button variant="contained" onClick={onNextClick}>
+
+        <Button
+          variant="contained"
+          onClick={onNextClick}
+          disabled={step4Selection.length == 0}
+          // tooltip
+        >
           Download & Install
         </Button>
       </Box>
