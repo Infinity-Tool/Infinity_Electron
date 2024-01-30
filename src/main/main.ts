@@ -202,6 +202,9 @@ async function downloadFile(file: InstallationFile) {
       method: 'get',
       url: file.source,
       responseType: 'stream',
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
     });
 
     // Ensure the destination directory exists
