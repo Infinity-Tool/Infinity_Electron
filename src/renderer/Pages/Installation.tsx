@@ -60,20 +60,21 @@ export default function Installation() {
   }, [filesCompleted]);
 
   const downloadEstimatedTime = useMemo(() => {
+    if (downloadPercentCompleted < 2) {
+      return 'Estimating time...';
+    }
     const currentTime = Date.now();
     const elapsedTimeMs = currentTime - (startTime ?? 0);
-
-    // if elapsed is say 20minutes and we are 50% done, then remaining is 20/50% = 40minutes
-
     const remainingTimeMs =
       (elapsedTimeMs / (downloadPercentCompleted / 100)) *
       (1 - downloadPercentCompleted / 100);
+    const minutes = Math.floor(remainingTimeMs / 60000);
 
-    const remaining = {
-      hours: Math.floor(remainingTimeMs / 3600000),
-      minutes: Math.floor((remainingTimeMs % 3600000) / 60000),
-    };
-    return remaining;
+    if (minutes > 180) return 'This is gonna take a while';
+    if (minutes > 120) return 'Over two hours remaining';
+    if (minutes > 60) return 'At least an hour to go';
+    if (minutes < 1) return 'Less than a minute remaining';
+    else return `About ${minutes + 1} minutes remaining`;
   }, [downloadPercentCompleted]);
 
   const startDownloads = () => {
@@ -99,31 +100,8 @@ export default function Installation() {
       const step4Files = buildFileLists(availableStep4Files, newStep4Selection);
       allFiles = [...step4Files];
     }
-
     setFileCount(allFiles.length);
-
-    const filesPreppedForDownload = allFiles.map((file: any) => {
-      const directoryWithoutFileName = file.destination.substring(
-        0,
-        file.destination.lastIndexOf('/'),
-      );
-      return {
-        url: file.source,
-        properties: {
-          directory: directoryWithoutFileName,
-          fileName: file.fileName,
-          overwrite: true,
-          openFolderWhenDone: false,
-          showBadge: false,
-          showProgressBar: false,
-        },
-      };
-    });
-
-    ipcRenderer.sendMessage(
-      'queue-files-for-download',
-      filesPreppedForDownload,
-    );
+    ipcRenderer.sendMessage('queue-files-for-download', allFiles.reverse());
   };
 
   const buildFileLists = (
@@ -169,15 +147,13 @@ export default function Installation() {
   };
 
   const updateLoadingMessage = () => {
-    if (downloadPercentCompleted && downloadPercentCompleted < 100) {
-      const randomLoadingMessage =
-        LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
-      setLoadingMessage(randomLoadingMessage);
+    const randomLoadingMessage =
+      LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
+    setLoadingMessage(randomLoadingMessage);
 
-      setTimeout(() => {
-        updateLoadingMessage();
-      }, 10000);
-    }
+    setTimeout(() => {
+      updateLoadingMessage();
+    }, 20000);
   };
 
   // Effects
@@ -257,11 +233,6 @@ export default function Installation() {
     <>
       <Box sx={pageContainerStyles}>
         <Box sx={pageContentStyles}>
-          <Typography>
-            {JSON.stringify(downloadEstimatedTime)}
-            remaining
-          </Typography>
-
           <Typography variant="h1" sx={percentDoneStyles}>
             {downloadPercentCompleted.toFixed(1) || 0}%
           </Typography>
@@ -270,6 +241,7 @@ export default function Installation() {
             variant="determinate"
             value={downloadPercentCompleted ?? 0}
           ></LinearProgress>
+          <Typography>{downloadEstimatedTime}</Typography>
 
           <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
         </Box>

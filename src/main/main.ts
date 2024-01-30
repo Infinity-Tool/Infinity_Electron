@@ -13,10 +13,13 @@ import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import electronDl from 'electron-dl';
-import async from 'async';
 import { resolveHtmlPath } from './util';
 import MenuBuilder from './menu';
 import { Mutex } from 'async-mutex';
+import axios from 'axios';
+import { InstallationFile } from '../renderer/Models/InstallationFile';
+import fs from 'fs';
+import async from 'async';
 
 class AppUpdater {
   constructor() {
@@ -186,48 +189,61 @@ ipcMain.on('open-patreon', () => {
   shell.openExternal('https://www.patreon.com/Compopack');
 });
 
-const queueNew = async (file: any) => {
-  if (mainWindow === null || mainWindow === undefined) {
-    return Promise.reject();
-  }
-  await electronDl
-    .download(mainWindow, file.url, file.properties)
-    .then((dl) => {
-      // console.debug('[ELECTRON] download-complete', file.properties.fileName);
-      // console.log('[ELECTRON] download-complete', file.properties);
-      console.log('[ELECTRON] dl', dl);
-      mainWindow?.webContents.send(
-        'download-complete',
-        file.properties.fileName,
-      );
-      return Promise.resolve();
-    })
-    .catch((err) => {
-      mainWindow?.webContents.send('download-error', file.properties.fileName);
+let shouldCancel = false; // Flag to indicate whether downloads should be canceled
+
+async function downloadFile(file: InstallationFile) {
+  try {
+    if (shouldCancel) {
+      console.log('Download canceled:', file.source);
+      return;
+    }
+
+    const response = await axios({
+      method: 'get',
+      url: file.source,
+      responseType: 'stream',
     });
-};
 
-// const queue = async.queue(async (task) => queueNew(task), 4);
+    // Ensure the destination directory exists
+    const destDir = path.dirname(file.destination);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
 
-const queue = async.queue(async (task) => {
-  await mutex.runExclusive(async () => {
-    return queueNew(task);
+    const writer = fs.createWriteStream(file.destination);
+    response.data.pipe(writer);
+
+    return new Promise((resolve: any, reject) => {
+      writer.on('finish', () => {
+        mainWindow?.webContents.send('download-complete', file.fileName);
+        return resolve();
+      });
+      writer.on('error', reject);
+    });
+  } catch (error: any) {
+    mainWindow?.webContents.send('download-error', file.fileName);
+    throw error;
+  }
+}
+
+async function downloadFiles(files: InstallationFile[]) {
+  async.eachLimit(files, 8, downloadFile, function (err) {
+    if (err) {
+      console.error('A file failed to download');
+    } else {
+      console.log('All files have been downloaded successfully');
+    }
   });
-}, 3);
+}
 
-ipcMain.on('queue-files-for-download', async (event, files) => {
-  // console.log('event', event);
-  queue.drain();
-  queue.push(files);
-});
+ipcMain.on(
+  'queue-files-for-download',
+  async (event, files: InstallationFile[]) => {
+    shouldCancel = false;
+    await downloadFiles(files);
+  },
+);
 
 ipcMain.on('download-cancel', async (event) => {
-  await queue.kill();
+  shouldCancel = true;
 });
-
-// ipcMain.on('clear-path', async (event, path) => {
-//   // Check if path is valid.
-//   // If not, return a failed event
-
-//   // Loop through all files and folder in the given path.
-// });
