@@ -18,6 +18,7 @@ import { AppRoutes } from '../Services/Constants';
 import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import { useSelectionContext } from '../Services/SelectionContext';
+import { InstallationFile } from '../Models/InstallationFile';
 
 export default function Installation() {
   const router = useNavigate();
@@ -44,11 +45,12 @@ export default function Installation() {
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [loadingMessage, setLoadingMessage] = useState('');
+  const [startTime, setStartTime]: any = useState(new Date());
 
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
 
-  const downloadProgress = useMemo(() => {
+  const downloadPercentCompleted = useMemo(() => {
     const totalFiles = fileCount;
     const completedFiles = filesCompleted.length;
     const erroredFiles = filesErrored.length;
@@ -57,7 +59,25 @@ export default function Installation() {
     return percent ?? 0;
   }, [filesCompleted]);
 
+  const downloadEstimatedTime = useMemo(() => {
+    const currentTime = Date.now();
+    const elapsedTimeMs = currentTime - (startTime ?? 0);
+
+    // if elapsed is say 20minutes and we are 50% done, then remaining is 20/50% = 40minutes
+
+    const remainingTimeMs =
+      (elapsedTimeMs / (downloadPercentCompleted / 100)) *
+      (1 - downloadPercentCompleted / 100);
+
+    const remaining = {
+      hours: Math.floor(remainingTimeMs / 3600000),
+      minutes: Math.floor((remainingTimeMs % 3600000) / 60000),
+    };
+    return remaining;
+  }, [downloadPercentCompleted]);
+
   const startDownloads = () => {
+    setStartTime(Date.now());
     let allFiles = [];
 
     if (moddedInstall) {
@@ -76,10 +96,7 @@ export default function Installation() {
     } else {
       const requiredStep4Files = { name: '_Required', childSelections: [] };
       const newStep4Selection = step4Selection.concat(requiredStep4Files);
-      console.log('newStep4Selection', newStep4Selection);
-      const step4Files = buildFileLists(availableStep4Files, step4Selection);
-      console.log('step4Files', step4Files);
-      // allFiles.push(...step4Files);
+      const step4Files = buildFileLists(availableStep4Files, newStep4Selection);
       allFiles = [...step4Files];
     }
 
@@ -152,7 +169,7 @@ export default function Installation() {
   };
 
   const updateLoadingMessage = () => {
-    if (downloadProgress && downloadProgress < 100) {
+    if (downloadPercentCompleted && downloadPercentCompleted < 100) {
       const randomLoadingMessage =
         LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
       setLoadingMessage(randomLoadingMessage);
@@ -170,10 +187,10 @@ export default function Installation() {
   }, []);
 
   useEffect(() => {
-    if (downloadProgress >= 100) {
+    if (downloadPercentCompleted >= 100) {
       navigateFinished();
     }
-  }, [downloadProgress]);
+  }, [downloadPercentCompleted]);
 
   useEffect(() => {
     ipcRenderer.on('download-complete', (event: any, file: any) => {
@@ -196,14 +213,18 @@ export default function Installation() {
     setConfirmCancelOpen(true);
   };
 
-  const cancelInstallAndGoBack = () => {
+  const cancelCurrentDownloadQueue = () => {
     ipcRenderer.sendMessage('download-cancel');
+  };
+
+  const cancelInstallAndGoBack = () => {
+    cancelCurrentDownloadQueue();
     if (moddedInstall) router(AppRoutes.citiesAndSettlements);
     else router(AppRoutes.vanillaPois);
   };
 
   const cancelInstallationAndGoCanceledPage = () => {
-    ipcRenderer.sendMessage('download-cancel');
+    cancelCurrentDownloadQueue();
     router(AppRoutes.canceled);
   };
 
@@ -236,15 +257,18 @@ export default function Installation() {
     <>
       <Box sx={pageContainerStyles}>
         <Box sx={pageContentStyles}>
-          {/* <Typography>TODO Zombie walking/running animation</Typography> */}
+          <Typography>
+            {JSON.stringify(downloadEstimatedTime)}
+            remaining
+          </Typography>
 
           <Typography variant="h1" sx={percentDoneStyles}>
-            {downloadProgress.toFixed(1) || 0}%
+            {downloadPercentCompleted.toFixed(1) || 0}%
           </Typography>
 
           <LinearProgress
             variant="determinate"
-            value={downloadProgress ?? 0}
+            value={downloadPercentCompleted ?? 0}
           ></LinearProgress>
 
           <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
@@ -307,17 +331,5 @@ export default function Installation() {
       );
       formattedInstallationFiles.push(installationFile);
     });
-  }
-}
-
-class InstallationFile {
-  source: string;
-  destination: string;
-  fileName: string;
-
-  constructor(source: string, destination: string, fileName: string) {
-    this.source = source;
-    this.destination = destination;
-    this.fileName = fileName;
   }
 }
