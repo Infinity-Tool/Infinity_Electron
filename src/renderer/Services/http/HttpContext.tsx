@@ -34,8 +34,8 @@ export const HttpContextProvider = ({ children }: any): any => {
   );
 
   const baseUrl: string = devMode
-    ? `https://storage.googleapis.com/infinity-compopack-dev/${devModeKey}`
-    : 'https://storage.googleapis.com/infinity-compopack-prod/';
+    ? `https://storage.googleapis.com/infinity-dev/${devModeKey}`
+    : 'https://storage.googleapis.com/infinity-prod/';
 
   const value: HttpContext = {
     baseUrl,

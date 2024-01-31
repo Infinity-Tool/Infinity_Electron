@@ -26,7 +26,8 @@ export default function Installation() {
   const { ipcRenderer } = window.electron;
   const { baseUrl } = useHttpContext();
   const directory = GetDirectoryFileQuery();
-  const availableStep0Files = directory.data?.step_0;
+  const availableStep0FilesModded = directory.data?.step_0_modded;
+  const availableStep0FilesUnmodded = directory.data?.step_0_unmodded;
   const availableStep1Files = directory.data?.step_1;
   const availableStep2Files = directory.data?.step_2;
   const availableStep3Files = directory.data?.step_3;
@@ -82,9 +83,9 @@ export default function Installation() {
     let allFiles = [];
 
     if (moddedInstall) {
-      const step0Files = buildFileLists(
-        availableStep0Files,
-        availableStep0Files.map((a: any) => ({
+      const step0FilesModded = buildFileLists(
+        availableStep0FilesModded,
+        availableStep0FilesModded.map((a: any) => ({
           name: a.name,
           childSelections: a.childSelections.map((b: any) => b.name),
         })),
@@ -92,13 +93,23 @@ export default function Installation() {
       const step1Files = buildFileLists(availableStep1Files, step1Selection);
       const step2Files = buildFileLists(availableStep2Files, step2Selection);
       const step3Files = buildFileLists(availableStep3Files, step3Selection);
-      // allFiles.push(...step0Files, ...step1Files, ...step2Files, ...step3Files);
-      allFiles = [...step0Files, ...step1Files, ...step2Files, ...step3Files];
+      allFiles = [
+        ...step0FilesModded,
+        ...step1Files,
+        ...step2Files,
+        ...step3Files,
+      ];
     } else {
-      const requiredStep4Files = { name: '_Required', childSelections: [] };
-      const newStep4Selection = step4Selection.concat(requiredStep4Files);
-      const step4Files = buildFileLists(availableStep4Files, newStep4Selection);
-      allFiles = [...step4Files];
+      //Unmodded install
+      const step0FilesUnModded = buildFileLists(
+        availableStep0FilesUnmodded,
+        availableStep0FilesUnmodded.map((a: any) => ({
+          name: a.name,
+          childSelections: a.childSelections.map((b: any) => b.name),
+        })),
+      );
+      const step4Files = buildFileLists(availableStep4Files, step4Selection);
+      allFiles = [...step0FilesUnModded, ...step4Files];
     }
     setFileCount(allFiles.length);
     ipcRenderer.sendMessage('queue-files-for-download', allFiles.reverse());

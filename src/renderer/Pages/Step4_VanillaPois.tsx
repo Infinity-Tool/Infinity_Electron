@@ -148,7 +148,7 @@ export default function Step4_VanillaPois() {
           disabled={step4Selection.length == 0}
           // tooltip
         >
-          Download & Install
+          Next
         </Button>
       </Box>
     </Box>
