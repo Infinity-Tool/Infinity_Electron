@@ -193,11 +193,21 @@ ipcMain.on('open-patreon', () => {
 
 let shouldCancel = false; // Flag to indicate whether downloads should be canceled
 
-async function downloadFile(file: InstallationFile) {
+async function downloadFile(
+  file: InstallationFile,
+  installMethod: InstallMethod,
+) {
   try {
     if (shouldCancel) {
       console.log('Download canceled:', file.source);
       return;
+    }
+
+    if (installMethod === InstallMethod.missingFilesOnly) {
+      if (fs.existsSync(file.destination)) {
+        mainWindow?.webContents.send('download-complete', file.fileName);
+        return;
+      }
     }
 
     const response = await axios({
@@ -235,13 +245,20 @@ async function downloadFiles(
   files: InstallationFile[],
   installMethod: InstallMethod,
 ) {
-  async.eachLimit(files, 8, downloadFile, function (err) {
-    if (err) {
-      console.error('A file failed to download');
-    } else {
-      console.log('All files have been downloaded successfully');
-    }
-  });
+  async.eachLimit(
+    files,
+    8,
+    async (file: InstallationFile) => {
+      await downloadFile(file, installMethod);
+    },
+    function (err) {
+      if (err) {
+        console.error('A file failed to download');
+      } else {
+        console.log('All files have been downloaded successfully');
+      }
+    },
+  );
 }
 
 ipcMain.on(
