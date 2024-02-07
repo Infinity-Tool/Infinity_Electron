@@ -19,6 +19,7 @@ import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import { useSelectionContext } from '../Services/SelectionContext';
 import { InstallationFile } from '../Models/InstallationFile';
+import { InstallationRequest } from '../Models/InstallationRequest';
 
 export default function Installation() {
   const router = useNavigate();
@@ -112,7 +113,20 @@ export default function Installation() {
       allFiles = [...step0FilesUnModded, ...step4Files];
     }
     setFileCount(allFiles.length);
-    ipcRenderer.sendMessage('queue-files-for-download', allFiles.reverse());
+
+    if (modsDirectory == null || localPrefabsDirectory == null) {
+      alert('Error: Mods and local prefabs directories are not set.');
+      return;
+    }
+
+    const request: InstallationRequest = {
+      modsDirectory,
+      localPrefabsDirectory,
+      files: allFiles.reverse(),
+      installMethod,
+    };
+
+    ipcRenderer.sendMessage('queue-files-for-download', request);
   };
 
   const buildFileLists = (

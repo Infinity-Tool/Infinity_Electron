@@ -72,37 +72,8 @@ export default function PreInstallationOptions(props: any) {
           </Box>
         </Box>
         {/* Installation Type */}
-        <Typography color="error" variant="h4">
-          NOT IMPLEMENTED
-        </Typography>
         <Box sx={installationMethodContainerStyles}>
-          <Paper
-            onClick={() => setInstallMethod(InstallMethod.overwrite)}
-            sx={installationTypeStyles(
-              installMethod === InstallMethod.overwrite,
-            )}
-          >
-            <Typography variant="h5">Overwrite (Recommended)</Typography>
-            <Typography>
-              Installs newly-selected files and overwrites existing files. No
-              files will be deleted.
-            </Typography>
-          </Paper>
-          <Paper
-            onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
-            sx={installationTypeStyles(
-              installMethod === InstallMethod.missingFilesOnly,
-            )}
-          >
-            <Typography variant="h5">Quick Install</Typography>
-            <Typography>
-              Only download missing files which is a faster installation.
-            </Typography>
-            <Typography sx={warningStyles} variant="caption">
-              WARNING: If newer files are available, they will not be
-              downloaded. Only recommended if your last installation was recent.
-            </Typography>
-          </Paper>
+          {/* Clean Install */}
           <Paper
             onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
             sx={installationTypeStyles(
@@ -116,6 +87,35 @@ export default function PreInstallationOptions(props: any) {
             <Typography sx={warningStyles} variant="caption">
               WARNING: This will delete the entire contents of the paths
               specified above!
+            </Typography>
+          </Paper>
+          {/* Overwrite */}
+          <Paper
+            onClick={() => setInstallMethod(InstallMethod.overwrite)}
+            sx={installationTypeStyles(
+              installMethod === InstallMethod.overwrite,
+            )}
+          >
+            <Typography variant="h5">Overwrite</Typography>
+            <Typography>
+              Installs newly-selected files and overwrites existing files. No
+              files will be deleted.
+            </Typography>
+          </Paper>
+          {/* Missing Files Only */}
+          <Paper
+            onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
+            sx={installationTypeStyles(
+              installMethod === InstallMethod.missingFilesOnly,
+            )}
+          >
+            <Typography variant="h5">Quick Install</Typography>
+            <Typography>
+              Only download missing files which is a faster installation.
+            </Typography>
+            <Typography sx={warningStyles} variant="caption">
+              WARNING: If newer files are available, they will not be
+              downloaded. Only recommended if your last installation was recent.
             </Typography>
           </Paper>
         </Box>

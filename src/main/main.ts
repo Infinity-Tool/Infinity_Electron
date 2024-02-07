@@ -20,6 +20,8 @@ import axios from 'axios';
 import { InstallationFile } from '../renderer/Models/InstallationFile';
 import fs from 'fs';
 import async from 'async';
+import { InstallationRequest } from '../renderer/Models/InstallationRequest';
+import { InstallMethod } from '../renderer/Services/SelectionContext';
 
 class AppUpdater {
   constructor() {
@@ -229,7 +231,10 @@ async function downloadFile(file: InstallationFile) {
   }
 }
 
-async function downloadFiles(files: InstallationFile[]) {
+async function downloadFiles(
+  files: InstallationFile[],
+  installMethod: InstallMethod,
+) {
   async.eachLimit(files, 8, downloadFile, function (err) {
     if (err) {
       console.error('A file failed to download');
@@ -241,9 +246,27 @@ async function downloadFiles(files: InstallationFile[]) {
 
 ipcMain.on(
   'queue-files-for-download',
-  async (event, files: InstallationFile[]) => {
+  async (event, request: InstallationRequest) => {
     shouldCancel = false;
-    await downloadFiles(files);
+
+    const installMethod = request.installMethod;
+
+    if (installMethod === InstallMethod.cleanInstall) {
+      // Delete all files in the request.modsDirectory and request.localPrefabsDirectory
+      // make sure to await it so that the files are deleted before we start downloading
+      // the new files
+
+      const deleteFiles = async (directory: string) => {
+        if (fs.existsSync(directory)) {
+          fs.rmdirSync(directory, { recursive: true });
+        }
+      };
+
+      await deleteFiles(request.modsDirectory);
+      await deleteFiles(request.localPrefabsDirectory);
+    }
+
+    await downloadFiles(request.files, installMethod);
   },
 );
 

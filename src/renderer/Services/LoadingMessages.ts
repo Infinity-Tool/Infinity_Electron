@@ -10,5 +10,9 @@ export const LoadingMessages = [
   'If a door is locked try looking around for a 🔑',
   'CP is balanced to CP loot level which follows vanilla guidelines, but tweaked to account for the extra Zs per tier',
   'New POIs are planned to be added quarterly, so check in often!',
-  'CP is a Prefab Mod Pack that Magoli began back around Alpha 8. It is a museum of POIs that have been collected since around Alpha 4.',
+  'CP (AKA Compopack) is a Prefab Mod Pack that Magoli began back around Alpha 8. It is a museum of POIs that have been collected since around Alpha 4',
+  'Do you have a POI that would be a good fit for the pack? Hop on the Discord and show us!',
+  'Interested in prefabbing? We will teach you step by step!',
+  'Some POIs have a destroyed and non-destroyed version',
+  "Once you prefab you can't go back",
 ];

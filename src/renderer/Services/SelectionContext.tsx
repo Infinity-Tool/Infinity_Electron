@@ -8,7 +8,7 @@ export enum InstallMethod {
   missingFilesOnly = 'missingFilesOnly',
 }
 export class Selection {
-  public installMethod: InstallMethod = InstallMethod.overwrite;
+  public installMethod: InstallMethod = InstallMethod.cleanInstall;
   public setInstallMethod: any;
 
   public moddedInstall: boolean = false;
