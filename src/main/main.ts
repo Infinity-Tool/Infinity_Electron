@@ -261,6 +261,17 @@ async function downloadFiles(
   );
 }
 
+async function clearFolders(request: InstallationRequest) {
+  const deleteFiles = async (directory: string) => {
+    if (fs.existsSync(directory)) {
+      fs.rmdirSync(directory, { recursive: true });
+    }
+  };
+
+  await deleteFiles(request.modsDirectory);
+  await deleteFiles(request.localPrefabsDirectory);
+}
+
 ipcMain.on(
   'queue-files-for-download',
   async (event, request: InstallationRequest) => {
@@ -269,18 +280,11 @@ ipcMain.on(
     const installMethod = request.installMethod;
 
     if (installMethod === InstallMethod.cleanInstall) {
-      // Delete all files in the request.modsDirectory and request.localPrefabsDirectory
-      // make sure to await it so that the files are deleted before we start downloading
-      // the new files
-
-      const deleteFiles = async (directory: string) => {
-        if (fs.existsSync(directory)) {
-          fs.rmdirSync(directory, { recursive: true });
-        }
-      };
-
-      await deleteFiles(request.modsDirectory);
-      await deleteFiles(request.localPrefabsDirectory);
+      try {
+        await clearFolders(request);
+      } catch (err) {
+        mainWindow?.webContents.send('clean-install-error', err);
+      }
     }
 
     await downloadFiles(request.files, installMethod);

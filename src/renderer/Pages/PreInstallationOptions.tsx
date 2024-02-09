@@ -1,4 +1,12 @@
-import { Typography, Box, Paper, useTheme, Button } from '@mui/material';
+import {
+  Typography,
+  Box,
+  Paper,
+  useTheme,
+  Button,
+  Alert,
+  AlertTitle,
+} from '@mui/material';
 import {
   InstallMethod,
   useSelectionContext,
@@ -11,12 +19,15 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { set } from 'lodash';
 
 export default function PreInstallationOptions(props: any) {
   const { moddedInstall, installMethod, setInstallMethod } =
     useSelectionContext();
   const theme = useTheme();
   const router = useNavigate();
+  const [warningText, setWarningText] = useState<string>('');
 
   const onBackClick = () => {
     if (moddedInstall) {
@@ -75,7 +86,9 @@ export default function PreInstallationOptions(props: any) {
         <Box sx={installationMethodContainerStyles}>
           {/* Clean Install */}
           <Paper
-            onClick={() => setInstallMethod(InstallMethod.cleanInstall)}
+            onClick={() => {
+              setInstallMethod(InstallMethod.cleanInstall);
+            }}
             sx={installationTypeStyles(
               installMethod === InstallMethod.cleanInstall,
             )}
@@ -84,14 +97,13 @@ export default function PreInstallationOptions(props: any) {
             <Typography>
               Wipe out target folders and fully install all files from scratch.
             </Typography>
-            <Typography sx={warningStyles} variant="caption">
-              WARNING: This will delete the entire contents of the paths
-              specified above!
-            </Typography>
           </Paper>
           {/* Overwrite */}
           <Paper
-            onClick={() => setInstallMethod(InstallMethod.overwrite)}
+            onClick={() => {
+              setInstallMethod(InstallMethod.overwrite);
+              setWarningText('');
+            }}
             sx={installationTypeStyles(
               installMethod === InstallMethod.overwrite,
             )}
@@ -104,7 +116,9 @@ export default function PreInstallationOptions(props: any) {
           </Paper>
           {/* Missing Files Only */}
           <Paper
-            onClick={() => setInstallMethod(InstallMethod.missingFilesOnly)}
+            onClick={() => {
+              setInstallMethod(InstallMethod.missingFilesOnly);
+            }}
             sx={installationTypeStyles(
               installMethod === InstallMethod.missingFilesOnly,
             )}
@@ -113,12 +127,26 @@ export default function PreInstallationOptions(props: any) {
             <Typography>
               Only download missing files which is a faster installation.
             </Typography>
-            <Typography sx={warningStyles} variant="caption">
-              WARNING: If newer files are available, they will not be
-              downloaded. Only recommended if your last installation was recent.
-            </Typography>
           </Paper>
         </Box>
+        {installMethod == InstallMethod.missingFilesOnly && (
+          <Alert severity={'warning'}>
+            <AlertTitle>
+              {
+                'WARNING: If newer files are available, they will not be downloaded. Only recommended if your last installation was recent.'
+              }
+            </AlertTitle>
+          </Alert>
+        )}
+        {installMethod == InstallMethod.cleanInstall && (
+          <Alert severity={'warning'}>
+            <AlertTitle>
+              {
+                'WARNING: This will delete the entire contents of the paths you specified!'
+              }
+            </AlertTitle>
+          </Alert>
+        )}
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
