@@ -27,7 +27,7 @@ class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    // autoUpdater.checkForUpdatesAndNotify();
   }
 }
 
@@ -98,7 +98,9 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  if (isDebug) {
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
+  }
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -284,6 +286,7 @@ ipcMain.on(
         await clearFolders(request);
       } catch (err) {
         mainWindow?.webContents.send('clean-install-error', err);
+        return;
       }
     }
 

@@ -26,13 +26,13 @@ export default function Installation() {
   const theme = useTheme();
   const { ipcRenderer } = window.electron;
   const { baseUrl } = useHttpContext();
-  const directory = GetDirectoryFileQuery();
-  const availableStep0FilesModded = directory.data?.step_0_modded;
-  const availableStep0FilesUnmodded = directory.data?.step_0_unmodded;
-  const availableStep1Files = directory.data?.step_1;
-  const availableStep2Files = directory.data?.step_2;
-  const availableStep3Files = directory.data?.step_3;
-  const availableStep4Files = directory.data?.step_4;
+  const directoryQuery = GetDirectoryFileQuery();
+  const availableStep0FilesModded = directoryQuery.data?.step_0_modded;
+  const availableStep0FilesUnmodded = directoryQuery.data?.step_0_unmodded;
+  const availableStep1Files = directoryQuery.data?.step_1;
+  const availableStep2Files = directoryQuery.data?.step_2;
+  const availableStep3Files = directoryQuery.data?.step_3;
+  const availableStep4Files = directoryQuery.data?.step_4;
   const [fileCount, setFileCount]: any = useState();
   const {
     moddedInstall,
@@ -48,18 +48,18 @@ export default function Installation() {
   const [filesErrored, setFilesErrored]: any = useState([]);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [startTime, setStartTime]: any = useState(new Date());
-
+  const [downloadsStarted, setDownloadsStarted] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
+  const [cleanInstallError, setCleanInstallError] = useState<string>('');
 
   const downloadPercentCompleted = useMemo(() => {
     const totalFiles = fileCount;
-    const completedFiles = filesCompleted.length;
-    const erroredFiles = filesErrored.length;
-    const percent =
-      ((completedFiles ?? 0 + erroredFiles ?? 0) / totalFiles ?? 0) * 100;
+    const completedFiles = filesCompleted.length ?? 0;
+    const erroredFiles = filesErrored.length ?? 0;
+    const percent = ((completedFiles + erroredFiles) / totalFiles ?? 0) * 100;
     return percent ?? 0;
-  }, [filesCompleted]);
+  }, [filesCompleted, filesErrored]);
 
   const downloadEstimatedTime = useMemo(() => {
     if (downloadPercentCompleted < 2) {
@@ -183,9 +183,12 @@ export default function Installation() {
 
   // Effects
   useEffect(() => {
-    startDownloads();
-    updateLoadingMessage();
-  }, []);
+    if (directoryQuery.isSuccess && !downloadsStarted) {
+      setDownloadsStarted(true);
+      startDownloads();
+      updateLoadingMessage();
+    }
+  }, [directoryQuery]);
 
   useEffect(() => {
     if (downloadPercentCompleted >= 100) {
@@ -194,15 +197,24 @@ export default function Installation() {
   }, [downloadPercentCompleted]);
 
   useEffect(() => {
-    ipcRenderer.on('download-complete', (event: any, file: any) => {
+    ipcRenderer.on('download-complete', (file: any) => {
       addToCompletedFiles(file);
     });
-    ipcRenderer.on('download-error', (event: any, file: any) => {
+    ipcRenderer.on('download-error', (file: any) => {
       addToErroredFiles(file);
     });
     return () => {
       ipcRenderer.removeAllListeners('download-complete');
       ipcRenderer.removeAllListeners('download-error');
+    };
+  }, [ipcRenderer]);
+
+  useEffect(() => {
+    ipcRenderer.on('clean-install-error', (error: any) => {
+      setCleanInstallError(error);
+    });
+    return () => {
+      ipcRenderer.removeAllListeners('clean-install-error');
     };
   }, [ipcRenderer]);
 
@@ -238,6 +250,7 @@ export default function Installation() {
   };
 
   const addToErroredFiles = (file: string) => {
+    console.log('file', file);
     setFilesErrored((prev: any) => [...prev, file]);
   };
 
@@ -267,14 +280,42 @@ export default function Installation() {
             value={downloadPercentCompleted ?? 0}
           ></LinearProgress>
           <Typography>{downloadEstimatedTime}</Typography>
-
           <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+
+          {filesErrored?.length > 0 && (
+            <Box>
+              <Typography variant="h4" color="error">
+                There was a problem installing these files:
+              </Typography>
+
+              {filesErrored.map((file: any) => (
+                <Typography color="secondary">{file}</Typography>
+              ))}
+            </Box>
+          )}
         </Box>
+
         <Box sx={pageFooterStyles}>
           <Button onClick={onBackClick}>Back</Button>
           <Button onClick={onCancelClick}>Cancel</Button>
         </Box>
       </Box>
+
+      {/* Back Dialog */}
+      <ConfirmationDialog
+        open={cleanInstallError}
+        onCancel={() => {
+          cancelInstallAndGoBack();
+        }}
+        onConfirm={() => {
+          setCleanInstallError('');
+          startDownloads();
+        }}
+        promptTitle={
+          'There was a problem during the clean install process. Retry?'
+        }
+        promptDescription={`This could be due to a file being in use by another program. Please close any programs that may be using the files and try again. ${cleanInstallError}`}
+      />
 
       {/* Back Dialog */}
       <ConfirmationDialog

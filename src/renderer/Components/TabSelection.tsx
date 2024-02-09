@@ -86,17 +86,19 @@ export default function TabSelection(props: any) {
   const filteredAvailableFiles = useMemo(() => {
     const cloneFiles = cloneDeep(availableFiles);
     return cloneFiles.map((file: any) => {
-      file.childSelections = file.childSelections.filter((child: any) => {
-        const containsTag = child.editorGroups?.some((tag: string) => {
-          return selectedTags.includes(tag);
-        });
+      file.childSelections = file.childSelections
+        .filter((child: any) => {
+          const containsTag = child.editorGroups?.some((tag: string) => {
+            return selectedTags.includes(tag);
+          });
 
-        const containsSearch = child?.name
-          ?.toLowerCase()
-          ?.includes(search.toLowerCase());
+          const containsSearch = child?.name
+            ?.toLowerCase()
+            ?.includes(search.toLowerCase());
 
-        return containsTag && containsSearch;
-      });
+          return containsTag && containsSearch;
+        })
+        .sort((a: any, b: any) => a.name.localeCompare(b.name));
       return file;
     });
   }, [availableFiles, selectedTags, search]);

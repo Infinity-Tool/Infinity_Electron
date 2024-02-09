@@ -157,64 +157,66 @@ export default function ListSelection(props: any) {
                   )}
                   <Box sx={childContainerStyles}>
                     {parent.childSelections?.length > 0 &&
-                      parent.childSelections.map((child: any) => {
-                        const selected = getIsChildSelected(
-                          parent.name,
-                          child.name,
-                        );
-                        return (
-                          <Box sx={poiStyles(theme, selected)} key={index}>
-                            <FormControl>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    disabled={!getIsSelected(parent.name)}
-                                    checked={selected}
-                                    onClick={(e: any) =>
-                                      onChildCheckToggle(
-                                        e.target.checked,
-                                        parent.name,
-                                        child.name,
-                                      )
-                                    }
-                                  />
-                                }
-                                label={RemoveZ(child.name)}
-                              />
-                            </FormControl>
-                            {showDetails && (
-                              <IconButton
-                                onClick={(e) => {
-                                  setInfoDialogState({
-                                    open: true,
-                                    poi: child,
-                                  });
-                                }}
-                              >
-                                <FontAwesomeIcon
-                                  icon={faInfoCircle}
-                                  color={theme.palette.text.secondary}
-                                />
-                              </IconButton>
-                            )}
-                            <Typography>{child.description}</Typography>
-                            <ImageList rowHeight={100} cols={100}>
-                              {child.images?.map((img: string) => (
-                                <ImageListItem>
-                                  <Zoom>
-                                    <img
-                                      src={`${baseUrl}/${img}`}
-                                      alt={child.name}
-                                      style={{ maxHeight: '90px' }}
-                                      loading="lazy"
+                      parent.childSelections
+                        .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                        .map((child: any) => {
+                          const selected = getIsChildSelected(
+                            parent.name,
+                            child.name,
+                          );
+                          return (
+                            <Box sx={poiStyles(theme, selected)} key={index}>
+                              <FormControl>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      disabled={!getIsSelected(parent.name)}
+                                      checked={selected}
+                                      onClick={(e: any) =>
+                                        onChildCheckToggle(
+                                          e.target.checked,
+                                          parent.name,
+                                          child.name,
+                                        )
+                                      }
                                     />
-                                  </Zoom>
-                                </ImageListItem>
-                              ))}
-                            </ImageList>
-                          </Box>
-                        );
-                      })}
+                                  }
+                                  label={RemoveZ(child.name)}
+                                />
+                              </FormControl>
+                              {showDetails && (
+                                <IconButton
+                                  onClick={(e) => {
+                                    setInfoDialogState({
+                                      open: true,
+                                      poi: child,
+                                    });
+                                  }}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faInfoCircle}
+                                    color={theme.palette.text.secondary}
+                                  />
+                                </IconButton>
+                              )}
+                              <Typography>{child.description}</Typography>
+                              <ImageList rowHeight={100} cols={100}>
+                                {child.images?.map((img: string) => (
+                                  <ImageListItem>
+                                    <Zoom>
+                                      <img
+                                        src={`${baseUrl}/${img}`}
+                                        alt={child.name}
+                                        style={{ maxHeight: '90px' }}
+                                        loading="lazy"
+                                      />
+                                    </Zoom>
+                                  </ImageListItem>
+                                ))}
+                              </ImageList>
+                            </Box>
+                          );
+                        })}
                   </Box>
                 </AccordionDetails>
               </Accordion>
