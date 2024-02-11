@@ -1,8 +1,6 @@
 enum StorageKeys {
   host = 'host',
-  // availableStep1Files = 'availableStep1Files',
-  // availableStep2Files = 'availableStep2Files',
-  // availableStep3Files = 'availableStep3Files',
+  theme = 'theme',
   modsDirectory = 'modsDirectory',
   localPrefabsDirectory = 'localPrefabsDirectory',
   installMethod = 'installMethod',

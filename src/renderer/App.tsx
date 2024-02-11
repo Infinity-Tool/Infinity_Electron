@@ -3,8 +3,7 @@ import Layout from './Components/Layout';
 import { AppRoutes } from './Services/Constants';
 import { HttpContextProvider } from './Services/http/HttpContext';
 import { ThemeProvider } from '@emotion/react';
-import { createTheme, CssBaseline } from '@mui/material';
-import GetTheme from './Services/Themes';
+import { CssBaseline, createTheme } from '@mui/material';
 import { QueryClient, QueryClientProvider } from 'react-query';
 //pages
 import Welcome from './Pages/Welcome';
@@ -19,16 +18,22 @@ import OptionalMods from './Pages/Step3_OptionalMods';
 import { SelectionContextProvider } from './Services/SelectionContext';
 import Step4_VanillaPois from './Pages/Step4_VanillaPois';
 import PreInstallationOptions from './Pages/PreInstallationOptions';
+import {
+  InfinityThemeContextProvider,
+  useInfinityThemeContext,
+} from './Services/theme/ThemeContext';
+import { darkTheme } from './Services/theme/Themes';
 
 export function AppContext(props: any) {
-  const theme = createTheme(GetTheme());
+  const { theme } = useInfinityThemeContext();
+  const compiledTheme = createTheme(theme);
   const queryClient = new QueryClient();
 
   return (
     <HttpContextProvider>
       <SelectionContextProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider theme={compiledTheme}>
             <CssBaseline />
             {props.children}
           </ThemeProvider>

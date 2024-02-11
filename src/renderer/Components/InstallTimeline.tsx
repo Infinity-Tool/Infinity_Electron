@@ -13,6 +13,7 @@ import { Paper } from '@mui/material';
 import { AppRoutes, RoutesMeta, installFlow } from '../Services/Constants';
 import { useLocation } from 'react-router-dom';
 import { useSelectionContext } from '../Services/SelectionContext';
+import ThemeToggler from './ThemeToggler';
 
 export default function InstallTimeline() {
   const location = useLocation();
@@ -43,7 +44,11 @@ export default function InstallTimeline() {
   };
 
   //Styles
-  const timelineContainerStyles = {};
+  const timelineContainerStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'space-between',
+  };
   const timelineItemStyles = {
     width: '220px',
 
@@ -83,6 +88,7 @@ export default function InstallTimeline() {
           ))
         }
       </Timeline>
+      <ThemeToggler />
     </Paper>
   );
 }

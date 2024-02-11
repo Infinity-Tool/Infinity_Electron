@@ -30,7 +30,7 @@ import { faInfoCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Virtuoso } from 'react-virtuoso';
 import PoiInfoDialog from './PoiInfoDialog';
 import { useHttpContext } from '../Services/http/HttpContext';
-import { ProperCase, RemoveZ } from '../Services/Utils/NameFormatterUtils';
+import { ProperCase, RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { poiStyles } from '../Services/CommonStyles';
 
 export default function TabSelection(props: any) {

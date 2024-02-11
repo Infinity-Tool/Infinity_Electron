@@ -27,9 +27,5 @@ export default function DiscordButton() {
     >
       Join our Discord
     </Button>
-
-    // <IconButton onClick={handleDiscordClick}>
-    //   <FontAwesomeIcon icon={faDiscord} />
-    // </IconButton>
   );
 }

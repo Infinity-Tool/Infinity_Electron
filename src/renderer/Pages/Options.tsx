@@ -22,7 +22,7 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
-import { IsOkayPath } from '../Services/Utils/PathValidatorUtils';
+import { IsOkayPath } from '../Services/utils/PathValidatorUtils';
 import {
   InstallMethod,
   useSelectionContext,

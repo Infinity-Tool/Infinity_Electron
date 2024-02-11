@@ -15,7 +15,6 @@ import log from 'electron-log';
 import electronDl from 'electron-dl';
 import { resolveHtmlPath } from './util';
 import MenuBuilder from './menu';
-import { Mutex } from 'async-mutex';
 import axios from 'axios';
 import { InstallationFile } from '../renderer/Models/InstallationFile';
 import fs from 'fs';
@@ -32,12 +31,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-const mutex = new Mutex();
-// ipcMain.on('ipc-example', async (event, arg) => {
-//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-//   console.log(msgTemplate(arg));
-//   event.reply('ipc-example', msgTemplate('pong'));
-// });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -66,9 +59,6 @@ const installExtensions = async () => {
 
 electronDl();
 
-// Remove the default menu
-Menu.setApplicationMenu(null);
-
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -94,6 +84,7 @@ const createWindow = async () => {
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
+    autoHideMenuBar: true,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));

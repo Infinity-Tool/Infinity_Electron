@@ -21,4 +21,7 @@ export const LoadingMessages = [
   'What should you never give a zombie? A piece of your mind!',
   'How do zombies eat healthier? They switch to vegetarians.',
   'If zombies were looking for brains in the government they would die of starvation.',
+
+  'CP has been around for many alphas concentrating on balance and balance improvements as well as volume fixes and many optimizations to the POIs.',
+  'We make an effort revisit and refurbish older POIs as time permits.',
 ];

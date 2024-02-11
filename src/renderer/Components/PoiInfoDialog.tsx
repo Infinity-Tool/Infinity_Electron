@@ -6,7 +6,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { dialogStyles } from '../Services/CommonStyles';
-import { RemoveZ } from '../Services/Utils/NameFormatterUtils';
+import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 
 export default function PoiInfoDialog(props: any) {
   const { dialogState, setDialogState } = props;
