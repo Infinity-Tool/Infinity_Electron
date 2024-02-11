@@ -87,8 +87,12 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/anton": "^5.0.18",
+    "@fontsource/chela-one": "^5.0.8",
+    "@fontsource/oswald": "^5.0.18",
     "@fontsource/poiret-one": "^5.0.18",
     "@fontsource/roboto": "^5.0.8",
+    "@fontsource/viga": "^5.0.8",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",

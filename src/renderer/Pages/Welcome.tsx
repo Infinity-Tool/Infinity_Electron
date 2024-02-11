@@ -45,69 +45,78 @@ export default function Welcome() {
     gap: theme.spacing(1),
     alignItems: 'center',
   };
-
+  const contentStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(4),
+  };
   const logoContainerStyles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(2),
+    padding: theme.spacing(4),
     '& svg': {
-      maxHeight: '50%',
-      maxWidth: '50%',
+      maxHeight: '400px',
+      maxWidth: '400px',
+      flex: '0 1 auto',
     },
-    mb: theme.spacing(2),
+    flex: '0 1 auto',
   };
 
-  const infinityTitleStyles = {
+  const headerStyles = {
     fontSize: '5rem',
   };
   const subHeaderStyles = {
     fontSize: '2rem',
   };
-  const listOfTextStyles = {
+  const textContainerStyles = {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(1),
+    gap: theme.spacing(2),
+    flex: '1 0 auto',
   };
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
         <Announcements />
-        <Box sx={logoContainerStyles} onClick={onLogoClick}>
-          <InfinityLogo devMode={devMode} />
-        </Box>
-        <Typography variant="h1" sx={infinityTitleStyles}>
-          Infinity
-        </Typography>
-        <Box sx={listOfTextStyles}>
-          <Typography variant="h2" sx={subHeaderStyles}>
-            Magoli's Compopack
-          </Typography>
-          <Typography>
-            A mod and custom prefab installer for{' '}
-            <span style={{ color: 'red' }}>7</span>
-            DaysToDie
-          </Typography>
-          <Box sx={creditStyles}>
-            <Typography variant="caption">Founded by Magoli</Typography>
-            <Typography>•</Typography>
-            <Typography variant="caption">Managed by Stallionsden</Typography>
-            <Typography>•</Typography>
-            <Typography variant="caption">
-              Developed by Alexander Trimble
+        <Box sx={contentStyles}>
+          {/* Logo */}
+          <Box sx={logoContainerStyles} onClick={onLogoClick}>
+            <InfinityLogo devMode={devMode} />
+          </Box>
+
+          {/* Text */}
+          <Box sx={textContainerStyles}>
+            <Typography variant="h1" sx={headerStyles}>
+              Infinity
             </Typography>
+            <Typography variant="h2" sx={subHeaderStyles}>
+              Magoli's Compopack Installer for{' '}
+              <span style={{ color: 'red' }}>7</span>
+              DaysToDie
+            </Typography>
+
+            <Box sx={creditStyles}>
+              <Typography variant="caption">Founded by Magoli</Typography>
+              <Typography>•</Typography>
+              <Typography variant="caption">Managed by Stallionsden</Typography>
+              <Typography>•</Typography>
+              <Typography variant="caption">
+                Developed by Alexander Trimble
+              </Typography>
+            </Box>
+            {devMode && (
+              <FormControl sx={{ mt: '1rem' }}>
+                <TextField
+                  label="Dev Mode Key"
+                  value={devModeKey}
+                  onChange={(event) => setDevModeKey(event.target.value)}
+                />
+              </FormControl>
+            )}
           </Box>
         </Box>
-        {devMode && (
-          <FormControl sx={{ mt: '1rem' }}>
-            <TextField
-              label="Dev Mode Key"
-              value={devModeKey}
-              onChange={(event) => setDevModeKey(event.target.value)}
-            />
-          </FormControl>
-        )}
       </Box>
       <Box sx={pageFooterStyles}>
         <DiscordButton />

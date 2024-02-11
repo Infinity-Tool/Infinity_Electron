@@ -18,10 +18,15 @@ import {
 import { AppRoutes } from '../Services/Constants';
 import { AgreementQuery } from '../Services/http/HttpFunctions';
 import Error from '../Components/Error';
+import useSessionStorage from '../Services/useSessionStorage';
+import StorageKeys from '../Services/StorageKeys';
 
 export default function Agreement() {
   const router = useNavigate();
-  const [agreementChecked, setAgreementChecked] = useState(false);
+  const [agreementChecked, setAgreementChecked] = useSessionStorage(
+    StorageKeys.agreementAccepted,
+    false,
+  );
   const agreementQuery = AgreementQuery();
 
   const handleBack = () => {
@@ -42,10 +47,14 @@ export default function Agreement() {
     gap: '.5rem',
   };
 
+  const agreementTextStyles = {
+    fontWeight: 'bold',
+  };
+
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Typography variant="h5">Agreement</Typography>
+        <Typography variant="h1">Agreement</Typography>
 
         {agreementQuery.isLoading && <Loading />}
         {agreementQuery.isError && (
@@ -56,9 +65,11 @@ export default function Agreement() {
         )}
 
         <Paper sx={agreementContainerStyles}>
-          {agreementQuery.data
-            ?.split('\n')
-            .map((p: string) => <Typography variant="caption">{p}</Typography>)}
+          {agreementQuery.data?.split('\n').map((p: string) => (
+            <Typography variant="caption" sx={agreementTextStyles}>
+              {p}
+            </Typography>
+          ))}
         </Paper>
         <FormGroup>
           <FormControlLabel

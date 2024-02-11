@@ -8,7 +8,7 @@ export default function ThemeToggler() {
   const theme = useTheme();
 
   const buttonContainerStyles = {
-    p: theme.spacing(1),
+    m: theme.spacing(1),
   };
   const themeTogglerButtonStyles = {
     color: theme.palette.text.secondary,

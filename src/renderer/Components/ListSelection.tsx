@@ -10,6 +10,7 @@ import {
   IconButton,
   ImageList,
   ImageListItem,
+  Paper,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -69,20 +70,20 @@ export default function ListSelection(props: any) {
   const getModListItemStyles = (file: string) => {
     const isSelected = getIsSelected(file);
     return {
-      // padding: '1rem',
-      border: isSelected
-        ? `1px solid ${theme.palette.primary.dark}`
-        : '1px solid transparent',
-      // display: 'flex',
-      // justifyContent: 'space-between',
-      // alignItems: 'start',
-      // maxWidth: '100%',
-      // overflowX: 'auto',
+      // border: isSelected
+      //   ? `1px solid ${theme.palette.primary.dark}`
+      //   : '1px solid transparent',
+      // background: isSelected && theme.palette.primary.dark,
       my: theme.spacing(2),
     };
   };
   const childContainerStyles = {
-    // paddingLeft: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+    // flexWrap: 'wrap',
+    // overflow: 'auto',
+    // ...scrollBarStyles,
   };
   const poiInfoStyles = {
     maxWidth: '66%',
@@ -110,7 +111,6 @@ export default function ListSelection(props: any) {
               <Accordion
                 expanded={selected && hasChildren}
                 sx={getModListItemStyles(parent.name)}
-                // CollapseProps={{ unmountOnExit: true }}
                 TransitionProps={{ unmountOnExit: true }}
               >
                 <AccordionSummary
@@ -165,7 +165,11 @@ export default function ListSelection(props: any) {
                             child.name,
                           );
                           return (
-                            <Box sx={poiStyles(theme, selected)} key={index}>
+                            <Paper
+                              sx={poiStyles(theme, selected)}
+                              key={index}
+                              elevation={3}
+                            >
                               <FormControl>
                                 <FormControlLabel
                                   control={
@@ -214,7 +218,7 @@ export default function ListSelection(props: any) {
                                   </ImageListItem>
                                 ))}
                               </ImageList>
-                            </Box>
+                            </Paper>
                           );
                         })}
                   </Box>

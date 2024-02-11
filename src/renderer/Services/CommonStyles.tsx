@@ -76,10 +76,11 @@ export const dialogStyles = {
 export const poiStyles = (theme: any, selected: boolean): any => ({
   paddingY: theme.spacing(1),
   paddingX: theme.spacing(2),
-  marginY: theme.spacing(1),
-  border: `1px solid ${
-    selected ? theme.palette.primary.dark : theme.palette.divider
-  }`,
+  // marginY: theme.spacing(1),
+  // border: `1px solid ${
+  //   selected ? theme.palette.primary.dark : theme.palette.divider
+  // }`,
   // display: "flex",
   justifyContent: 'space-between',
+  borderLeft: `4px solid ${theme.palette.primary.dark}`,
 });

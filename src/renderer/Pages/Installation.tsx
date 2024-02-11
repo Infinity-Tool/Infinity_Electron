@@ -100,6 +100,7 @@ export default function Installation() {
         ...step2Files,
         ...step3Files,
       ];
+      console.log('allFiles', allFiles);
     } else {
       //Unmodded install
       const step0FilesUnModded = buildFileLists(

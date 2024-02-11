@@ -170,6 +170,7 @@ export default function Options() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
+        <Typography variant="h1">Options</Typography>
         <Box sx={installationTypeContainerStyles}>
           <Paper
             onClick={() => setModdedInstall(true)}

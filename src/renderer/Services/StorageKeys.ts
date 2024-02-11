@@ -14,6 +14,7 @@ enum StorageKeys {
   devModeEnabled = 'devModeEnabled',
   devModeKey = 'devModeKey',
   dismissedAlerts = 'dismissedAlerts',
+  agreementAccepted = 'agreementAccepted',
 }
 
 export default StorageKeys;
