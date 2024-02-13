@@ -20,7 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { faChevronDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
-import { poiStyles, scrollBarStyles } from '../Services/CommonStyles';
+import { poiStyles } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { Virtuoso } from 'react-virtuoso';
