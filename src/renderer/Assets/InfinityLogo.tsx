@@ -4,8 +4,8 @@ export default function InfinityLogo(props: any) {
   const { devMode } = props;
 
   const theme: any = useTheme();
-  const primary = devMode ? 'cyan' : theme.palette.primary.main;
-  const secondary = devMode ? 'cyan' : theme.palette.secondary.main;
+  const primary = devMode ? 'orange' : theme.palette.primary.main;
+  const secondary = devMode ? 'orange' : theme.palette.secondary.main;
 
   return (
     <svg
