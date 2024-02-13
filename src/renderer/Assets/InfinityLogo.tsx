@@ -1,11 +1,11 @@
-import { css, keyframes, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 
 export default function InfinityLogo(props: any) {
   const { devMode } = props;
 
   const theme: any = useTheme();
-  const primary = devMode ? 'gold' : theme.palette.primary.main;
-  const secondary = devMode ? 'gold' : theme.palette.secondary.main;
+  const primary = devMode ? 'salmon' : theme.palette.primary.main;
+  const secondary = devMode ? 'salmon' : theme.palette.secondary.main;
 
   return (
     <svg

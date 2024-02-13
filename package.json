@@ -1,7 +1,6 @@
 {
   "title": "Infinity",
   "description": "A 7 Days to Die mod and custom prefab manager and installer",
-  "version": "0.5.2",
   "keywords": [
     "electron",
     "boilerplate",
@@ -246,12 +245,7 @@
     "publish": {
       "provider": "github",
       "owner": "Infinity-Tool",
-      "repo": "Infinity_Electron",
-      "vPrefixedTagName": true,
-      "host": "github.com",
-      "protocol": "https",
-      "channel": "latest",
-      "releaseType": "release"
+      "repo": "Infinity_Electron"
     }
   },
   "devEngines": {

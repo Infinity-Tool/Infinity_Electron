@@ -1,7 +1,7 @@
-## Infinity
+# Infinity
 
-A 7 Days to Die mod and custom prefab manager and installer  
-Also known as Magoli's Compopack
+A third-party installer for Magoli's Compopack for the game 7 Days To Die.
+Choose from many mods, fully custom Cities and Settlements, and over a thousand handcrafted POIs built by the community.
 
 <!-- Discord Link: -->
 
