@@ -5,10 +5,10 @@ export default function InfinityLogo(props: any) {
 
   const theme: any = useTheme();
   const primary = devMode
-    ? theme.palette.text.secondary
+    ? theme.palette.text.main
     : theme.palette.primary.main;
   const secondary = devMode
-    ? theme.palette.text.secondary
+    ? theme.palette.text.main
     : theme.palette.secondary.main;
 
   return (

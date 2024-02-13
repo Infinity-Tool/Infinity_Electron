@@ -1,7 +1,7 @@
 {
   "title": "Infinity",
   "description": "A 7 Days to Die mod and custom prefab manager and installer",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "keywords": [
     "electron",
     "boilerplate",
