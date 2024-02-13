@@ -246,7 +246,12 @@
     "publish": {
       "provider": "github",
       "owner": "Infinity-Tool",
-      "repo": "Infinity_Electron"
+      "repo": "Infinity_Electron",
+      "vPrefixedTagName": true,
+      "host": "github.com",
+      "protocol": "https",
+      "channel": "latest",
+      "releaseType": "release"
     }
   },
   "devEngines": {
