@@ -4,6 +4,7 @@ import useLocalStorage from '../useLocalStorage';
 import useSessionStorage from '../useSessionStorage';
 
 export class HttpContext {
+  public bucket: string = '';
   public baseUrl: string = '';
   public devMode: any;
   public setDevMode: any;
@@ -33,11 +34,13 @@ export const HttpContextProvider = ({ children }: any): any => {
     '',
   );
 
+  const bucket = devMode ? 'infinity-dev' : 'infinity-prod';
   const baseUrl: string = devMode
-    ? `https://storage.googleapis.com/infinity-dev/${devModeKey}`
-    : 'https://storage.googleapis.com/infinity-prod/';
+    ? `https://storage.googleapis.com/${bucket}/${devModeKey}`
+    : `https://storage.googleapis.com/${bucket}/`;
 
   const value: HttpContext = {
+    bucket,
     baseUrl,
     devMode,
     setDevMode,

@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
+  centerContentStyles,
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
@@ -23,19 +24,17 @@ export default function Canceled() {
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Typography variant="h3">Installation Canceled ☹️</Typography>
-        <Typography>
-          Note: Some files may have been downloaded to your selected folders.
-        </Typography>
+        <Box sx={centerContentStyles}>
+          <Typography variant="h1">Installation Canceled ❌</Typography>
+          <Typography color={'text.secondary'}>
+            Note: Some files may have been downloaded to your selected folders.
+          </Typography>
+        </Box>
       </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={handleChangeSelection}>Change Selection</Button>
-        <Button
-          variant="contained"
-          // color="primary"
-          onClick={handleClose}
-        >
-          Close
+        <Button variant="contained" onClick={handleClose} color={'error'}>
+          Exit
         </Button>
       </Box>
     </Box>

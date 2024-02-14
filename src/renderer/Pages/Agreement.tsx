@@ -76,6 +76,7 @@ export default function Agreement() {
             control={
               <Checkbox
                 value={agreementChecked}
+                defaultChecked={agreementChecked}
                 onChange={(e) => setAgreementChecked(e.target.checked)}
               />
             }

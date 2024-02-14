@@ -24,6 +24,27 @@ const componentOverrides = {
       },
     },
   },
+  // MuiCssBaseline: {
+  //   styleOverrides: {
+  //     '&::-webkit-scrollbar': {
+  //       width: '18px',
+  //     },
+  //     '&::-webkit-scrollbar-track': {
+  //       backgroundColor: 'rgba(255,255,255,0.15)',
+  //       borderRadius: '999px',
+  //     },
+  //     '&::-webkit-scrollbar-thumb': {
+  //       backgroundColor: 'rgba(255,255,255,0.25)',
+  //       '&:hover': {
+  //         backgroundColor: 'rgba(255,255,255,0.3)',
+  //       },
+  //       '&:active': {
+  //         backgroundColor: 'rgba(255,255,255,0.4)',
+  //       },
+  //       borderRadius: '999px',
+  //     },
+  //   },
+  // },
 };
 const typography = {
   fontFamily: 'Roboto',
@@ -89,12 +110,35 @@ export const darkTheme = {
       main: '#DD1F26',
     },
     background: {
-      default: '#1E1E1E',
+      default: '#282828',
       defaultDarker: '#101010',
       paper: '#070707',
     },
   },
   ...baseTheme,
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        '&::-webkit-scrollbar': {
+          width: '15px',
+        },
+        '&::-webkit-scrollbar-track': {
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          borderRadius: '999px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: 'rgba(255,255,255,0.2)',
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,0.3)',
+          },
+          '&:active': {
+            backgroundColor: 'rgba(255,255,255,0.4)',
+          },
+          borderRadius: '999px',
+        },
+      },
+    },
+  },
 };
 
 export const lightTheme = {

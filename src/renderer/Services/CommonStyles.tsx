@@ -1,26 +1,3 @@
-export const scrollBarStyles = {
-  //Scrollbar styles
-  '&::-webkit-scrollbar': {
-    width: '18px',
-  },
-  '&::-webkit-scrollbar-track': {
-    // boxShadow: "inset 0 0 6px rgba(0,0,0,2)",
-    // webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    borderRadius: '999px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    '&:hover': {
-      backgroundColor: 'rgba(255,255,255,0.15)',
-    },
-    '&:active': {
-      backgroundColor: 'rgba(255,255,255,0.3)',
-    },
-    borderRadius: '999px',
-  },
-};
-
 export const pageContainerStyles = {
   display: 'flex',
   flexDirection: 'column',
@@ -76,11 +53,26 @@ export const dialogStyles = {
 export const poiStyles = (theme: any, selected: boolean): any => ({
   paddingY: theme.spacing(1),
   paddingX: theme.spacing(2),
-  // marginY: theme.spacing(1),
+  marginY: theme.spacing(1.5),
   // border: `1px solid ${
   //   selected ? theme.palette.primary.dark : theme.palette.divider
   // }`,
   // display: "flex",
   justifyContent: 'space-between',
-  borderLeft: `4px solid ${theme.palette.primary.dark}`,
+  borderLeft: `6px solid ${
+    selected ? theme.palette.primary.dark : theme.palette.text.secondary
+  }`,
+  //gradient from primary to transparent, bottom left to top right. gradient should be 30% opacity using rgba and
+
+  // background: `linear-gradient(60deg, ${
+  //   selected ? theme.palette.primary.dark : 'transparent'
+  // } 0%, transparent 100%)`,
 });
+
+export const centerContentStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+};

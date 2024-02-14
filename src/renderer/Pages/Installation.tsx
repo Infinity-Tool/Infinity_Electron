@@ -17,9 +17,13 @@ import {
 import { AppRoutes } from '../Services/Constants';
 import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
-import { useSelectionContext } from '../Services/SelectionContext';
+import {
+  InstallMethod,
+  useSelectionContext,
+} from '../Services/SelectionContext';
 import { InstallationFile } from '../Models/InstallationFile';
 import { InstallationRequest } from '../Models/InstallationRequest';
+import Slideshow from '../Components/Slideshow';
 
 export default function Installation() {
   const router = useNavigate();
@@ -57,11 +61,18 @@ export default function Installation() {
     const totalFiles = fileCount;
     const completedFiles = filesCompleted.length ?? 0;
     const erroredFiles = filesErrored.length ?? 0;
+
+    if (totalFiles === 0) return 0;
+    if (completedFiles + erroredFiles === 0) return 0;
+
     const percent = ((completedFiles + erroredFiles) / totalFiles ?? 0) * 100;
     return percent ?? 0;
   }, [filesCompleted, filesErrored]);
 
   const downloadEstimatedTime = useMemo(() => {
+    if (installMethod == InstallMethod.quickInstall) {
+      return '';
+    }
     if (downloadPercentCompleted < 2) {
       return 'Estimating time...';
     }
@@ -264,41 +275,48 @@ export default function Installation() {
   const loadingMessageStyles = {
     my: theme.spacing(2),
     width: '100%',
-    fontSize: '1.5rem',
+    fontSize: '1.2rem',
     textAlign: 'center',
   };
 
   return (
     <>
       <Box sx={pageContainerStyles}>
-        <Box sx={pageContentStyles}>
-          <Typography variant="h1" sx={percentDoneStyles}>
-            {downloadPercentCompleted.toFixed(1) || 0}%
-          </Typography>
+        <Box sx={pageContentStyles} justifyContent={'space-between'}>
+          <Box>
+            <Slideshow moddedInstall={moddedInstall} />
+            <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="h1" sx={percentDoneStyles}>
+              {downloadPercentCompleted.toFixed(1) || 0}%
+            </Typography>
 
-          <LinearProgress
-            variant="determinate"
-            value={downloadPercentCompleted ?? 0}
-          ></LinearProgress>
-          <Typography>{downloadEstimatedTime}</Typography>
-          <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+            <LinearProgress
+              variant="determinate"
+              value={downloadPercentCompleted ?? 0}
+            ></LinearProgress>
+            <Typography>{downloadEstimatedTime}</Typography>
 
-          {filesErrored?.length > 0 && (
-            <Box>
-              <Typography variant="h4" color="error">
-                There was a problem installing these files:
-              </Typography>
+            {filesErrored?.length > 0 && (
+              <Box>
+                <Typography variant="h4" color="error">
+                  There was a problem installing these files:
+                </Typography>
 
-              {filesErrored.map((file: any) => (
-                <Typography color="secondary">{file}</Typography>
-              ))}
-            </Box>
-          )}
+                {filesErrored.map((file: any) => (
+                  <Typography color="secondary">{file}</Typography>
+                ))}
+              </Box>
+            )}
+          </Box>
         </Box>
 
         <Box sx={pageFooterStyles}>
           <Button onClick={onBackClick}>Back</Button>
-          <Button onClick={onCancelClick}>Cancel</Button>
+          <Button onClick={onCancelClick} color={'error'}>
+            Cancel
+          </Button>
         </Box>
       </Box>
 

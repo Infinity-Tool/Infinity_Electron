@@ -323,7 +323,9 @@ export default function TabSelection(props: any) {
     return (
       <Virtuoso
         key={index}
-        style={{ height: '100%' }}
+        style={{
+          height: '100%',
+        }}
         totalCount={count}
         itemContent={(index) => {
           const tabFile: TabFile = tabFiles[index];

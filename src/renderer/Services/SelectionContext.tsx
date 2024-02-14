@@ -5,7 +5,7 @@ import useLocalStorage from './useLocalStorage';
 export enum InstallMethod {
   overwrite = 'overwrite',
   cleanInstall = 'cleanInstall',
-  missingFilesOnly = 'missingFilesOnly',
+  quickInstall = 'missingFilesOnly',
 }
 export class Selection {
   public installMethod: InstallMethod = InstallMethod.cleanInstall;

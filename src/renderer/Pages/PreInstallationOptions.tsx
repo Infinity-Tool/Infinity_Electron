@@ -117,10 +117,10 @@ export default function PreInstallationOptions(props: any) {
           {/* Missing Files Only */}
           <Paper
             onClick={() => {
-              setInstallMethod(InstallMethod.missingFilesOnly);
+              setInstallMethod(InstallMethod.quickInstall);
             }}
             sx={installationTypeStyles(
-              installMethod === InstallMethod.missingFilesOnly,
+              installMethod === InstallMethod.quickInstall,
             )}
           >
             <Typography variant="h5">Quick Install</Typography>
@@ -129,7 +129,7 @@ export default function PreInstallationOptions(props: any) {
             </Typography>
           </Paper>
         </Box>
-        {installMethod == InstallMethod.missingFilesOnly && (
+        {installMethod == InstallMethod.quickInstall && (
           <Alert severity={'warning'}>
             <AlertTitle>
               {

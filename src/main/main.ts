@@ -196,7 +196,7 @@ async function downloadFile(
       return;
     }
 
-    if (installMethod === InstallMethod.missingFilesOnly) {
+    if (installMethod === InstallMethod.quickInstall) {
       if (fs.existsSync(file.destination)) {
         mainWindow?.webContents.send('download-complete', file.fileName);
         return;

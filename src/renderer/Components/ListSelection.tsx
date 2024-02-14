@@ -68,22 +68,13 @@ export default function ListSelection(props: any) {
     height: '100%',
   };
   const getModListItemStyles = (file: string) => {
-    const isSelected = getIsSelected(file);
     return {
-      // border: isSelected
-      //   ? `1px solid ${theme.palette.primary.dark}`
-      //   : '1px solid transparent',
-      // background: isSelected && theme.palette.primary.dark,
-      my: theme.spacing(2),
+      my: theme.spacing(1.5),
     };
   };
   const childContainerStyles = {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(1),
-    // flexWrap: 'wrap',
-    // overflow: 'auto',
-    // ...scrollBarStyles,
   };
   const poiInfoStyles = {
     maxWidth: '66%',
@@ -114,7 +105,7 @@ export default function ListSelection(props: any) {
                 TransitionProps={{ unmountOnExit: true }}
               >
                 <AccordionSummary
-                  key={index}
+                  key={`${parent.name}_index`}
                   expandIcon={
                     hasChildren && (
                       <IconButton onClick={toggle}>
@@ -167,8 +158,8 @@ export default function ListSelection(props: any) {
                           return (
                             <Paper
                               sx={poiStyles(theme, selected)}
-                              key={index}
-                              elevation={3}
+                              key={`${parent.name}_${child.name}_index`}
+                              elevation={10}
                             >
                               <FormControl>
                                 <FormControlLabel
