@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Timeline,
   TimelineConnector,
@@ -8,15 +8,16 @@ import {
   TimelineSeparator,
   timelineItemClasses,
 } from '@mui/lab';
-import { Paper } from '@mui/material';
-// import { useLocation } from 'react-router';
+import { Box, Paper, useTheme } from '@mui/material';
 import { AppRoutes, RoutesMeta, installFlow } from '../Services/Constants';
 import { useLocation } from 'react-router-dom';
 import { useSelectionContext } from '../Services/SelectionContext';
 import ThemeToggler from './ThemeToggler';
+import AppVersionLabel from './AppVersionLabel';
 
 export default function InstallTimeline() {
   const location = useLocation();
+  const theme = useTheme();
   const { moddedInstall } = useSelectionContext();
   const routesArray = Object.values(AppRoutes)
     .filter((r) => r !== AppRoutes.canceled)
@@ -65,6 +66,13 @@ export default function InstallTimeline() {
     textWrap: 'nowrap',
   };
 
+  const bottomRowStyles = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    p: theme.spacing(2),
+  };
+
   return (
     <Paper sx={timelineContainerStyles}>
       <Timeline sx={timelineItemStyles}>
@@ -88,7 +96,10 @@ export default function InstallTimeline() {
           ))
         }
       </Timeline>
-      <ThemeToggler />
+      <Box sx={bottomRowStyles}>
+        <ThemeToggler />
+        <AppVersionLabel />
+      </Box>
     </Paper>
   );
 }

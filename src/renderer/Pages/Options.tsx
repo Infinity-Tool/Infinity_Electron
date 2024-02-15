@@ -72,15 +72,7 @@ export default function Options() {
   const HandleFolderSelected = () => {
     ipcRenderer.on('selected-directory', (event: any, path: any) => {
       const { folderType } = event;
-      // console.log(
-      //   'selected-directory',
-      //   'event',
-      //   event,
-      //   'path',
-      //   path,
-      //   'folderType',
-      //   folderType,
-      // );
+
       if (!event.canceled && event.filePaths?.length > 0) {
         const filePath = event.filePaths[0];
         switch (folderType) {

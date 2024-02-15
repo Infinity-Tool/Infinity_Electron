@@ -288,3 +288,21 @@ ipcMain.on(
 ipcMain.on('download-cancel', async (event) => {
   shouldCancel = true;
 });
+
+ipcMain.on('get-app-version', async (event) => {
+  const version = autoUpdater.currentVersion;
+  console.warn('Current version:', version);
+  mainWindow?.webContents.send('app-version', version);
+});
+
+// ipcMain.on('get-app-update-available', (event) => {
+//   autoUpdater
+//     .checkForUpdates()
+//     .then((updateCheckResult) => {
+//       console.warn('Update check result:', updateCheckResult);
+//       event.reply('app-update-available', updateCheckResult);
+//     })
+//     .catch((error) => {
+//       console.error('Error checking for updates:', error);
+//     });
+// });
