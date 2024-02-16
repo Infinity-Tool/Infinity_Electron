@@ -3,11 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Box,
   Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormHelperText,
   IconButton,
   Paper,
   TextField,
@@ -24,9 +27,13 @@ import {
 import { AppRoutes } from '../Services/Constants';
 import { IsOkayPath } from '../Services/utils/PathValidatorUtils';
 import { useSelectionContext } from '../Services/SelectionContext';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import { useHttpContext } from '../Services/http/HttpContext';
+import Loading from '../Components/Loading';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
+  const { baseUrl } = useHttpContext();
   const router = useNavigate();
   const theme = useTheme();
   const {
@@ -41,6 +48,9 @@ export default function Options() {
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
   const [localModsError, setLocalModsError] = useState(false);
   const hasErrors = localPrefabsError || localModsError;
+  const directoryQuery = GetDirectoryFileQuery();
+  const showcaseModded = directoryQuery?.data?.showcase_modded;
+  const showcaseUnmodded = directoryQuery?.data?.showcase_unmodded;
 
   enum FolderType {
     mods = 'mods',
@@ -138,21 +148,21 @@ export default function Options() {
     px: theme.spacing(4),
   };
 
-  const installationTypeStyles = (selected: boolean) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: theme.spacing(2),
+  const installationTypeStyles = (modded: boolean, selected: boolean): any => ({
+    // display: 'flex',
+    // flexDirection: 'column',
+    // justifyContent: 'center',
+    // padding: theme.spacing(2),
     border: `2px solid ${
       selected ? theme.palette.primary.main : 'transparent'
     }`,
-    color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
-    transform: selected ? 'scale(1.05)' : 'scale(.95)',
+    // color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
+    transform: selected ? 'scale(1.04)' : 'scale(.96)',
     transition: 'all 0.2s ease-in-out',
     flex: 1,
     cursor: 'pointer',
-    textAlign: 'center',
-    // filter to mute all color
+    // textAlign: 'center',
+    // // filter to mute all color
     filter: selected ? 'none' : 'grayscale(100%)',
   });
 
@@ -160,90 +170,145 @@ export default function Options() {
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
         <Typography variant="h1">Options</Typography>
-        <Box sx={installationTypeContainerStyles}>
-          <Paper
-            onClick={() => setModdedInstall(true)}
-            sx={installationTypeStyles(moddedInstall)}
-          >
-            <Typography variant="h5">Modded (Recommended)</Typography>
-            <Typography>
-              Adds support for custom Towns & Settlements, blah blah blah and
-              much more.
-            </Typography>
-          </Paper>
-          <Paper
-            onClick={() => setModdedInstall(false)}
-            sx={installationTypeStyles(!moddedInstall)}
-          >
-            <Typography variant="h5">Vanilla</Typography>
-            <Typography>Add custom POIs to vanilla towns.</Typography>
-          </Paper>
-        </Box>
+        {directoryQuery.isLoading && <Loading />}
+        {directoryQuery.isSuccess && (
+          <Box>
+            <Box sx={installationTypeContainerStyles}>
+              {/* MODDED */}
+              <Card
+                onClick={() => setModdedInstall(true)}
+                sx={installationTypeStyles(true, moddedInstall)}
+              >
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="180"
+                    image={`${baseUrl}/Showcase_Modded/${showcaseModded[0]}`}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Modded (Recommended)
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Adds support for custom Towns & Settlements, blah blah
+                      blah and much more.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
 
-        <Box sx={formContainerStyles}>
-          <FormControl>
-            <TextField
-              label="LocalPrefabs Folder"
-              id="localPrefabs-folder-path"
-              value={localPrefabsDirectory || ''}
-              onChange={(event) => onLocalPrefabsPathChange(event.target.value)}
-              error={localPrefabsError}
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    onClick={() => handleSelectFolder(FolderType.localPrefabs)}
-                  >
-                    <FontAwesomeIcon icon={faFolder} />
-                  </IconButton>
-                ),
-              }}
-            />
-          </FormControl>
+              {/* UNMODDED */}
+              <Card
+                onClick={() => setModdedInstall(false)}
+                sx={installationTypeStyles(false, !moddedInstall)}
+              >
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="180"
+                    image={`${baseUrl}/Showcase_Unmodded/${showcaseUnmodded[0]}`}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Vanilla
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Add custom POIs to vanilla towns.
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
 
-          <FormControl>
-            <TextField
-              label="Mods Folder"
-              id="mods-folder-path"
-              value={modsDirectory || ''}
-              error={localModsError}
-              onChange={(event) => onModsPathChange(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    onClick={() => handleSelectFolder(FolderType.mods)}
-                  >
-                    <FontAwesomeIcon icon={faFolder} />
-                  </IconButton>
-                ),
-              }}
-            />
-          </FormControl>
-
-          {moddedInstall && (
-            <Box>
-              <Typography color="error" variant="h4">
-                NOT IMPLEMENTED
-              </Typography>
-              <FormGroup sx={formControlStyles}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      // checked={cleanInstall}
-                      // onChange={(e) => setCleanInstall(e.target.checked)}
-                      sx={checkBoxStyles}
-                    />
-                  }
-                  label="Hide all trader selections (Usually for those who play with overhauls)"
-                />
-              </FormGroup>
+              {/* <Paper
+                onClick={() => setModdedInstall(true)}
+                sx={installationTypeStyles(true, moddedInstall)}
+                square={false}
+              >
+                <Typography variant="h5">Modded (Recommended)</Typography>
+                <Typography>
+                  Adds support for custom Towns & Settlements, blah blah blah
+                  and much more.
+                </Typography>
+              </Paper>
+              <Paper
+                onClick={() => setModdedInstall(false)}
+                sx={installationTypeStyles(false, !moddedInstall)}
+                square={false}
+              >
+                <Typography variant="h5">Vanilla</Typography>
+                <Typography>Add custom POIs to vanilla towns.</Typography>
+              </Paper> */}
             </Box>
-          )}
-          <Typography variant="caption" color="error">
-            {hasErrors && 'Please provide valid file paths.'}
-          </Typography>
-        </Box>
-      </Box>
 
+            <Box sx={formContainerStyles}>
+              <FormControl>
+                <TextField
+                  label="LocalPrefabs Folder"
+                  id="localPrefabs-folder-path"
+                  value={localPrefabsDirectory || ''}
+                  onChange={(event) =>
+                    onLocalPrefabsPathChange(event.target.value)
+                  }
+                  error={localPrefabsError}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={() =>
+                          handleSelectFolder(FolderType.localPrefabs)
+                        }
+                      >
+                        <FontAwesomeIcon icon={faFolder} />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </FormControl>
+
+              <FormControl>
+                <TextField
+                  label="Mods Folder"
+                  id="mods-folder-path"
+                  value={modsDirectory || ''}
+                  error={localModsError}
+                  onChange={(event) => onModsPathChange(event.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        onClick={() => handleSelectFolder(FolderType.mods)}
+                      >
+                        <FontAwesomeIcon icon={faFolder} />
+                      </IconButton>
+                    ),
+                  }}
+                />
+              </FormControl>
+
+              {moddedInstall && (
+                <Box>
+                  <Typography color="error" variant="h4">
+                    NOT IMPLEMENTED
+                  </Typography>
+                  <FormGroup sx={formControlStyles}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          // checked={cleanInstall}
+                          // onChange={(e) => setCleanInstall(e.target.checked)}
+                          sx={checkBoxStyles}
+                        />
+                      }
+                      label="Hide all trader selections (Usually for those who play with overhauls)"
+                    />
+                  </FormGroup>
+                </Box>
+              )}
+              <Typography variant="caption" color="error">
+                {hasErrors && 'Please provide valid file paths.'}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
       <Box sx={pageFooterStyles}>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>

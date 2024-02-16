@@ -7,7 +7,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { AppRoutes } from '../Services/Constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InfinityLogo from '../Assets/InfinityLogo';
 import DiscordButton from '../Components/DiscordButton';
 import {
@@ -18,12 +18,14 @@ import {
 import { useHttpContext } from '../Services/http/HttpContext';
 import { useNavigate } from 'react-router-dom';
 import Announcements from '../Components/Announcements';
+import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 
 export default function Welcome() {
   const router = useNavigate();
   const theme = useTheme();
   const [logoClickCount, setLogoClickCount]: any = useState(0);
   const { devMode, setDevMode, devModeKey, setDevModeKey } = useHttpContext();
+  const directoryQuery = GetDirectoryFileQuery();
 
   //Functions
   const handleBegin = () => {
