@@ -295,14 +295,24 @@ ipcMain.on('get-app-version', async (event) => {
   mainWindow?.webContents.send('app-version', version);
 });
 
-// ipcMain.on('get-app-update-available', (event) => {
-//   autoUpdater
-//     .checkForUpdates()
-//     .then((updateCheckResult) => {
-//       console.warn('Update check result:', updateCheckResult);
-//       event.reply('app-update-available', updateCheckResult);
-//     })
-//     .catch((error) => {
-//       console.error('Error checking for updates:', error);
-//     });
-// });
+ipcMain.on('save-json-file', async (event, selection) => {
+  const todaysDateYYYYMMDD = new Date().toISOString().split('T')[0];
+  const fileName = `Infinity_Selection_${todaysDateYYYYMMDD}.json`;
+  const jsonToSave = JSON.stringify(selection, null, 2);
+
+  // Show save file dialog
+  dialog
+    .showSaveDialog({
+      title: 'Save Selection',
+      defaultPath: fileName,
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+    })
+    .then((result: any) => {
+      if (!result.canceled) {
+        fs.writeFileSync(result.filePath, jsonToSave);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});

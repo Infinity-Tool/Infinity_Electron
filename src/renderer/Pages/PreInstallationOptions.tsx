@@ -19,15 +19,14 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { set } from 'lodash';
+import { select } from 'async';
 
 export default function PreInstallationOptions(props: any) {
-  const { moddedInstall, installMethod, setInstallMethod } =
-    useSelectionContext();
+  const fullSelection = useSelectionContext();
+  const { moddedInstall, installMethod, setInstallMethod } = fullSelection;
   const theme = useTheme();
   const router = useNavigate();
-  const [warningText, setWarningText] = useState<string>('');
+  const { ipcRenderer } = window.electron;
 
   const onBackClick = () => {
     if (moddedInstall) {
@@ -41,6 +40,28 @@ export default function PreInstallationOptions(props: any) {
     router(AppRoutes.installation);
   };
 
+  const onExportClick = () => {
+    const selection = buildSelection();
+    ipcRenderer.sendMessage('save-json-file', selection);
+  };
+
+  const buildSelection = () => {
+    if (moddedInstall) {
+      return {
+        moddedInstall,
+        step1Selection: fullSelection.step1Selection,
+        step2Selection: fullSelection.step2Selection,
+        step3Selection: fullSelection.step3Selection,
+      };
+    } else {
+      return {
+        moddedInstall,
+        step4Selection: fullSelection.step4Selection,
+      };
+    }
+  };
+
+  // Styles
   const installationMethodContainerStyles = {
     display: 'flex',
     flexDirection: 'row',
@@ -67,9 +88,7 @@ export default function PreInstallationOptions(props: any) {
     filter: selected ? 'none' : 'grayscale(100%)',
   });
 
-  const warningStyles = {
-    color: theme.palette.warning.main,
-  };
+  const exportSelectionButtonStyles = { mr: 'auto' };
 
   return (
     <Box sx={pageContainerStyles}>
@@ -102,7 +121,6 @@ export default function PreInstallationOptions(props: any) {
           <Paper
             onClick={() => {
               setInstallMethod(InstallMethod.overwrite);
-              setWarningText('');
             }}
             sx={installationTypeStyles(
               installMethod === InstallMethod.overwrite,
@@ -149,6 +167,9 @@ export default function PreInstallationOptions(props: any) {
         )}
       </Box>
       <Box sx={pageFooterStyles}>
+        <Button sx={exportSelectionButtonStyles} onClick={onExportClick}>
+          Export Selection
+        </Button>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Download & Install

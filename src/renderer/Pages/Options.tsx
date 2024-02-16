@@ -23,10 +23,7 @@ import {
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { IsOkayPath } from '../Services/utils/PathValidatorUtils';
-import {
-  InstallMethod,
-  useSelectionContext,
-} from '../Services/SelectionContext';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;

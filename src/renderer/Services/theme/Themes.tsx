@@ -3,6 +3,7 @@ import '@fontsource/poiret-one';
 import '@fontsource/viga';
 import '@fontsource/oswald';
 import '@fontsource/chela-one';
+import shadows from '@mui/material/styles/shadows';
 
 const componentOverrides = {
   MuiButton: {
@@ -24,27 +25,6 @@ const componentOverrides = {
       },
     },
   },
-  // MuiCssBaseline: {
-  //   styleOverrides: {
-  //     '&::-webkit-scrollbar': {
-  //       width: '18px',
-  //     },
-  //     '&::-webkit-scrollbar-track': {
-  //       backgroundColor: 'rgba(255,255,255,0.15)',
-  //       borderRadius: '999px',
-  //     },
-  //     '&::-webkit-scrollbar-thumb': {
-  //       backgroundColor: 'rgba(255,255,255,0.25)',
-  //       '&:hover': {
-  //         backgroundColor: 'rgba(255,255,255,0.3)',
-  //       },
-  //       '&:active': {
-  //         backgroundColor: 'rgba(255,255,255,0.4)',
-  //       },
-  //       borderRadius: '999px',
-  //     },
-  //   },
-  // },
 };
 const typography = {
   fontFamily: 'Roboto',
@@ -70,7 +50,7 @@ const typography = {
     fontFamily: 'Oswald',
   },
 };
-const shadowOverrides = {
+const noShadows = {
   1: 'none',
   2: 'none',
   3: 'none',
@@ -95,8 +75,56 @@ const shadowOverrides = {
 
 const baseTheme = {
   typography: typography,
-  components: componentOverrides,
-  shadows: shadowOverrides,
+  // components: componentOverrides,
+  // shadows: shadowOverrides,
+};
+
+const darkThemeComponentOverrides = {
+  MuiCssBaseline: {
+    styleOverrides: {
+      '&::-webkit-scrollbar': {
+        width: '15px',
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderRadius: '999px',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        '&:hover': {
+          backgroundColor: 'rgba(255,255,255,0.3)',
+        },
+        '&:active': {
+          backgroundColor: 'rgba(255,255,255,0.4)',
+        },
+        borderRadius: '999px',
+      },
+    },
+  },
+};
+
+const lightThemeComponentOverrides = {
+  MuiCssBaseline: {
+    styleOverrides: {
+      '&::-webkit-scrollbar': {
+        width: '15px',
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: 'rgba(0,0,0,0.15)',
+        borderRadius: '999px',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        '&:hover': {
+          backgroundColor: 'rgba(0,0,0,0.3)',
+        },
+        '&:active': {
+          backgroundColor: 'rgba(0,0,0,0.4)',
+        },
+        borderRadius: '999px',
+      },
+    },
+  },
 };
 
 export const darkTheme = {
@@ -116,29 +144,8 @@ export const darkTheme = {
     },
   },
   ...baseTheme,
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        '&::-webkit-scrollbar': {
-          width: '15px',
-        },
-        '&::-webkit-scrollbar-track': {
-          backgroundColor: 'rgba(255,255,255,0.15)',
-          borderRadius: '999px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-          '&:hover': {
-            backgroundColor: 'rgba(255,255,255,0.3)',
-          },
-          '&:active': {
-            backgroundColor: 'rgba(255,255,255,0.4)',
-          },
-          borderRadius: '999px',
-        },
-      },
-    },
-  },
+  shadows: noShadows,
+  components: { ...componentOverrides, ...darkThemeComponentOverrides },
 };
 
 export const lightTheme = {
@@ -157,6 +164,7 @@ export const lightTheme = {
     },
   },
   ...baseTheme,
+  components: { ...componentOverrides, ...lightThemeComponentOverrides },
 };
 
 //update global scrollbar

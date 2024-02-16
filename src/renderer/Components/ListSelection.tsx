@@ -159,7 +159,6 @@ export default function ListSelection(props: any) {
                             <Paper
                               sx={poiStyles(theme, selected)}
                               key={`${parent.name}_${child.name}_index`}
-                              elevation={10}
                             >
                               <FormControl>
                                 <FormControlLabel
