@@ -230,7 +230,7 @@ export default function Installation() {
     };
   }, [ipcRenderer]);
 
-  const onBackClick = (event: any) => {
+  const onChangeSelectionClick = (event: any) => {
     setConfirmBackOpen(true);
   };
 
@@ -313,7 +313,7 @@ export default function Installation() {
         </Box>
 
         <Box sx={pageFooterStyles}>
-          <Button onClick={onBackClick}>Back</Button>
+          <Button onClick={onChangeSelectionClick}>Change Selection</Button>
           <Button onClick={onCancelClick} color={'error'}>
             Cancel
           </Button>
