@@ -13,6 +13,7 @@ import {
   FormGroup,
   IconButton,
   Paper,
+  Snackbar,
   TextField,
   Typography,
   useTheme,
@@ -30,6 +31,7 @@ import { useSelectionContext } from '../Services/SelectionContext';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import { useHttpContext } from '../Services/http/HttpContext';
 import Loading from '../Components/Loading';
+import { enqueueSnackbar } from 'notistack';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
@@ -43,6 +45,10 @@ export default function Options() {
     setModdedInstall,
     localPrefabsDirectory,
     setLocalPrefabsDirectory,
+    setStep1Selection,
+    setStep2Selection,
+    setStep3Selection,
+    setStep4Selection,
   } = useSelectionContext();
 
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
@@ -53,8 +59,8 @@ export default function Options() {
   const showcaseUnmodded = directoryQuery?.data?.showcase_unmodded;
 
   enum FolderType {
-    mods = 'mods',
-    localPrefabs = 'localPrefabs',
+    mods = 'Mods',
+    localPrefabs = 'LocalPrefabs',
   }
 
   // File selection
@@ -62,22 +68,7 @@ export default function Options() {
     ipcRenderer.sendMessage('open-folder-dialog', folderType);
   };
   useEffect(() => {
-    return HandleFolderSelected();
-  }, [ipcRenderer]);
-
-  const onModsPathChange = (value: string) => {
-    setModsDirectory(value);
-    setLocalModsError(false);
-  };
-
-  const onLocalPrefabsPathChange = (value: string) => {
-    setLocalPrefabsDirectory(value);
-    setLocalPrefabsError(false);
-  };
-
-  //Functions
-  const HandleFolderSelected = () => {
-    ipcRenderer.on('selected-directory', (event: any, path: any) => {
+    ipcRenderer.on('selected-directory', (event: any) => {
       const { folderType } = event;
 
       if (!event.canceled && event.filePaths?.length > 0) {
@@ -97,13 +88,71 @@ export default function Options() {
       }
     });
 
+    ipcRenderer.on('selection-file-selected', (selection: any) => {
+      const validSelection = IsValidSelection(selection);
+
+      if (validSelection) {
+        try {
+          const parsed = JSON.parse(selection);
+          setModdedInstall(parsed.moddedInstall);
+          if (parsed.moddedInstall) {
+            setStep1Selection(parsed.step1Selection);
+            setStep2Selection(parsed.step2Selection);
+            setStep3Selection(parsed.step3Selection);
+          } else {
+            setStep4Selection(parsed.step4Selection);
+          }
+          enqueueSnackbar('Selection Imported', {
+            variant: 'success',
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            autoHideDuration: 3000,
+          });
+          router(AppRoutes.preInstallation);
+        } catch (e) {
+          alert('Error parsing selection file.');
+        }
+      } else {
+        alert('Error: Selection File is not valid.');
+      }
+    });
+
     return () => {
       ipcRenderer.removeAllListeners('selected-directory');
+      ipcRenderer.removeAllListeners('selection-file-selected');
     };
+  }, [ipcRenderer]);
+
+  const IsValidSelection = (selection: any) => {
+    if (selection == null) return false;
+
+    //if does not parse to json, it is not a valid selection
+    try {
+      const parsed = JSON.parse(selection);
+      if (parsed.moddedInstall == null) {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const onModsPathChange = (value: string) => {
+    setModsDirectory(value);
+    setLocalModsError(false);
+  };
+
+  const onLocalPrefabsPathChange = (value: string) => {
+    setLocalPrefabsDirectory(value);
+    setLocalPrefabsError(false);
   };
 
   const onBackClick = () => {
-    router(AppRoutes.welcome);
+    router(AppRoutes.agreement);
   };
 
   const onNextClick = () => {
@@ -125,6 +174,12 @@ export default function Options() {
       setLocalModsError(true);
     }
     return valid;
+  };
+
+  const onImportClick = () => {
+    if (Validate()) {
+      ipcRenderer.sendMessage('open-json-file');
+    }
   };
 
   //Styles
@@ -149,20 +204,13 @@ export default function Options() {
   };
 
   const installationTypeStyles = (modded: boolean, selected: boolean): any => ({
-    // display: 'flex',
-    // flexDirection: 'column',
-    // justifyContent: 'center',
-    // padding: theme.spacing(2),
     border: `2px solid ${
       selected ? theme.palette.primary.main : 'transparent'
     }`,
-    // color: selected ? theme.palette.text.primary : theme.palette.text.secondary,
     transform: selected ? 'scale(1.04)' : 'scale(.96)',
     transition: 'all 0.2s ease-in-out',
     flex: 1,
     cursor: 'pointer',
-    // textAlign: 'center',
-    // // filter to mute all color
     filter: selected ? 'none' : 'grayscale(100%)',
   });
 
@@ -218,26 +266,6 @@ export default function Options() {
                   </CardContent>
                 </CardActionArea>
               </Card>
-
-              {/* <Paper
-                onClick={() => setModdedInstall(true)}
-                sx={installationTypeStyles(true, moddedInstall)}
-                square={false}
-              >
-                <Typography variant="h5">Modded (Recommended)</Typography>
-                <Typography>
-                  Adds support for custom Towns & Settlements, blah blah blah
-                  and much more.
-                </Typography>
-              </Paper>
-              <Paper
-                onClick={() => setModdedInstall(false)}
-                sx={installationTypeStyles(false, !moddedInstall)}
-                square={false}
-              >
-                <Typography variant="h5">Vanilla</Typography>
-                <Typography>Add custom POIs to vanilla towns.</Typography>
-              </Paper> */}
             </Box>
 
             <Box sx={formContainerStyles}>
@@ -310,6 +338,9 @@ export default function Options() {
         )}
       </Box>
       <Box sx={pageFooterStyles}>
+        <Button onClick={onImportClick} sx={{ mr: 'auto' }}>
+          Import
+        </Button>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Next

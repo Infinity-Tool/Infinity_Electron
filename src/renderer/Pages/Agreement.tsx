@@ -92,7 +92,7 @@ export default function Agreement() {
           variant="contained"
           color="primary"
           onClick={handleNext}
-          disabled={!agreementChecked || agreementQuery.isLoading == null}
+          disabled={!agreementChecked || !agreementQuery.isSuccess}
         >
           Next
         </Button>

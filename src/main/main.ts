@@ -161,6 +161,7 @@ app.on('activate', () => {
 ipcMain.on('open-folder-dialog', (event, folderType) => {
   dialog
     .showOpenDialog({
+      title: `Choose ${folderType} Folder`,
       properties: ['openDirectory'],
     })
     .then((result: any) => {
@@ -303,13 +304,33 @@ ipcMain.on('save-json-file', async (event, selection) => {
   // Show save file dialog
   dialog
     .showSaveDialog({
-      title: 'Save Selection',
+      title: 'Save Selection File',
       defaultPath: fileName,
       filters: [{ name: 'JSON', extensions: ['json'] }],
     })
     .then((result: any) => {
       if (!result.canceled) {
         fs.writeFileSync(result.filePath, jsonToSave);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+ipcMain.on('open-json-file', async (event) => {
+  // Show open file dialog
+  dialog
+    .showOpenDialog({
+      title: 'Choose Selection File',
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+    })
+    .then((result: any) => {
+      if (!result.canceled) {
+        const filePath = result.filePaths[0];
+        const fileContents = fs.readFileSync(filePath, 'utf8');
+        const selection = fileContents;
+        mainWindow?.webContents.send('selection-file-selected', selection);
       }
     })
     .catch((err) => {

@@ -25,7 +25,7 @@ export const useHttpContext = () => {
 };
 
 export const HttpContextProvider = ({ children }: any): any => {
-  const [devMode, setDevMode] = useSessionStorage(
+  const [devMode, setDevMode] = useLocalStorage(
     StorageKeys.devModeEnabled,
     false,
   );

@@ -18,11 +18,8 @@ import OptionalMods from './Pages/Step3_OptionalMods';
 import { SelectionContextProvider } from './Services/SelectionContext';
 import Step4_VanillaPois from './Pages/Step4_VanillaPois';
 import PreInstallationOptions from './Pages/PreInstallationOptions';
-import {
-  InfinityThemeContextProvider,
-  useInfinityThemeContext,
-} from './Services/theme/ThemeContext';
-import { darkTheme } from './Services/theme/Themes';
+import { useInfinityThemeContext } from './Services/theme/ThemeContext';
+import { SnackbarProvider } from 'notistack';
 
 export function AppContext(props: any) {
   const { theme } = useInfinityThemeContext();
@@ -35,7 +32,7 @@ export function AppContext(props: any) {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={compiledTheme}>
             <CssBaseline />
-            {props.children}
+            <SnackbarProvider maxSnack={3}>{props.children}</SnackbarProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </SelectionContextProvider>
