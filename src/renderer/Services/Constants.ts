@@ -1,4 +1,5 @@
-import { any } from 'async';
+export const TRADER_TAG = (moddedInstall: boolean) =>
+  moddedInstall ? 'cptrader' : 'cpvtrader';
 
 export const InfinityAssetsPath =
   'https://storage.googleapis.com/infinity-assets-dev';

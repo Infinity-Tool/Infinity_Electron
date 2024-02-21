@@ -20,7 +20,12 @@ export interface IUserSelection {
 
 export default function CitiesAndSettlements() {
   const router = useNavigate();
-  const { step1Selection, setStep1Selection }: any = useSelectionContext();
+  const {
+    step1Selection,
+    setStep1Selection,
+    excludeTraders,
+    moddedInstall,
+  }: any = useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
   const availableFiles = directoryQuery.data?.step_1?.sort((a: any, b: any) =>
     a.name.localeCompare(b.name),
@@ -35,7 +40,6 @@ export default function CitiesAndSettlements() {
   };
 
   const onParentCheckToggle = (checked: boolean, fileName: string) => {
-    // console.log('checked', checked, 'fileName', fileName);
     if (checked) {
       const newSelection = [...step1Selection];
       newSelection.push({ name: fileName, childSelections: [] });
@@ -122,6 +126,8 @@ export default function CitiesAndSettlements() {
           onChildCheckToggle={onChildCheckToggle}
           showDetails={true}
           selectAll={selectAll}
+          excludeTraders={excludeTraders}
+          moddedInstall={moddedInstall}
         />
       </Box>
       <Box sx={pageFooterStyles}>

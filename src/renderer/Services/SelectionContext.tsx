@@ -37,6 +37,9 @@ export class Selection {
 
   public step4SelectedTags: any[] = [];
   public setStep4SelectedTags: any;
+
+  public excludeTraders: boolean = false;
+  public setExcludeTraders: any;
 }
 
 export const selectionContext = createContext(new Selection());
@@ -95,6 +98,11 @@ export const SelectionContextProvider = ({ children }: any): any => {
     [],
   );
 
+  const [excludeTraders, setExcludeTraders] = useLocalStorage(
+    StorageKeys.excludeTraders,
+    false,
+  );
+
   const selection: Selection = {
     installMethod,
     setInstallMethod,
@@ -116,6 +124,8 @@ export const SelectionContextProvider = ({ children }: any): any => {
     setStep4Selection,
     step4SelectedTags: step4SelectedTags,
     setStep4SelectedTags: setStep4SelectedTags,
+    excludeTraders,
+    setExcludeTraders,
   };
 
   return (

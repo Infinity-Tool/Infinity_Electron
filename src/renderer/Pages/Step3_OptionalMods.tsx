@@ -15,7 +15,8 @@ import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function Step3_OptionalMods(props: any) {
   const router = useNavigate();
-  const { step3Selection, setStep3Selection } = useSelectionContext();
+  const { step3Selection, setStep3Selection, excludeTraders, moddedInstall } =
+    useSelectionContext();
   const directoryQuery = GetDirectoryFileQuery();
   const availableFiles = directoryQuery.data?.step_3?.sort((a: any, b: any) =>
     a.name.localeCompare(b.name),
@@ -94,6 +95,8 @@ export default function Step3_OptionalMods(props: any) {
           onParentCheckToggle={onParentCheckToggle}
           onChildCheckToggle={onChildCheckToggle}
           showDetails={false}
+          excludeTraders={excludeTraders}
+          moddedInstall={moddedInstall}
         />
       </Box>
       <Box sx={pageFooterStyles}>

@@ -27,6 +27,8 @@ export default function Step4_VanillaPois() {
     setStep4Selection,
     step4SelectedTags,
     setStep4SelectedTags,
+    excludeTraders,
+    moddedInstall,
   } = useSelectionContext();
   const availableFiles = directoryQuery.data?.step_4;
   const availableTags = directoryQuery.data?.step_4_tags;
@@ -136,6 +138,8 @@ export default function Step4_VanillaPois() {
             selectedTags={step4SelectedTags}
             setSelectedTags={setStep4SelectedTags}
             selectAll={selectAll}
+            excludeTraders={excludeTraders}
+            moddedInstall={moddedInstall}
           />
         )}
       </Box>

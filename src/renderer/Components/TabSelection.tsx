@@ -32,6 +32,7 @@ import PoiInfoDialog from './PoiInfoDialog';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { ProperCase, RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { poiStyles } from '../Services/CommonStyles';
+import { TRADER_TAG } from '../Services/Constants';
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
@@ -51,6 +52,8 @@ export default function TabSelection(props: any) {
     setSelectedTags,
     onToggle,
     selectAll,
+    excludeTraders,
+    moddedInstall,
   } = props;
 
   const getIsChildSelected = (
@@ -88,16 +91,34 @@ export default function TabSelection(props: any) {
     return cloneFiles.map((file: any) => {
       file.childSelections = file.childSelections
         .filter((child: any) => {
+          // Selected tags
           const containsTag = child.editorGroups?.some((tag: string) => {
             return selectedTags.includes(tag);
           });
 
+          // Exclude Traders
+          if (
+            excludeTraders &&
+            child.editorGroups?.some((tag: string) =>
+              tag.toLowerCase().includes(TRADER_TAG(moddedInstall)),
+            )
+          ) {
+            return false;
+          }
+
+          // Search bar
           const containsSearch = child?.name
             ?.toLowerCase()
             ?.includes(search.toLowerCase());
 
           return containsTag && containsSearch;
         })
+        // .filter((child: any) => {
+        //   if (excludeTraders) {
+        //     return !child.name.toLowerCase().includes(TRADER_TAG);
+        //   }
+        //   return true;
+        // })
         .sort((a: any, b: any) => a.name.localeCompare(b.name));
       return file;
     });

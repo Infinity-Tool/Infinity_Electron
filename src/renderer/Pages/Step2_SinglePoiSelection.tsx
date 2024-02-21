@@ -27,6 +27,8 @@ export default function StandalonePois() {
     setStep2Selection,
     step2SelectedTags,
     setStep2SelectedTags,
+    excludeTraders,
+    moddedInstall,
   } = useSelectionContext();
   const availableFiles = directoryQuery.data?.step_2;
   const availableTags = directoryQuery.data?.step_2_tags;
@@ -136,6 +138,8 @@ export default function StandalonePois() {
             selectedTags={step2SelectedTags}
             setSelectedTags={setStep2SelectedTags}
             selectAll={selectAll}
+            excludeTraders={excludeTraders}
+            moddedInstall={moddedInstall}
           />
         )}
       </Box>

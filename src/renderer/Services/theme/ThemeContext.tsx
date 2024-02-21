@@ -24,7 +24,6 @@ export const useInfinityThemeContext = () => {
 export const InfinityThemeContextProvider = ({ children }: any): any => {
   // Get OS theme
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-  console.log('prefersDarkScheme: ', prefersDarkScheme);
 
   const [themeMode, setThemeMode] = useLocalStorage(
     StorageKeys.theme,

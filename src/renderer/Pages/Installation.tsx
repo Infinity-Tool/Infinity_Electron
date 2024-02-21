@@ -14,7 +14,7 @@ import {
   pageContentStyles,
   pageFooterStyles,
 } from '../Services/CommonStyles';
-import { AppRoutes } from '../Services/Constants';
+import { AppRoutes, TRADER_TAG } from '../Services/Constants';
 import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import {
@@ -47,6 +47,7 @@ export default function Installation() {
     step2Selection,
     step3Selection,
     step4Selection,
+    excludeTraders,
   } = useSelectionContext();
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
@@ -111,7 +112,6 @@ export default function Installation() {
         ...step2Files,
         ...step3Files,
       ];
-      console.log('allFiles', allFiles);
     } else {
       //Unmodded install
       const step0FilesUnModded = buildFileLists(
@@ -162,7 +162,18 @@ export default function Installation() {
         if (selected.childSelections.length > 0) {
           selected.childSelections.forEach((child: any) => {
             const foundChildEntry = foundEntry.childSelections.find(
-              (availableChild: any) => child === availableChild.name,
+              (availableChild: any) => {
+                if (
+                  excludeTraders &&
+                  availableChild?.editorGroups?.includes(
+                    TRADER_TAG(moddedInstall),
+                  )
+                ) {
+                  return false;
+                }
+
+                return child === availableChild.name;
+              },
             );
 
             if (foundChildEntry) {
@@ -262,7 +273,6 @@ export default function Installation() {
   };
 
   const addToErroredFiles = (file: string) => {
-    console.log('file', file);
     setFilesErrored((prev: any) => [...prev, file]);
   };
 

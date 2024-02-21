@@ -17,13 +17,14 @@ import {
 import Zoom from 'react-medium-image-zoom';
 import '../Assets/css/react-medium-image-zoom-overrides.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { faChevronDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
 import { poiStyles } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { Virtuoso } from 'react-virtuoso';
+import { TRADER_TAG } from '../Services/Constants';
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -40,6 +41,8 @@ export default function ListSelection(props: any) {
     onChildCheckToggle,
     showDetails,
     selectAll,
+    excludeTraders,
+    moddedInstall,
   } = props;
 
   const getIsSelected = (fileName: string): boolean => {
@@ -59,6 +62,19 @@ export default function ListSelection(props: any) {
     );
     return childIndex > -1;
   };
+
+  const filteredSelection = useMemo(() => {
+    const filtered = availableFiles?.map((x: any) => {
+      if (excludeTraders) {
+        x.childSelections = x.childSelections.filter(
+          (y: any) => !y.editorGroups?.includes(TRADER_TAG(moddedInstall)),
+        );
+      }
+      return x;
+    });
+
+    return filtered;
+  }, [availableFiles]);
 
   //Styles
   const modListContainer = {
@@ -88,10 +104,10 @@ export default function ListSelection(props: any) {
     <>
       <Box sx={modListContainer}>
         <Virtuoso
-          totalCount={availableFiles?.length}
+          totalCount={filteredSelection?.length}
           // eslint-disable-next-line react/no-unstable-nested-components
           itemContent={(index) => {
-            const parent = availableFiles[index];
+            const parent = filteredSelection[index];
             const selected = getIsSelected(parent.name);
             const toggle = (e: any) => {
               onParentCheckToggle(!selected, parent.name);

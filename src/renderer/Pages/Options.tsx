@@ -11,9 +11,8 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   IconButton,
-  Paper,
-  Snackbar,
   TextField,
   Typography,
   useTheme,
@@ -25,13 +24,14 @@ import {
   pageContentStyles,
   pageFooterStyles,
 } from '../Services/CommonStyles';
-import { AppRoutes } from '../Services/Constants';
+import { AppRoutes, TRADER_TAG } from '../Services/Constants';
 import { IsOkayPath } from '../Services/utils/PathValidatorUtils';
 import { useSelectionContext } from '../Services/SelectionContext';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import { useHttpContext } from '../Services/http/HttpContext';
 import Loading from '../Components/Loading';
 import { enqueueSnackbar } from 'notistack';
+import { on } from 'events';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
@@ -49,6 +49,8 @@ export default function Options() {
     setStep2Selection,
     setStep3Selection,
     setStep4Selection,
+    excludeTraders,
+    setExcludeTraders,
   } = useSelectionContext();
 
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
@@ -67,6 +69,7 @@ export default function Options() {
   const handleSelectFolder = (folderType: FolderType) => {
     ipcRenderer.sendMessage('open-folder-dialog', folderType);
   };
+
   useEffect(() => {
     ipcRenderer.on('selected-directory', (event: any) => {
       const { folderType } = event;
@@ -95,6 +98,7 @@ export default function Options() {
         try {
           const parsed = JSON.parse(selection);
           setModdedInstall(parsed.moddedInstall);
+          setExcludeTraders(parsed.excludeTraders);
           if (parsed.moddedInstall) {
             setStep1Selection(parsed.step1Selection);
             setStep2Selection(parsed.step2Selection);
@@ -311,25 +315,23 @@ export default function Options() {
                 />
               </FormControl>
 
-              {moddedInstall && (
-                <Box>
-                  <Typography color="error" variant="h4">
-                    NOT IMPLEMENTED
-                  </Typography>
-                  <FormGroup sx={formControlStyles}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          // checked={cleanInstall}
-                          // onChange={(e) => setCleanInstall(e.target.checked)}
-                          sx={checkBoxStyles}
-                        />
-                      }
-                      label="Hide all trader selections (Usually for those who play with overhauls)"
-                    />
-                  </FormGroup>
-                </Box>
-              )}
+              <Box>
+                <FormGroup sx={formControlStyles}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={excludeTraders}
+                        onChange={() => setExcludeTraders(!excludeTraders)}
+                        sx={checkBoxStyles}
+                      />
+                    }
+                    label="Hide all trader selections"
+                  />
+                </FormGroup>
+                <FormHelperText>
+                  Usually for those who play with overhauls
+                </FormHelperText>
+              </Box>
               <Typography variant="caption" color="error">
                 {hasErrors && 'Please provide valid file paths.'}
               </Typography>

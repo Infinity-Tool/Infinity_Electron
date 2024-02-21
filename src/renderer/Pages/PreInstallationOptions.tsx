@@ -23,7 +23,8 @@ import { select } from 'async';
 
 export default function PreInstallationOptions(props: any) {
   const fullSelection = useSelectionContext();
-  const { moddedInstall, installMethod, setInstallMethod } = fullSelection;
+  const { moddedInstall, installMethod, setInstallMethod, excludeTraders } =
+    fullSelection;
   const theme = useTheme();
   const router = useNavigate();
   const { ipcRenderer } = window.electron;
@@ -49,6 +50,7 @@ export default function PreInstallationOptions(props: any) {
     if (moddedInstall) {
       return {
         moddedInstall,
+        excludeTraders,
         step1Selection: fullSelection.step1Selection,
         step2Selection: fullSelection.step2Selection,
         step3Selection: fullSelection.step3Selection,
@@ -56,6 +58,7 @@ export default function PreInstallationOptions(props: any) {
     } else {
       return {
         moddedInstall,
+        excludeTraders,
         step4Selection: fullSelection.step4Selection,
       };
     }
