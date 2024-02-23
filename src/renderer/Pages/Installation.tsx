@@ -24,12 +24,18 @@ import {
 import { InstallationFile } from '../Models/InstallationFile';
 import { InstallationRequest } from '../Models/InstallationRequest';
 import Slideshow from '../Components/Slideshow';
+import useLocalStorage from '../Services/useLocalStorage';
+import StorageKeys from '../Services/StorageKeys';
 
 export default function Installation() {
   const router = useNavigate();
   const theme = useTheme();
   const { ipcRenderer } = window.electron;
   const { baseUrl } = useHttpContext();
+  const [lastInstallDate, setLastInstallDate] = useLocalStorage(
+    StorageKeys.lastInstallDate,
+    null,
+  );
   const directoryQuery = GetDirectoryFileQuery();
   const availableStep0FilesModded = directoryQuery.data?.step_0_modded;
   const availableStep0FilesUnmodded = directoryQuery.data?.step_0_unmodded;
@@ -92,7 +98,9 @@ export default function Installation() {
   }, [downloadPercentCompleted]);
 
   const startDownloads = () => {
-    setStartTime(Date.now());
+    const utcNow = Date.now();
+    setLastInstallDate(utcNow);
+    setStartTime(utcNow);
     let allFiles = [];
 
     if (moddedInstall) {

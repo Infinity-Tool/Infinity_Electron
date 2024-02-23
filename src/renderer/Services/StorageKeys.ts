@@ -16,6 +16,7 @@ enum StorageKeys {
   dismissedAlerts = 'dismissedAlerts',
   agreementAccepted = 'agreementAccepted',
   excludeTraders = 'excludeTraders',
+  lastInstallDate = 'lastInstallDate',
 }
 
 export default StorageKeys;

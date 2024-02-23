@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   FormControl,
@@ -7,7 +9,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { AppRoutes } from '../Services/Constants';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import InfinityLogo from '../Assets/InfinityLogo';
 import DiscordButton from '../Components/DiscordButton';
 import {
@@ -19,13 +21,36 @@ import { useHttpContext } from '../Services/http/HttpContext';
 import { useNavigate } from 'react-router-dom';
 import Announcements from '../Components/Announcements';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
+import useLocalStorage from '../Services/useLocalStorage';
+import StorageKeys from '../Services/StorageKeys';
 
 export default function Welcome() {
   const router = useNavigate();
   const theme = useTheme();
   const [logoClickCount, setLogoClickCount]: any = useState(0);
   const { devMode, setDevMode, devModeKey, setDevModeKey } = useHttpContext();
+  const [clientFilesDate] = useLocalStorage(StorageKeys.lastInstallDate, null);
+  // Here to pre-fetch directory
   const directoryQuery = GetDirectoryFileQuery();
+
+  const newFilesAvailable = useMemo(
+    () => {
+      const serverFilesDate =
+        directoryQuery.data &&
+        new Date(directoryQuery.data['last-generated'] + 'Z');
+
+      if (directoryQuery?.data && serverFilesDate) {
+        const newerFilesAvailable = serverFilesDate.getTime() > clientFilesDate;
+        return {
+          newerFilesAvailable: newerFilesAvailable,
+          clientFilesDate: clientFilesDate && new Date(clientFilesDate),
+          serverFilesDate: serverFilesDate && new Date(serverFilesDate),
+        };
+      }
+      return null;
+    },
+    directoryQuery?.data,
+  );
 
   //Functions
   const handleBegin = () => {
@@ -107,6 +132,36 @@ export default function Welcome() {
               <Typography variant="caption">
                 Developed by Alexander Trimble
               </Typography>
+            </Box>
+            <Box>
+              {newFilesAvailable?.newerFilesAvailable && (
+                <Alert severity="info">
+                  <AlertTitle>
+                    Heads up: Our files have changed since your last install
+                  </AlertTitle>
+                  <Typography variant="caption">
+                    {`You last installed on ${new Date(
+                      newFilesAvailable.clientFilesDate,
+                    ).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })} and our files were updated last on ${new Date(
+                      newFilesAvailable.serverFilesDate,
+                    ).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}.`}
+                  </Typography>
+                </Alert>
+              )}
             </Box>
             {devMode && (
               <FormControl sx={{ mt: '1rem' }}>
