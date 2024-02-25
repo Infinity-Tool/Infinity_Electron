@@ -7,14 +7,19 @@ import {
   pageFooterStyles,
 } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
+import { useSelectionContext } from '../Services/SelectionContext';
 
 export default function Canceled() {
-  // const { ipcRenderer } = window.require('electron');
+  const { moddedInstall } = useSelectionContext();
   const { ipcRenderer } = window.electron;
   const router = useNavigate();
 
   const handleChangeSelection = () => {
-    router(AppRoutes.citiesAndSettlements);
+    if (moddedInstall) {
+      router(AppRoutes.citiesAndSettlements);
+    } else {
+      router(AppRoutes.vanillaPois);
+    }
   };
 
   const handleClose = () => {

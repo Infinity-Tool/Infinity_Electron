@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DiscordButton from '../Components/DiscordButton';
 import PatreonButton from '../Components/PatreonButton';
 import {
+  centerContentStyles,
   pageContainerStyles,
   pageContentStyles,
   pageFooterStyles,
@@ -14,6 +15,7 @@ export default function Finished() {
   // const { ipcRenderer } = window.require('electron');
   const { moddedInstall } = useSelectionContext();
   const { ipcRenderer } = window.electron;
+  const theme = useTheme();
   const router = useNavigate();
 
   const handleChangeSelection = () => {
@@ -37,19 +39,23 @@ export default function Finished() {
   const externalButtonContainerStyles = {
     display: 'flex',
     justifyContent: 'space-around',
+    gap: theme.spacing(2),
+    mt: theme.spacing(4),
   };
 
   return (
     <Box sx={pageContainerStyles}>
       <Box sx={pageContentStyles}>
-        <Box sx={headerMessageStyles}>
-          <Typography variant="h1">Installation Complete</Typography>
-          <Typography>Thank you for using Infinity!</Typography>
-        </Box>
+        <Box sx={centerContentStyles}>
+          <Box sx={headerMessageStyles}>
+            <Typography variant="h1">Installation Complete ✅</Typography>
+            <Typography>Thank you for using Infinity!</Typography>
+          </Box>
 
-        <Box sx={externalButtonContainerStyles}>
-          <PatreonButton />
-          <DiscordButton />
+          <Box sx={externalButtonContainerStyles}>
+            <PatreonButton />
+            <DiscordButton />
+          </Box>
         </Box>
       </Box>
 
@@ -60,7 +66,7 @@ export default function Finished() {
           // color="primary"
           onClick={handleClose}
         >
-          Close
+          EXIT
         </Button>
       </Box>
     </Box>

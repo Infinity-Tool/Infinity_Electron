@@ -6,6 +6,7 @@ import {
   Button,
   Alert,
   AlertTitle,
+  Tooltip,
 } from '@mui/material';
 import {
   InstallMethod,
@@ -116,6 +117,7 @@ export default function PreInstallationOptions(props: any) {
             )}
           >
             <Typography variant="h5">Clean Install</Typography>
+            {/* <Typography variant="h6">(Recommended)</Typography> */}
             <Typography>
               Wipe out target folders and fully install all files from scratch.
             </Typography>
@@ -170,9 +172,11 @@ export default function PreInstallationOptions(props: any) {
         )}
       </Box>
       <Box sx={pageFooterStyles}>
-        <Button sx={exportSelectionButtonStyles} onClick={onExportClick}>
-          Export Selection
-        </Button>
+        <Tooltip title="Export your selection to a file. Can be imported at the Options step by another person to skip to this step.">
+          <Button sx={exportSelectionButtonStyles} onClick={onExportClick}>
+            Export Selection
+          </Button>
+        </Tooltip>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Download & Install

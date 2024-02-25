@@ -25,7 +25,7 @@ export default function PatreonButton() {
       startIcon={<FontAwesomeIcon icon={faPatreon} />}
       onClick={handlePatreonClick}
     >
-      Support Infinity on Patreon
+      Support Compopack on Patreon
     </Button>
   );
 }

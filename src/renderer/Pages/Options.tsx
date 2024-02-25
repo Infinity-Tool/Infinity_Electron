@@ -8,12 +8,16 @@ import {
   CardContent,
   CardMedia,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormGroup,
   FormHelperText,
   IconButton,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -55,6 +59,7 @@ export default function Options() {
 
   const [localPrefabsError, setLocalPrefabsError] = useState(false);
   const [localModsError, setLocalModsError] = useState(false);
+  const [helpDialogOpen, setHelpDialogOpen] = useState(false);
   const hasErrors = localPrefabsError || localModsError;
   const directoryQuery = GetDirectoryFileQuery();
   const showcaseModded = directoryQuery?.data?.showcase_modded;
@@ -206,7 +211,6 @@ export default function Options() {
     mb: theme.spacing(8),
     px: theme.spacing(4),
   };
-
   const installationTypeStyles = (modded: boolean, selected: boolean): any => ({
     border: `2px solid ${
       selected ? theme.palette.primary.main : 'transparent'
@@ -217,6 +221,9 @@ export default function Options() {
     cursor: 'pointer',
     filter: selected ? 'none' : 'grayscale(100%)',
   });
+  const helpButtonStyles = {
+    mb: theme.spacing(1),
+  };
 
   return (
     <Box sx={pageContainerStyles}>
@@ -242,8 +249,8 @@ export default function Options() {
                       Modded (Recommended)
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Adds support for custom Towns & Settlements, blah blah
-                      blah and much more.
+                      Adds support for custom textures, towns & settlements, and
+                      some optional mods, allowing for even more POI choices.
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -272,6 +279,36 @@ export default function Options() {
               </Card>
             </Box>
 
+            <Box>
+              <Button
+                sx={helpButtonStyles}
+                onClick={() => setHelpDialogOpen(true)}
+              >
+                Help
+              </Button>
+              <Dialog
+                open={helpDialogOpen}
+                onClose={() => setHelpDialogOpen(false)}
+              >
+                <DialogTitle>Help</DialogTitle>
+                <DialogContent>
+                  <Typography>
+                    <strong>Windows</strong>
+                  </Typography>
+                  <Typography>
+                    C:\Users\(your user)\AppData\Roaming\7DaysToDie
+                  </Typography>
+                  <Typography variant="caption">
+                    You can get here by typing <strong>%appdata%</strong> in the
+                    address bar of your file explorer.
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    If they do not exist, you may need to create them.
+                  </Typography>
+                </DialogContent>
+              </Dialog>
+            </Box>
             <Box sx={formContainerStyles}>
               <FormControl>
                 <TextField
@@ -340,9 +377,12 @@ export default function Options() {
         )}
       </Box>
       <Box sx={pageFooterStyles}>
-        <Button onClick={onImportClick} sx={{ mr: 'auto' }}>
-          Import
-        </Button>
+        <Tooltip title="Import a selection file and skip to the installation. Usually given to you by someone else, or saved from a previous selection.">
+          <Button onClick={onImportClick} sx={{ mr: 'auto' }}>
+            Import
+          </Button>
+        </Tooltip>
+
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Next
