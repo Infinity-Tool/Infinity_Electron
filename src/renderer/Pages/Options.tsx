@@ -304,7 +304,8 @@ export default function Options() {
                   </Typography>
                   <br />
                   <Typography variant="caption">
-                    If they do not exist, you may need to create them.
+                    If these folders do not exist then you may need to create
+                    them.
                   </Typography>
                 </DialogContent>
               </Dialog>

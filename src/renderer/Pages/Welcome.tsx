@@ -30,7 +30,6 @@ export default function Welcome() {
   const [logoClickCount, setLogoClickCount]: any = useState(0);
   const { devMode, setDevMode, devModeKey, setDevModeKey } = useHttpContext();
   const [clientFilesDate] = useLocalStorage(StorageKeys.lastInstallDate, null);
-  // Here to pre-fetch directory
   const directoryQuery = GetDirectoryFileQuery();
 
   const newFilesAvailable = useMemo(
@@ -134,7 +133,7 @@ export default function Welcome() {
               </Typography>
             </Box>
             <Box>
-              {newFilesAvailable?.newerFilesAvailable && (
+              {clientFilesDate && newFilesAvailable?.newerFilesAvailable && (
                 <Alert severity="info">
                   <AlertTitle>
                     Heads up: Our files have changed since your last install

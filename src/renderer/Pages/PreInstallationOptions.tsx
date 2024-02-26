@@ -117,7 +117,6 @@ export default function PreInstallationOptions(props: any) {
             )}
           >
             <Typography variant="h5">Clean Install</Typography>
-            {/* <Typography variant="h6">(Recommended)</Typography> */}
             <Typography>
               Wipe out target folders and fully install all files from scratch.
             </Typography>
