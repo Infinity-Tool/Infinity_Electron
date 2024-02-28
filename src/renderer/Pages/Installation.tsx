@@ -9,11 +9,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHttpContext } from '../Services/http/HttpContext';
 import ConfirmationDialog from '../Components/ConfirmationDialog';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
 import { AppRoutes, TRADER_TAG } from '../Services/Constants';
 import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
@@ -26,6 +21,9 @@ import { InstallationRequest } from '../Models/InstallationRequest';
 import Slideshow from '../Components/Slideshow';
 import useLocalStorage from '../Services/useLocalStorage';
 import StorageKeys from '../Services/StorageKeys';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export default function Installation() {
   const router = useNavigate();
@@ -299,8 +297,8 @@ export default function Installation() {
 
   return (
     <>
-      <Box sx={pageContainerStyles}>
-        <Box sx={pageContentStyles} justifyContent={'space-between'}>
+      <PageContainer>
+        <PageContent justifyContent={'space-between'}>
           <Box>
             <Slideshow moddedInstall={moddedInstall} />
             <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
@@ -328,15 +326,15 @@ export default function Installation() {
               </Box>
             )}
           </Box>
-        </Box>
+        </PageContent>
 
-        <Box sx={pageFooterStyles}>
+        <PageFooter>
           <Button onClick={onChangeSelectionClick}>Change Selection</Button>
           <Button onClick={onCancelClick} color={'error'}>
             Cancel
           </Button>
-        </Box>
-      </Box>
+        </PageFooter>
+      </PageContainer>
 
       {/* Back Dialog */}
       <ConfirmationDialog

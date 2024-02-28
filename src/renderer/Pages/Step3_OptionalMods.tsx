@@ -1,17 +1,15 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ListSelection from '../Components/ListSelection';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  headerContainerStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
+import { headerContainerStyles } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
 import { useSelectionContext } from '../Services/SelectionContext';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export default function Step3_OptionalMods(props: any) {
   const router = useNavigate();
@@ -71,8 +69,8 @@ export default function Step3_OptionalMods(props: any) {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Optional Mods</Typography>
@@ -98,13 +96,13 @@ export default function Step3_OptionalMods(props: any) {
           excludeTraders={excludeTraders}
           moddedInstall={moddedInstall}
         />
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Next
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

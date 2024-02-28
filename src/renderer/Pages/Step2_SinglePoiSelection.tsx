@@ -2,17 +2,15 @@ import { Box, Button, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TabSelection from '../Components/TabSelection';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  headerContainerStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
+import { headerContainerStyles } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
 import { useSelectionContext } from '../Services/SelectionContext';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export interface IUserSelection {
   name: string;
@@ -112,8 +110,8 @@ export default function StandalonePois() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Single POI Selection</Typography>
@@ -142,13 +140,13 @@ export default function StandalonePois() {
             moddedInstall={moddedInstall}
           />
         )}
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Next
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

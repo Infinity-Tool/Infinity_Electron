@@ -7,19 +7,16 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Components/Loading';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { AgreementQuery } from '../Services/http/HttpFunctions';
 import Error from '../Components/Error';
 import useSessionStorage from '../Services/useSessionStorage';
 import StorageKeys from '../Services/StorageKeys';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export default function Agreement() {
   const router = useNavigate();
@@ -52,8 +49,8 @@ export default function Agreement() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Typography variant="h1">Agreement</Typography>
 
         {agreementQuery.isLoading && <Loading />}
@@ -83,8 +80,8 @@ export default function Agreement() {
             label="I Agree"
           />
         </FormGroup>
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Button color="primary" onClick={handleBack}>
           Back
         </Button>
@@ -96,7 +93,7 @@ export default function Agreement() {
         >
           Next
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

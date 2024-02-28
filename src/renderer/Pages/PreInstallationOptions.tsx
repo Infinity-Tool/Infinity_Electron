@@ -12,15 +12,12 @@ import {
   InstallMethod,
   useSelectionContext,
 } from '../Services/SelectionContext';
-import {
-  headerContainerStyles,
-  pageContainerStyles,
-  pageContentStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { useNavigate } from 'react-router-dom';
-import { select } from 'async';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import { headerContainerStyles } from '../Services/CommonStyles';
+import PageFooter from '../Components/PageFooter';
 
 export default function PreInstallationOptions(props: any) {
   const fullSelection = useSelectionContext();
@@ -95,8 +92,8 @@ export default function PreInstallationOptions(props: any) {
   const exportSelectionButtonStyles = { mr: 'auto' };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Install Options</Typography>
@@ -169,8 +166,8 @@ export default function PreInstallationOptions(props: any) {
             </AlertTitle>
           </Alert>
         )}
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Tooltip title="Export your selection to a file. Can be imported at the Options step by another person to skip to this step.">
           <Button sx={exportSelectionButtonStyles} onClick={onExportClick}>
             Export Selection
@@ -180,7 +177,7 @@ export default function PreInstallationOptions(props: any) {
         <Button variant="contained" onClick={onNextClick}>
           Download & Install
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

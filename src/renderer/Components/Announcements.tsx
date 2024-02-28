@@ -21,7 +21,7 @@ export default function Announcements() {
     display: 'flex',
     gap: theme.spacing(2),
     flexDirection: 'column',
-    position: 'absolute',
+    // position: 'absolute',
   };
 
   const dismissAlert = (type: AnnouncementType) => {

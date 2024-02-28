@@ -3,7 +3,6 @@
     "no-console": "off",
     "global-require": "off",
     "import/no-dynamic-require": "off",
-    "import/no-extraneous-dependencies": "off",
-    "linebreak-style": "off"
+    "import/no-extraneous-dependencies": "off"
   }
 }

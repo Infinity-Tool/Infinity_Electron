@@ -12,17 +12,15 @@ import { AppRoutes } from '../Services/Constants';
 import { useMemo, useState } from 'react';
 import InfinityLogo from '../Assets/InfinityLogo';
 import DiscordButton from '../Components/DiscordButton';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { useNavigate } from 'react-router-dom';
 import Announcements from '../Components/Announcements';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import useLocalStorage from '../Services/useLocalStorage';
 import StorageKeys from '../Services/StorageKeys';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export default function Welcome() {
   const router = useNavigate();
@@ -36,7 +34,7 @@ export default function Welcome() {
     () => {
       const serverFilesDate =
         directoryQuery.data &&
-        new Date(directoryQuery.data['last-generated'] + 'Z');
+        new Date(directoryQuery.data['last-generated'] + 'Z'); //incredibly hacky, but it works
 
       if (directoryQuery?.data && serverFilesDate) {
         const newerFilesAvailable = serverFilesDate.getTime() > clientFilesDate;
@@ -80,17 +78,22 @@ export default function Welcome() {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(4),
+    height: '40%',
+    my: theme.spacing(6),
     '& svg': {
-      maxHeight: '400px',
-      maxWidth: '400px',
-      flex: '0 1 auto',
+      width: '100%',
+      height: '100%',
     },
-    flex: '0 1 auto',
   };
 
   const headerStyles = {
     fontSize: '5rem',
+  };
+  const titleStyles = {
+    display: 'flex',
+    gap: theme.spacing(2),
+    // justifyContent: 'space-between',
+    alignItems: 'center',
   };
   const subHeaderStyles = {
     fontSize: '2rem',
@@ -103,20 +106,30 @@ export default function Welcome() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
-        <Announcements />
+    <PageContainer>
+      <PageContent>
+        {/* Logo */}
+        <Box sx={logoContainerStyles} onClick={onLogoClick}>
+          <InfinityLogo devMode={devMode} />
+        </Box>
         <Box sx={contentStyles}>
-          {/* Logo */}
-          <Box sx={logoContainerStyles} onClick={onLogoClick}>
-            <InfinityLogo devMode={devMode} />
-          </Box>
-
           {/* Text */}
           <Box sx={textContainerStyles}>
-            <Typography variant="h1" sx={headerStyles}>
-              Infinity
-            </Typography>
+            <Box sx={titleStyles}>
+              <Typography variant="h1" sx={headerStyles}>
+                Infinity
+              </Typography>
+              {devMode && (
+                <FormControl sx={{ mt: '1rem' }}>
+                  <TextField
+                    label="Dev Mode Key"
+                    value={devModeKey}
+                    onChange={(event) => setDevModeKey(event.target.value)}
+                  />
+                </FormControl>
+              )}
+            </Box>
+
             <Typography variant="h2" sx={subHeaderStyles}>
               Magoli's Compopack Installer for{' '}
               <span style={{ color: 'red' }}>7</span>
@@ -132,6 +145,9 @@ export default function Welcome() {
                 Developed by Alexander Trimble
               </Typography>
             </Box>
+
+            <Announcements />
+
             <Box>
               {clientFilesDate && newFilesAvailable?.newerFilesAvailable && (
                 <Alert severity="info">
@@ -162,19 +178,10 @@ export default function Welcome() {
                 </Alert>
               )}
             </Box>
-            {devMode && (
-              <FormControl sx={{ mt: '1rem' }}>
-                <TextField
-                  label="Dev Mode Key"
-                  value={devModeKey}
-                  onChange={(event) => setDevModeKey(event.target.value)}
-                />
-              </FormControl>
-            )}
           </Box>
         </Box>
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <DiscordButton />
         <Button
           variant="contained"
@@ -184,7 +191,7 @@ export default function Welcome() {
         >
           Begin
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

@@ -23,19 +23,16 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
-import { AppRoutes, TRADER_TAG } from '../Services/Constants';
+import { AppRoutes } from '../Services/Constants';
 import { IsOkayPath } from '../Services/utils/PathValidatorUtils';
 import { useSelectionContext } from '../Services/SelectionContext';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import { useHttpContext } from '../Services/http/HttpContext';
 import Loading from '../Components/Loading';
 import { enqueueSnackbar } from 'notistack';
-import { on } from 'events';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
@@ -226,8 +223,8 @@ export default function Options() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Typography variant="h1">Options</Typography>
         {directoryQuery.isLoading && <Loading />}
         {directoryQuery.isSuccess && (
@@ -376,8 +373,8 @@ export default function Options() {
             </Box>
           </Box>
         )}
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Tooltip title="Import a selection file and skip to the installation. Usually given to you by someone else, or saved from a previous selection.">
           <Button onClick={onImportClick} sx={{ mr: 'auto' }}>
             Import
@@ -388,7 +385,7 @@ export default function Options() {
         <Button variant="contained" onClick={onNextClick}>
           Next
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }

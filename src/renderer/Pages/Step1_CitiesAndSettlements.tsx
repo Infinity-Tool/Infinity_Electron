@@ -1,17 +1,15 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ListSelection from '../Components/ListSelection';
-import {
-  pageContainerStyles,
-  pageContentStyles,
-  headerContainerStyles,
-  pageFooterStyles,
-} from '../Services/CommonStyles';
+import { headerContainerStyles } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import Loading from '../Components/Loading';
 import Error from '../Components/Error';
 import { useSelectionContext } from '../Services/SelectionContext';
+import PageContainer from '../Components/PageContainer';
+import PageContent from '../Components/PageContent';
+import PageFooter from '../Components/PageFooter';
 
 export interface IUserSelection {
   name: string;
@@ -101,9 +99,8 @@ export default function CitiesAndSettlements() {
   };
 
   return (
-    <Box sx={pageContainerStyles}>
-      {/* <Button onClick={ConfigureSelectedFiles}>Test (delete me)</Button> */}
-      <Box sx={pageContentStyles}>
+    <PageContainer>
+      <PageContent>
         <Box sx={headerContainerStyles}>
           <Box>
             <Typography variant="h1">Cities & Settlements</Typography>
@@ -129,13 +126,13 @@ export default function CitiesAndSettlements() {
           excludeTraders={excludeTraders}
           moddedInstall={moddedInstall}
         />
-      </Box>
-      <Box sx={pageFooterStyles}>
+      </PageContent>
+      <PageFooter>
         <Button onClick={onBackClick}>Back</Button>
         <Button variant="contained" onClick={onNextClick}>
           Next
         </Button>
-      </Box>
-    </Box>
+      </PageFooter>
+    </PageContainer>
   );
 }
