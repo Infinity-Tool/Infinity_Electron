@@ -31,7 +31,7 @@ export default function PreInstallationOptions(props: any) {
     if (moddedInstall) {
       router(AppRoutes.optionalMods);
     } else {
-      router(AppRoutes.vanillaPois);
+      router(AppRoutes.vanillaOptionalMods);
     }
   };
 

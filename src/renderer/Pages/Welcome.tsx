@@ -146,8 +146,6 @@ export default function Welcome() {
               </Typography>
             </Box>
 
-            <Announcements />
-
             <Box>
               {clientFilesDate && newFilesAvailable?.newerFilesAvailable && (
                 <Alert severity="info">
@@ -178,6 +176,8 @@ export default function Welcome() {
                 </Alert>
               )}
             </Box>
+
+            <Announcements />
           </Box>
         </Box>
       </PageContent>

@@ -17,6 +17,7 @@ import StandalonePois from './Pages/Step2_SinglePoiSelection';
 import OptionalMods from './Pages/Step3_OptionalMods';
 import { SelectionContextProvider } from './Services/SelectionContext';
 import Step4_VanillaPois from './Pages/Step4_VanillaPois';
+import Step5_OptionalVanillaMods from './Pages/Step5_OptionalVanillaMods';
 import PreInstallationOptions from './Pages/PreInstallationOptions';
 import { useInfinityThemeContext } from './Services/theme/ThemeContext';
 import { SnackbarProvider } from 'notistack';
@@ -59,6 +60,10 @@ export default function App() {
             <Route
               path={AppRoutes.vanillaPois}
               element={<Step4_VanillaPois />}
+            />
+            <Route
+              path={AppRoutes.vanillaOptionalMods}
+              element={<Step5_OptionalVanillaMods />}
             />
             <Route path={AppRoutes.optionalMods} element={<OptionalMods />} />
             <Route path={AppRoutes.options} element={<Options />} />

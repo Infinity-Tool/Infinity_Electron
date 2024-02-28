@@ -12,6 +12,7 @@ export enum AppRoutes {
   singlePoiSelection = '/standalone-pois',
   optionalMods = '/optional-mods',
   vanillaPois = '/vanilla-pois',
+  vanillaOptionalMods = '/vanilla-optional-mods',
   preInstallation = '/pre-installation',
   installation = '/installation',
   finished = '/finished',
@@ -65,6 +66,12 @@ export const RoutesMeta: Record<
   [AppRoutes.vanillaPois]: {
     title: 'Vanilla POIs',
     value: 3,
+    installFlow: installFlow.vanilla,
+  },
+  // Step 5
+  [AppRoutes.vanillaOptionalMods]: {
+    title: 'Optional Mods',
+    value: 4,
     installFlow: installFlow.vanilla,
   },
   [AppRoutes.preInstallation]: {

@@ -6,7 +6,7 @@ import { centerContentStyles } from '../Services/CommonStyles';
 import { AppRoutes } from '../Services/Constants';
 import { useSelectionContext } from '../Services/SelectionContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
@@ -42,14 +42,25 @@ export default function Finished() {
     gap: theme.spacing(2),
     mt: theme.spacing(4),
   };
+  const installCompleteTitleStyles = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+  };
 
   return (
     <PageContainer>
       <PageContent>
         <Box sx={centerContentStyles}>
           <Box sx={headerMessageStyles}>
-            <Typography variant="h1">Installation Complete</Typography>
-            <FontAwesomeIcon icon={faCheckSquare} color="success" />
+            <Box sx={installCompleteTitleStyles}>
+              <Typography variant="h1">Installation Complete</Typography>
+              <FontAwesomeIcon
+                size="3x"
+                icon={faCheck}
+                color={theme.palette.primary.main}
+              />
+            </Box>
             <Typography>Thank you for using Infinity!</Typography>
           </Box>
 

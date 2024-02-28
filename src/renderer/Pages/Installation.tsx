@@ -41,6 +41,7 @@ export default function Installation() {
   const availableStep2Files = directoryQuery.data?.step_2;
   const availableStep3Files = directoryQuery.data?.step_3;
   const availableStep4Files = directoryQuery.data?.step_4;
+  const availableStep5Files = directoryQuery.data?.step_5;
   const [fileCount, setFileCount]: any = useState();
   const {
     moddedInstall,
@@ -51,6 +52,7 @@ export default function Installation() {
     step2Selection,
     step3Selection,
     step4Selection,
+    step5Selection,
     excludeTraders,
   } = useSelectionContext();
   const [filesCompleted, setFilesCompleted]: any = useState([]);
@@ -128,7 +130,8 @@ export default function Installation() {
         })),
       );
       const step4Files = buildFileLists(availableStep4Files, step4Selection);
-      allFiles = [...step0FilesUnModded, ...step4Files];
+      const step5Files = buildFileLists(availableStep5Files, step5Selection);
+      allFiles = [...step0FilesUnModded, ...step4Files, ...step5Files];
     }
     setFileCount(allFiles.length);
 

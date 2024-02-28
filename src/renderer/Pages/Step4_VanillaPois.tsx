@@ -53,7 +53,7 @@ export default function Step4_VanillaPois() {
     router(AppRoutes.options);
   };
   const onNextClick = async () => {
-    router(AppRoutes.preInstallation);
+    router(AppRoutes.vanillaOptionalMods);
   };
 
   const onToggle = (checked: boolean, parent: string, child: string) => {

@@ -38,6 +38,9 @@ export class Selection {
   public step4SelectedTags: any[] = [];
   public setStep4SelectedTags: any;
 
+  public step5Selection: any[] = [];
+  public setStep5Selection: any;
+
   public excludeTraders: boolean = false;
   public setExcludeTraders: any;
 }
@@ -97,7 +100,10 @@ export const SelectionContextProvider = ({ children }: any): any => {
     StorageKeys.step4SelectedTags,
     [],
   );
-
+  const [step5Selection, setStep5Selection] = useLocalStorage(
+    StorageKeys.step5Selection,
+    [],
+  );
   const [excludeTraders, setExcludeTraders] = useLocalStorage(
     StorageKeys.excludeTraders,
     false,
@@ -124,6 +130,8 @@ export const SelectionContextProvider = ({ children }: any): any => {
     setStep4Selection,
     step4SelectedTags: step4SelectedTags,
     setStep4SelectedTags: setStep4SelectedTags,
+    step5Selection,
+    setStep5Selection,
     excludeTraders,
     setExcludeTraders,
   };
