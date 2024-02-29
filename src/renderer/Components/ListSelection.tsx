@@ -96,7 +96,7 @@ export default function ListSelection(props: any) {
     maxWidth: '66%',
   };
   const parentTitleStyles = {
-    fontSize: '1.2rem',
+    fontSize: '1.5rem',
     fontWeight: 'bold',
   };
 

@@ -15,13 +15,9 @@ const componentOverrides = {
     },
   },
   MuiChip: {
-    // make primary chip color darker
     styleOverrides: {
-      colorPrimary: {
-        backgroundColor: '#22ab82',
-      },
-      colorDefault: {
-        color: '#b0b0b0',
+      root: {
+        paddingTop: 2, // text in chips isn't centered for some reason, this fixes it
       },
     },
   },

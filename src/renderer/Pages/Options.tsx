@@ -221,6 +221,12 @@ export default function Options() {
   const helpButtonStyles = {
     mb: theme.spacing(1),
   };
+  const directorySelectHeaderStyles = {
+    display: 'flex',
+    alignContent: 'center',
+    gap: theme.spacing(2),
+    mb: theme.spacing(2),
+  };
 
   return (
     <PageContainer>
@@ -277,12 +283,18 @@ export default function Options() {
             </Box>
 
             <Box>
-              <Button
-                sx={helpButtonStyles}
-                onClick={() => setHelpDialogOpen(true)}
-              >
-                Help
-              </Button>
+              <Box sx={directorySelectHeaderStyles}>
+                <Typography variant="h5">
+                  Select Installation Directories
+                </Typography>
+                <Button
+                  sx={helpButtonStyles}
+                  onClick={() => setHelpDialogOpen(true)}
+                >
+                  Help
+                </Button>
+              </Box>
+
               <Dialog
                 open={helpDialogOpen}
                 onClose={() => setHelpDialogOpen(false)}

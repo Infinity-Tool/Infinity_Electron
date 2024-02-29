@@ -11,11 +11,12 @@ jobs:
     # config in package.json > "build" and remove the conditional below
     if: ${{ github.repository_owner == 'Infinity-Tool' }}
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        os: [macos-latest]
+    # runs-on: ${{ matrix.os }}
+    # strategy:
+    #   matrix:
+    #     os: [macos-latest]
 
     steps:
       - name: Checkout git repo
