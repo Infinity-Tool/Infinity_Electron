@@ -36,9 +36,8 @@ export const GetDirectoryFileQuery = (): UseQueryResult<any, unknown> => {
   const query = useQuery(
     `${baseUrl}_directory`,
     () => {
-      const dateString = new Date().toISOString();
-      const url = `${baseUrl}/directory.json?${dateString}`;
-      return axios.get(url, fetchOptions).then((res) => res.data);
+      const url = `${baseUrl}/directory.json`;
+      return axios.get(url).then((res) => res.data);
     },
     {
       staleTime: Infinity,

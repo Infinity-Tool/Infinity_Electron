@@ -1,10 +1,8 @@
 import { createContext, useContext } from 'react';
 import StorageKeys from '../StorageKeys';
 import useLocalStorage from '../useLocalStorage';
-import useSessionStorage from '../useSessionStorage';
 
 export class HttpContext {
-  public bucket: string = '';
   public baseUrl: string = '';
   public devMode: any;
   public setDevMode: any;
@@ -34,13 +32,11 @@ export const HttpContextProvider = ({ children }: any): any => {
     '',
   );
 
-  const bucket = devMode ? 'infinity-dev' : 'infinity-prod';
   const baseUrl: string = devMode
-    ? `https://storage.googleapis.com/${bucket}/${devModeKey}`
-    : `https://storage.googleapis.com/${bucket}/`;
+    ? `https://infinity-develop.syd1.digitaloceanspaces.com/${devModeKey}`
+    : `https://infinity-production.sfo3.digitaloceanspaces.com`;
 
   const value: HttpContext = {
-    bucket,
     baseUrl,
     devMode,
     setDevMode,
