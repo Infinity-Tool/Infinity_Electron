@@ -6,13 +6,13 @@ import { UseQueryResult, useQuery } from 'react-query';
 import { useHttpContext } from './HttpContext';
 import axios from 'axios';
 
-const fetchOptions: any = {
-  headers: {
-    'Content-Type': 'application/octet-stream',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET',
-  },
-};
+// const fetchOptions: any = {
+//   headers: {
+//     'Content-Type': 'application/octet-stream',
+//     'Access-Control-Allow-Origin': '*',
+//     'Access-Control-Allow-Methods': 'GET',
+//   },
+// };
 
 export const AgreementQuery = (): UseQueryResult<any, unknown> => {
   const { baseUrl } = useHttpContext();
