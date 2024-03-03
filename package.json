@@ -102,7 +102,6 @@
     "async": "^3.2.5",
     "axios": "^1.6.5",
     "electron-debug": "^3.2.0",
-    "electron-dl": "^3.5.1",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "lodash": "^4.17.21",
@@ -114,7 +113,8 @@
     "react-query": "^3.39.3",
     "react-router": "^6.21.1",
     "react-router-dom": "^6.16.0",
-    "react-virtuoso": "^4.6.2"
+    "react-virtuoso": "^4.6.2",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",

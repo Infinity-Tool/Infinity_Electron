@@ -33,8 +33,8 @@ export const HttpContextProvider = ({ children }: any): any => {
   );
 
   const baseUrl: string = devMode
-    ? `https://infinity-develop.syd1.digitaloceanspaces.com/${devModeKey}`
-    : `https://infinity-production.sfo3.digitaloceanspaces.com`;
+    ? `https://infinity-develop.syd1.cdn.digitaloceanspaces.com/${devModeKey}`
+    : `https://infinity-production.sfo3.cdn.digitaloceanspaces.com`;
 
   const value: HttpContext = {
     baseUrl,

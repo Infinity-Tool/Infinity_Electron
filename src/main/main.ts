@@ -9,10 +9,9 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import electronDl from 'electron-dl';
 import { resolveHtmlPath } from './util';
 import MenuBuilder from './menu';
 import axios from 'axios';
@@ -21,6 +20,7 @@ import fs from 'fs';
 import async from 'async';
 import { InstallationRequest } from '../renderer/Models/InstallationRequest';
 import { InstallMethod } from '../renderer/Services/SelectionContext';
+import zlib from 'zlib';
 
 class AppUpdater {
   constructor() {
@@ -56,8 +56,6 @@ const installExtensions = async () => {
     )
     .catch(console.log);
 };
-
-electronDl();
 
 const createWindow = async () => {
   if (isDebug) {
@@ -224,15 +222,47 @@ async function downloadFile(
 
     return new Promise((resolve: any, reject) => {
       writer.on('finish', () => {
-        mainWindow?.webContents.send('download-complete', file.fileName);
-        return resolve();
+        if (file.source.endsWith('.gz')) {
+          decompressFile(file.destination)
+            .then(() => {
+              mainWindow?.webContents.send('download-complete', file.fileName);
+              resolve();
+            })
+            .catch((error) => {
+              mainWindow?.webContents.send('download-error', file.fileName);
+              reject(error);
+            });
+        } else {
+          mainWindow?.webContents.send('download-complete', file.fileName);
+          resolve();
+        }
       });
       writer.on('error', reject);
     });
   } catch (error: any) {
     mainWindow?.webContents.send('download-error', file.fileName);
-    throw error;
+    // throw error;
   }
+}
+
+async function decompressFile(filePath: string) {
+  const decompressedFilePath = filePath.replace('.gz', '');
+  const readStream = fs.createReadStream(filePath);
+  const writeStream = fs.createWriteStream(decompressedFilePath);
+  const unzip = zlib.createGunzip();
+
+  return new Promise<void>((resolve, reject) => {
+    readStream
+      .pipe(unzip)
+      .pipe(writeStream)
+      .on('finish', () => {
+        fs.unlinkSync(filePath); // Delete the gzipped version after decompressing
+        resolve();
+      })
+      .on('error', (error) => {
+        reject(error);
+      });
+  });
 }
 
 async function downloadFiles(

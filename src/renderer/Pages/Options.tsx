@@ -242,11 +242,13 @@ export default function Options() {
                 sx={installationTypeStyles(true, moddedInstall)}
               >
                 <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="180"
-                    image={`${baseUrl}/Showcase_Modded/${showcaseModded[0]}`}
-                  />
+                  {showcaseModded && (
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={`${baseUrl}/Showcase_Modded/${showcaseModded[0]}`}
+                    />
+                  )}
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       Modded (Recommended)
@@ -265,11 +267,13 @@ export default function Options() {
                 sx={installationTypeStyles(false, !moddedInstall)}
               >
                 <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="180"
-                    image={`${baseUrl}/Showcase_Unmodded/${showcaseUnmodded[0]}`}
-                  />
+                  {showcaseUnmodded && (
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={`${baseUrl}/Showcase_Unmodded/${showcaseUnmodded[0]}`}
+                    />
+                  )}
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       Vanilla

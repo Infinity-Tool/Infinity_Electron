@@ -4,15 +4,13 @@
 
 import { UseQueryResult, useQuery } from 'react-query';
 import { useHttpContext } from './HttpContext';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
-// const fetchOptions: any = {
-//   headers: {
-//     'Content-Type': 'application/octet-stream',
-//     'Access-Control-Allow-Origin': '*',
-//     'Access-Control-Allow-Methods': 'GET',
-//   },
-// };
+const noCacheHeaders: AxiosRequestConfig = {
+  headers: {
+    'Cache-Control': 'no-cache',
+  },
+};
 
 export const AgreementQuery = (): UseQueryResult<any, unknown> => {
   const { baseUrl } = useHttpContext();
@@ -20,7 +18,7 @@ export const AgreementQuery = (): UseQueryResult<any, unknown> => {
     `${baseUrl}_agreement`,
     () => {
       const url = `${baseUrl}/user_agreement.txt`;
-      return axios.get(url).then((res) => res.data);
+      return axios.get(url, noCacheHeaders).then((res) => res.data);
     },
     {
       staleTime: Infinity,
@@ -37,7 +35,7 @@ export const GetDirectoryFileQuery = (): UseQueryResult<any, unknown> => {
     `${baseUrl}_directory`,
     () => {
       const url = `${baseUrl}/directory.json`;
-      return axios.get(url).then((res) => res.data);
+      return axios.get(url, noCacheHeaders).then((res) => res.data);
     },
     {
       staleTime: Infinity,
@@ -56,7 +54,7 @@ export const GetAnnouncementQuery = (
     `${baseUrl}_announcement_${announcementType}`,
     () => {
       const url = `${baseUrl}/Announcements/${announcementType}.txt`;
-      return axios.get(url).then((res) => res.data);
+      return axios.get(url, noCacheHeaders).then((res) => res.data);
     },
     {
       staleTime: Infinity,
