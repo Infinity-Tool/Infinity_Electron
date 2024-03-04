@@ -188,6 +188,7 @@ let shouldCancel = false; // Flag to indicate whether downloads should be cancel
 async function downloadFile(
   file: InstallationFile,
   installMethod: InstallMethod,
+  attemptCount = 0,
 ) {
   try {
     if (shouldCancel) {
@@ -196,7 +197,8 @@ async function downloadFile(
     }
 
     if (installMethod === InstallMethod.quickInstall) {
-      if (fs.existsSync(file.destination)) {
+      const fileNameWithoutGz = file.destination.replace('.gz', '');
+      if (fs.existsSync(fileNameWithoutGz)) {
         mainWindow?.webContents.send('download-complete', file.fileName);
         return;
       }
@@ -240,8 +242,13 @@ async function downloadFile(
       writer.on('error', reject);
     });
   } catch (error: any) {
+    if (attemptCount < 3) {
+      console.log(`Download failed, retrying: ${file.source}`);
+      await downloadFile(file, installMethod, attemptCount + 1);
+      return;
+    }
+
     mainWindow?.webContents.send('download-error', file.fileName);
-    // throw error;
   }
 }
 
