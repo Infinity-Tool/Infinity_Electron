@@ -196,6 +196,12 @@ async function downloadFile(
       return;
     }
 
+    if (blackListedFileExtensions.some((ext) => file.source.endsWith(ext))) {
+      console.warn('Skipping blacklisted file:', file.source);
+      mainWindow?.webContents.send('download-error', file.fileName);
+      return;
+    }
+
     if (installMethod === InstallMethod.quickInstall) {
       const fileNameWithoutGz = file.destination.replace('.gz', '');
       if (fs.existsSync(fileNameWithoutGz)) {
@@ -374,3 +380,42 @@ ipcMain.on('open-json-file', async (event) => {
       console.log(err);
     });
 });
+
+const blackListedFileExtensions = [
+  '.exe',
+  '.scr',
+  '.com',
+  '.cmd',
+  '.bat',
+  '.js',
+  '.jar',
+  '.vbs',
+  '.wsf',
+  '.msi',
+  '.pif',
+  '.reg',
+  '.php',
+  '.pl',
+  '.py',
+  '.rb',
+  '.sh.',
+  '.ps1',
+  '.exe.gz',
+  '.scr.gz',
+  '.com.gz',
+  '.cmd.gz',
+  '.bat.gz',
+  '.js.gz',
+  '.jar.gz',
+  '.vbs.gz',
+  '.wsf.gz',
+  '.msi.gz',
+  '.pif.gz',
+  '.reg.gz',
+  '.php.gz',
+  '.pl.gz',
+  '.py.gz',
+  '.rb.gz',
+  '.sh.gz',
+  '.ps1.gz',
+];
