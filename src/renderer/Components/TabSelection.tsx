@@ -1,44 +1,38 @@
+/* eslint-disable no-else-return */
+/* eslint-disable prettier/prettier */
 import {
   Box,
   Button,
   Checkbox,
-  Chip,
   FormControl,
-  FormControlLabel,
   IconButton,
-  ImageList,
-  ImageListItem,
   InputLabel,
+  List,
   ListItemText,
   MenuItem,
   OutlinedInput,
-  Paper,
   Select,
   Tab,
   Tabs,
   TextField,
-  Typography,
   useTheme,
 } from '@mui/material';
-import Zoom from 'react-medium-image-zoom';
 import Loading from './Loading';
 import { useMemo, useState } from 'react';
 import { TabContext, TabPanel } from '@mui/lab';
 import { cloneDeep } from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Virtuoso } from 'react-virtuoso';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
-import { useHttpContext } from '../Services/http/HttpContext';
 import { ProperCase, RemoveZ } from '../Services/utils/NameFormatterUtils';
-import { poiStyles } from '../Services/CommonStyles';
 import { TRADER_TAG } from '../Services/Constants';
+import NoResults from './NoResults';
+import VirtualTabFileList from './VirtualPoiList';
 
 export default function TabSelection(props: any) {
   const theme = useTheme();
   const [currentTab, setCurrentTab]: any = useState('All');
   const [search, setSearch]: any = useState('');
-  const { baseUrl } = useHttpContext();
   const [infoDialogState, setInfoDialogState]: any = useState({
     open: false,
     poi: null,
@@ -50,25 +44,11 @@ export default function TabSelection(props: any) {
     availableTags,
     selectedTags,
     setSelectedTags,
-    onToggle,
     selectAll,
     excludeTraders,
     moddedInstall,
+    onToggle,
   } = props;
-
-  const getIsChildSelected = (
-    parentFileName: string,
-    childFileName: string,
-  ): boolean => {
-    const parentIndex = currentSelection.findIndex(
-      (x: any) => x.name === parentFileName,
-    );
-    if (parentIndex === -1) return false;
-    const childIndex = currentSelection[parentIndex]?.childSelections.findIndex(
-      (x: any) => x === childFileName,
-    );
-    return childIndex > -1;
-  };
 
   const onTabChange = (event: any, newValue: string) => {
     setCurrentTab(newValue);
@@ -110,15 +90,8 @@ export default function TabSelection(props: any) {
           const containsSearch = child?.name
             ?.toLowerCase()
             ?.includes(search.toLowerCase());
-
           return containsTag && containsSearch;
         })
-        // .filter((child: any) => {
-        //   if (excludeTraders) {
-        //     return !child.name.toLowerCase().includes(TRADER_TAG);
-        //   }
-        //   return true;
-        // })
         .sort((a: any, b: any) => a.name.localeCompare(b.name));
       return file;
     });
@@ -163,10 +136,6 @@ export default function TabSelection(props: any) {
     return tabs;
   }, [availableFiles]);
 
-  const GetChipVariant = (selected: boolean) => {
-    return selected ? 'filled' : 'outlined';
-  };
-
   // Styles
   const filterContainerStyles = {
     display: 'flex',
@@ -176,7 +145,6 @@ export default function TabSelection(props: any) {
   };
 
   const filterStyles = {
-    // make all filters the same width
     width: '100%',
   };
 
@@ -195,24 +163,6 @@ export default function TabSelection(props: any) {
   };
 
   const tabRowstyles = { borderBottom: 1, borderColor: 'divider' };
-
-  const tagChipContainerStyles = {
-    display: 'flex',
-    gap: theme.spacing(0.5),
-  };
-
-  const noResultsMessageTitleStyles = {
-    color: theme.palette.text.secondary,
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  };
-
-  const noResultsMessageCaptionStyles = {
-    color: theme.palette.text.secondary,
-    fontSize: '1rem',
-    textAlign: 'center',
-  };
 
   return (
     <>
@@ -290,28 +240,38 @@ export default function TabSelection(props: any) {
         </Box>
 
         {/* Tab Panels */}
-        {panelFileList?.map((tabContent: TabContent, index: number) => (
+        {panelFileList?.map((tabContent: TabContent) => (
           <TabPanel
             value={tabContent.tabName}
             key={tabContent.tabName}
             sx={{ height: '100%' }}
           >
-            {tabContent?.parentName && (
-              <Button
-                onClick={() => {
-                  const parentName = tabContent.parentName;
-                  selectAll(parentName);
-                }}
-              >
-                Select All
-              </Button>
-            )}
-            {tabContent.tabFiles.length > 0
-              ? VirtualTabFileList(tabContent.tabFiles, index)
-              : DisplayNoResults()}
+            <List sx={{ height: '100%' }}>
+              {tabContent?.parentName && (
+                <Button
+                  onClick={() => {
+                    const { parentName } = tabContent;
+                    selectAll(parentName);
+                  }}
+                >
+                  Select All
+                </Button>
+              )}
+              {tabContent.tabFiles.length > 0 ? (
+                <VirtualTabFileList
+                  key={tabContent.tabName}
+                  tabFiles={tabContent.tabFiles}
+                  selection={currentSelection}
+                  onToggle={onToggle}
+                  setInfoDialogState={setInfoDialogState}
+                  selectedTags={selectedTags}
+                />
+              ) : (
+                <NoResults />
+              )}
+            </List>
           </TabPanel>
         ))}
-        {/* <TabPanel value={'All'} sx={{ height: '100%' }}></TabPanel> */}
       </TabContext>
 
       {/* Info Popover */}
@@ -321,100 +281,4 @@ export default function TabSelection(props: any) {
       />
     </>
   );
-
-  function DisplayNoResults() {
-    return (
-      <>
-        <Typography sx={noResultsMessageTitleStyles}>
-          No results found
-        </Typography>
-        <Typography sx={noResultsMessageCaptionStyles}>
-          Try changing your search or selected tags
-        </Typography>
-      </>
-    );
-  }
-
-  function VirtualTabFileList(tabFiles: TabFile[], index: number) {
-    const count = tabFiles.length;
-    const poiInfoStyles = {
-      maxWidth: '66%',
-    };
-
-    return (
-      <Virtuoso
-        key={index}
-        style={{
-          height: '100%',
-        }}
-        totalCount={count}
-        itemContent={(index) => {
-          const tabFile: TabFile = tabFiles[index];
-          const selected = getIsChildSelected(tabFile.parent, tabFile.name);
-
-          return (
-            <Paper sx={poiStyles(theme, selected)} key={index}>
-              <Box sx={poiInfoStyles}>
-                <FormControl>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selected}
-                        onClick={(e: any) => {
-                          onToggle(
-                            e.target.checked,
-                            tabFile.parent,
-                            tabFile.name,
-                          );
-                        }}
-                      />
-                    }
-                    label={RemoveZ(tabFile.name)}
-                  ></FormControlLabel>
-                </FormControl>
-                <IconButton
-                  onClick={(e) => {
-                    setInfoDialogState({
-                      open: true,
-                      poi: tabFile,
-                    });
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={faInfoCircle}
-                    color={theme.palette.text.secondary}
-                  />
-                </IconButton>
-                <Typography>{tabFile.description}</Typography>
-                <Box sx={tagChipContainerStyles}>
-                  {tabFile.editorGroups?.map((eg: string) => (
-                    <Chip
-                      label={ProperCase(eg)}
-                      size="small"
-                      color="default"
-                      variant={GetChipVariant(selectedTags.includes(eg))}
-                    ></Chip>
-                  ))}
-                </Box>
-              </Box>
-              <ImageList rowHeight={100} cols={100}>
-                {tabFile.images?.map((img: string) => (
-                  <ImageListItem>
-                    <Zoom>
-                      <img
-                        src={`${baseUrl}/${img}`}
-                        alt={tabFile.name}
-                        style={{ maxHeight: '90px' }}
-                        loading="lazy"
-                      ></img>
-                    </Zoom>
-                  </ImageListItem>
-                ))}
-              </ImageList>
-            </Paper>
-          );
-        }}
-      ></Virtuoso>
-    );
-  }
 }

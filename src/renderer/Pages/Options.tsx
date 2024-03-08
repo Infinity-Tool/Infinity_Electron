@@ -33,6 +33,7 @@ import { enqueueSnackbar } from 'notistack';
 import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
+import FolderHelpDialog from '../Components/FolderHelpDialog';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
@@ -299,29 +300,10 @@ export default function Options() {
                 </Button>
               </Box>
 
-              <Dialog
-                open={helpDialogOpen}
-                onClose={() => setHelpDialogOpen(false)}
-              >
-                <DialogTitle>Help</DialogTitle>
-                <DialogContent>
-                  <Typography>
-                    <strong>Windows</strong>
-                  </Typography>
-                  <Typography>
-                    C:\Users\(your user)\AppData\Roaming\7DaysToDie
-                  </Typography>
-                  <Typography variant="caption">
-                    You can get here by typing <strong>%appdata%</strong> in the
-                    address bar of your file explorer.
-                  </Typography>
-                  <br />
-                  <Typography variant="caption">
-                    If these folders do not exist then you may need to create
-                    them.
-                  </Typography>
-                </DialogContent>
-              </Dialog>
+              <FolderHelpDialog
+                helpDialogOpen={helpDialogOpen}
+                setHelpDialogOpen={setHelpDialogOpen}
+              />
             </Box>
             <Box sx={formContainerStyles}>
               <FormControl>
