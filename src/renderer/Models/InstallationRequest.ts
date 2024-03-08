@@ -6,4 +6,8 @@ export interface InstallationRequest {
   localPrefabsDirectory: string;
   files: InstallationFile[];
   installMethod: InstallMethod;
+  teragon: {
+    townPropertyList: string;
+    poiPropertyList: string;
+  } | null;
 }

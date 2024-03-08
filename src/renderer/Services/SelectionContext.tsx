@@ -43,6 +43,9 @@ export class Selection {
 
   public excludeTraders: boolean = false;
   public setExcludeTraders: any;
+
+  public buildTeragonFiles: boolean = false;
+  public setBuildTeragonFiles: any;
 }
 
 export const selectionContext = createContext(new Selection());
@@ -109,6 +112,11 @@ export const SelectionContextProvider = ({ children }: any): any => {
     false,
   );
 
+  const [buildTerragonFiles, setBuildTerragonFiles] = useLocalStorage(
+    StorageKeys.buildTerragonFiles,
+    false,
+  );
+
   const selection: Selection = {
     installMethod,
     setInstallMethod,
@@ -134,6 +142,8 @@ export const SelectionContextProvider = ({ children }: any): any => {
     setStep5Selection,
     excludeTraders,
     setExcludeTraders,
+    buildTeragonFiles: buildTerragonFiles,
+    setBuildTeragonFiles: setBuildTerragonFiles,
   };
 
   return (

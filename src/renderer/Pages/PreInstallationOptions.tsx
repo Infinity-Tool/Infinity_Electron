@@ -7,6 +7,10 @@ import {
   Alert,
   AlertTitle,
   Tooltip,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
 } from '@mui/material';
 import {
   InstallMethod,
@@ -21,8 +25,14 @@ import PageFooter from '../Components/PageFooter';
 
 export default function PreInstallationOptions(props: any) {
   const fullSelection = useSelectionContext();
-  const { moddedInstall, installMethod, setInstallMethod, excludeTraders } =
-    fullSelection;
+  const {
+    moddedInstall,
+    installMethod,
+    setInstallMethod,
+    excludeTraders,
+    buildTeragonFiles,
+    setBuildTeragonFiles,
+  } = fullSelection;
   const theme = useTheme();
   const router = useNavigate();
   const { ipcRenderer } = window.electron;
@@ -90,6 +100,12 @@ export default function PreInstallationOptions(props: any) {
   });
 
   const exportSelectionButtonStyles = { mr: 'auto' };
+  const formControlStyles = {
+    width: '100%',
+  };
+  const checkBoxStyles = {
+    '& .MuiSvgIcon-root': { fontSize: '2rem' },
+  };
 
   return (
     <PageContainer>
@@ -166,6 +182,24 @@ export default function PreInstallationOptions(props: any) {
             </AlertTitle>
           </Alert>
         )}
+        {/* Terragon */}
+        <Box sx={{ mt: theme.spacing(2) }}>
+          <FormGroup sx={formControlStyles}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={checkBoxStyles}
+                  checked={buildTeragonFiles}
+                  onChange={() => setBuildTeragonFiles(!buildTeragonFiles)}
+                />
+              }
+              label="Add Teragon Support"
+            />
+          </FormGroup>
+          <FormHelperText>
+            Check this if you use the Teragon map generator
+          </FormHelperText>
+        </Box>
       </PageContent>
       <PageFooter>
         <Tooltip title="Export your selection to a file. Can be imported at the Options step by another person to skip to this step.">

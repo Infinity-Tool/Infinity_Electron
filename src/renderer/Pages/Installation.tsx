@@ -54,6 +54,7 @@ export default function Installation() {
     step4Selection,
     step5Selection,
     excludeTraders,
+    buildTeragonFiles,
   } = useSelectionContext();
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
@@ -97,64 +98,48 @@ export default function Installation() {
     else return `About ${minutes + 1} minutes remaining`;
   }, [downloadPercentCompleted]);
 
-  const startDownloads = () => {
-    const utcNow = Date.now();
-    setLastInstallDate(utcNow);
-    setStartTime(utcNow);
-    let allFiles = [];
-
-    if (moddedInstall) {
-      const step0FilesModded = buildFileLists(
-        availableStep0FilesModded,
-        availableStep0FilesModded.map((a: any) => ({
-          name: a.name,
-          childSelections: a.childSelections.map((b: any) => b.name),
-        })),
+  function FormatAndAddLocalPrefabFiles(
+    localPrefabs: any,
+    formattedInstallationFiles: any,
+  ) {
+    localPrefabs.forEach((localPrefab: any) => {
+      const fileName = localPrefab.destination.substring(
+        localPrefab.destination.lastIndexOf('/') + 1,
       );
-      const step1Files = buildFileLists(availableStep1Files, step1Selection);
-      const step2Files = buildFileLists(availableStep2Files, step2Selection);
-      const step3Files = buildFileLists(availableStep3Files, step3Selection);
-      allFiles = [
-        ...step0FilesModded,
-        ...step1Files,
-        ...step2Files,
-        ...step3Files,
-      ];
-    } else {
-      //Unmodded install
-      const step0FilesUnModded = buildFileLists(
-        availableStep0FilesUnmodded,
-        availableStep0FilesUnmodded.map((a: any) => ({
-          name: a.name,
-          childSelections: a.childSelections.map((b: any) => b.name),
-        })),
+      const installationFile = new InstallationFile(
+        `${baseUrl}/${localPrefab.source}`,
+        `${localPrefabsDirectory}/${localPrefab.destination}`,
+        fileName,
       );
-      const step4Files = buildFileLists(availableStep4Files, step4Selection);
-      const step5Files = buildFileLists(availableStep5Files, step5Selection);
-      allFiles = [...step0FilesUnModded, ...step4Files, ...step5Files];
-    }
-    setFileCount(allFiles.length);
+      formattedInstallationFiles.push(installationFile);
+    });
+  }
 
-    if (modsDirectory == null || localPrefabsDirectory == null) {
-      alert('Error: Mods and local prefabs directories are not set.');
-      return;
-    }
-
-    const request: InstallationRequest = {
-      modsDirectory,
-      localPrefabsDirectory,
-      files: allFiles.reverse(),
-      installMethod,
-    };
-
-    ipcRenderer.sendMessage('queue-files-for-download', request);
-  };
+  function FormatAndAddModFiles(mods: any, formattedInstallationFiles: any) {
+    mods.forEach((mod: any) => {
+      const fileName = mod.destination.substring(
+        mod.destination.lastIndexOf('/') + 1,
+      );
+      const installationFile = new InstallationFile(
+        `${baseUrl}/${mod.source}`,
+        `${modsDirectory}/${mod.destination}`,
+        fileName,
+      );
+      formattedInstallationFiles.push(installationFile);
+    });
+  }
 
   const buildFileLists = (
     availableFiles: any,
     selectedFiles: any,
-  ): InstallationFile[] => {
+  ): {
+    installationFiles: InstallationFile[];
+    poiPropertyList: string;
+    townPropertyList: string;
+  } => {
     let formattedInstallationFiles: any = [];
+    let poiPropertyList = '';
+    let townPropertyList = '';
 
     selectedFiles.forEach((selected: any) => {
       const foundEntry = availableFiles.find(
@@ -167,6 +152,13 @@ export default function Installation() {
 
         FormatAndAddModFiles(mods, formattedInstallationFiles);
         FormatAndAddLocalPrefabFiles(localPrefabs, formattedInstallationFiles);
+
+        if (foundEntry.townPropertyList) {
+          townPropertyList += foundEntry.townPropertyList + '\n';
+        }
+        if (foundEntry.poiPropertyList) {
+          poiPropertyList += foundEntry.poiPropertyList;
+        }
 
         if (selected.childSelections.length > 0) {
           selected.childSelections.forEach((child: any) => {
@@ -188,6 +180,12 @@ export default function Installation() {
             if (foundChildEntry) {
               const mods = foundChildEntry.mods;
               const localPrefabs = foundChildEntry.localPrefabs;
+              if (foundChildEntry.townPropertyList) {
+                townPropertyList += foundChildEntry.townPropertyList + '\n';
+              }
+              if (foundChildEntry.poiPropertyList) {
+                poiPropertyList += foundChildEntry.poiPropertyList;
+              }
 
               FormatAndAddModFiles(mods, formattedInstallationFiles);
               FormatAndAddLocalPrefabFiles(
@@ -200,7 +198,94 @@ export default function Installation() {
       }
     });
 
-    return formattedInstallationFiles;
+    return {
+      installationFiles: formattedInstallationFiles,
+      poiPropertyList,
+      townPropertyList,
+    };
+  };
+
+  const startDownloads = () => {
+    const utcNow = Date.now();
+    setLastInstallDate(utcNow);
+    setStartTime(utcNow);
+    let allFiles = [];
+    let townPropertyList = '';
+    let poiPropertyList = '';
+
+    if (moddedInstall) {
+      const step0FilesModded = buildFileLists(
+        availableStep0FilesModded,
+        availableStep0FilesModded.map((a: any) => ({
+          name: a.name,
+          childSelections: a.childSelections.map((b: any) => b.name),
+        })),
+      );
+      const step1Files = buildFileLists(availableStep1Files, step1Selection);
+      const step2Files = buildFileLists(availableStep2Files, step2Selection);
+      const step3Files = buildFileLists(availableStep3Files, step3Selection);
+      allFiles = [
+        ...step0FilesModded.installationFiles,
+        ...step1Files.installationFiles,
+        ...step2Files.installationFiles,
+        ...step3Files.installationFiles,
+      ];
+      townPropertyList =
+        step0FilesModded.townPropertyList +
+        step1Files.townPropertyList +
+        step2Files.townPropertyList +
+        step3Files.townPropertyList;
+      poiPropertyList =
+        step0FilesModded.poiPropertyList +
+        step1Files.poiPropertyList +
+        step2Files.poiPropertyList +
+        step3Files.poiPropertyList;
+    } else {
+      //Unmodded install
+      const step0FilesUnModded = buildFileLists(
+        availableStep0FilesUnmodded,
+        availableStep0FilesUnmodded.map((a: any) => ({
+          name: a.name,
+          childSelections: a.childSelections.map((b: any) => b.name),
+        })),
+      );
+      const step4Files = buildFileLists(availableStep4Files, step4Selection);
+      const step5Files = buildFileLists(availableStep5Files, step5Selection);
+      allFiles = [
+        ...step0FilesUnModded.installationFiles,
+        ...step4Files.installationFiles,
+        ...step5Files.installationFiles,
+      ];
+      townPropertyList =
+        step0FilesUnModded.townPropertyList +
+        step4Files.townPropertyList +
+        step5Files.townPropertyList;
+      poiPropertyList =
+        step0FilesUnModded.poiPropertyList +
+        step4Files.poiPropertyList +
+        step5Files.poiPropertyList;
+    }
+    setFileCount(allFiles.length);
+
+    if (modsDirectory == null || localPrefabsDirectory == null) {
+      alert('Error: Mods and local prefabs directories are not set.');
+      return;
+    }
+
+    const request: InstallationRequest = {
+      modsDirectory,
+      localPrefabsDirectory,
+      files: allFiles.reverse(),
+      installMethod,
+      teragon: buildTeragonFiles
+        ? {
+            townPropertyList,
+            poiPropertyList,
+          }
+        : null,
+    };
+
+    ipcRenderer.sendMessage('queue-files-for-download', request);
   };
 
   const updateLoadingMessage = () => {
@@ -223,21 +308,19 @@ export default function Installation() {
   }, [directoryQuery]);
 
   useEffect(() => {
-    if (downloadPercentCompleted >= 100) {
-      navigateFinished();
-    }
-  }, [downloadPercentCompleted]);
-
-  useEffect(() => {
     ipcRenderer.on('download-complete', (file: any) => {
       addToCompletedFiles(file);
     });
     ipcRenderer.on('download-error', (file: any) => {
       addToErroredFiles(file);
     });
+    ipcRenderer.on('install-complete', () => {
+      navigateFinished();
+    });
     return () => {
       ipcRenderer.removeAllListeners('download-complete');
       ipcRenderer.removeAllListeners('download-error');
+      ipcRenderer.removeAllListeners('install-complete');
     };
   }, [ipcRenderer]);
 
@@ -377,35 +460,4 @@ export default function Installation() {
       />
     </>
   );
-
-  function FormatAndAddLocalPrefabFiles(
-    localPrefabs: any,
-    formattedInstallationFiles: any,
-  ) {
-    localPrefabs.forEach((localPrefab: any) => {
-      const fileName = localPrefab.destination.substring(
-        localPrefab.destination.lastIndexOf('/') + 1,
-      );
-      const installationFile = new InstallationFile(
-        `${baseUrl}/${localPrefab.source}`,
-        `${localPrefabsDirectory}/${localPrefab.destination}`,
-        fileName,
-      );
-      formattedInstallationFiles.push(installationFile);
-    });
-  }
-
-  function FormatAndAddModFiles(mods: any, formattedInstallationFiles: any) {
-    mods.forEach((mod: any) => {
-      const fileName = mod.destination.substring(
-        mod.destination.lastIndexOf('/') + 1,
-      );
-      const installationFile = new InstallationFile(
-        `${baseUrl}/${mod.source}`,
-        `${modsDirectory}/${mod.destination}`,
-        fileName,
-      );
-      formattedInstallationFiles.push(installationFile);
-    });
-  }
 }

@@ -18,6 +18,7 @@ enum StorageKeys {
   agreementAccepted = 'agreementAccepted',
   excludeTraders = 'excludeTraders',
   lastInstallDate = 'lastInstallDate',
+  buildTerragonFiles = 'buildTerragonFiles',
 }
 
 export default StorageKeys;

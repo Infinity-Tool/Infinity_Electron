@@ -282,20 +282,9 @@ async function downloadFiles(
   files: InstallationFile[],
   installMethod: InstallMethod,
 ) {
-  async.eachLimit(
-    files,
-    8,
-    async (file: InstallationFile) => {
-      await downloadFile(file, installMethod);
-    },
-    function (err) {
-      if (err) {
-        console.error('A file failed to download');
-      } else {
-        console.log('All files have been downloaded successfully');
-      }
-    },
-  );
+  return async.eachLimit(files, 8, async (file: InstallationFile) => {
+    await downloadFile(file, installMethod);
+  });
 }
 
 async function clearFolders(request: InstallationRequest) {
@@ -326,8 +315,59 @@ ipcMain.on(
     }
 
     await downloadFiles(request.files, installMethod);
+
+    if (request.teragon) {
+      buildTownPropertyList(
+        request.teragon.townPropertyList,
+        request.modsDirectory,
+      );
+      buildPoiPropertyList(
+        request.teragon.poiPropertyList,
+        request.modsDirectory,
+      );
+    }
+
+    mainWindow?.webContents.send('install-complete');
   },
 );
+
+function buildTownPropertyList(
+  teragonTownPropertyList: string,
+  modsDirectory: string,
+) {
+  const terragonDirectory = path.join(modsDirectory, 'TeragonLists');
+  if (!fs.existsSync(terragonDirectory)) {
+    fs.mkdirSync(terragonDirectory, { recursive: true });
+  }
+
+  const townPropertyListPath = path.join(
+    terragonDirectory,
+    'Town_Property_List_CP.txt',
+  );
+  fs.writeFileSync(townPropertyListPath, teragonTownPropertyList);
+}
+
+const linebreak = '\n';
+
+function buildPoiPropertyList(
+  teragonPoiPropertyList: string,
+  modsDirectory: string,
+) {
+  const terragonDirectory = path.join(modsDirectory, 'TeragonLists');
+  if (!fs.existsSync(terragonDirectory)) {
+    fs.mkdirSync(terragonDirectory, { recursive: true });
+  }
+
+  const poiPropertyListPath = path.join(
+    terragonDirectory,
+    'POI_Property_List_CP.txt',
+  );
+
+  const fullString =
+    '// CP POI Property List for Teragon' + linebreak + teragonPoiPropertyList;
+
+  fs.writeFileSync(poiPropertyListPath, fullString);
+}
 
 ipcMain.on('download-cancel', async (event) => {
   shouldCancel = true;
