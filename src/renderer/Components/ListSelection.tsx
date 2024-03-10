@@ -84,6 +84,12 @@ export default function ListSelection(props: any) {
     width: '100%',
   };
 
+  const justifyApartStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  };
+
   return (
     <>
       <Box sx={modListContainer}>
@@ -104,7 +110,7 @@ export default function ListSelection(props: any) {
                 key={`${parent.name}_index`}
               >
                 <Box sx={settlementInfoContainerStyles}>
-                  <Box>
+                  <Box sx={justifyApartStyles}>
                     <FormControl>
                       <FormControlLabel
                         control={
@@ -116,12 +122,12 @@ export default function ListSelection(props: any) {
                       <Typography variant="caption">
                         {parent.description}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        <br />
-                        {parent.childSelections?.length > 0 &&
-                          `${parent.childSelections.length} sub-selection(s) available`}
-                      </Typography>
                     </FormControl>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {parent.childSelections?.length > 0 &&
+                        `${parent.childSelections.length} sub-selection(s) available`}
+                    </Typography>
                   </Box>
                   {parent.image && (
                     <Zoom>
@@ -152,6 +158,7 @@ export default function ListSelection(props: any) {
                     };
                     return (
                       <>
+                        <Divider variant="middle" />
                         <PoiListItem
                           index={tabFile.name + tabFile.parent}
                           tabFile={tabFile}
@@ -160,10 +167,6 @@ export default function ListSelection(props: any) {
                           selectedTags={[]}
                           selection={currentSelection}
                         />
-                        {parent.childSelections?.indexOf(child) !==
-                          parent.childSelections?.length - 1 && (
-                          <Divider variant="middle" />
-                        )}
                       </>
                     );
                   })}
