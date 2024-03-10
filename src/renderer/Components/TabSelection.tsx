@@ -11,6 +11,7 @@ import {
   ListItemText,
   MenuItem,
   OutlinedInput,
+  Paper,
   Select,
   Tab,
   Tabs,
@@ -246,30 +247,32 @@ export default function TabSelection(props: any) {
             key={tabContent.tabName}
             sx={{ height: '100%' }}
           >
-            <List sx={{ height: '100%' }}>
-              {tabContent?.parentName && (
-                <Button
-                  onClick={() => {
-                    const { parentName } = tabContent;
-                    selectAll(parentName);
-                  }}
-                >
-                  Select All
-                </Button>
-              )}
-              {tabContent.tabFiles.length > 0 ? (
-                <VirtualTabFileList
-                  key={tabContent.tabName}
-                  tabFiles={tabContent.tabFiles}
-                  selection={currentSelection}
-                  onToggle={onToggle}
-                  setInfoDialogState={setInfoDialogState}
-                  selectedTags={selectedTags}
-                />
-              ) : (
-                <NoResults />
-              )}
-            </List>
+            {tabContent?.parentName && (
+              <Button
+                onClick={() => {
+                  const { parentName } = tabContent;
+                  selectAll(parentName);
+                }}
+              >
+                Select All
+              </Button>
+            )}
+            <Paper sx={{ height: '100%' }}>
+              <List sx={{ height: '100%' }}>
+                {tabContent.tabFiles.length > 0 ? (
+                  <VirtualTabFileList
+                    key={tabContent.tabName}
+                    tabFiles={tabContent.tabFiles}
+                    selection={currentSelection}
+                    onToggle={onToggle}
+                    setInfoDialogState={setInfoDialogState}
+                    selectedTags={selectedTags}
+                  />
+                ) : (
+                  <NoResults />
+                )}
+              </List>
+            </Paper>
           </TabPanel>
         ))}
       </TabContext>

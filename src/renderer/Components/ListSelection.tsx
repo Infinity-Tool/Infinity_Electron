@@ -9,15 +9,13 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
-  IconButton,
+  List,
   Typography,
   useTheme,
 } from '@mui/material';
 import Zoom from 'react-medium-image-zoom';
 import '../Assets/css/react-medium-image-zoom-overrides.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useState } from 'react';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
 import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
@@ -37,7 +35,6 @@ export default function ListSelection(props: any) {
     availableFiles,
     onParentCheckToggle,
     onChildCheckToggle,
-    showDetails,
     selectAll,
     excludeTraders,
     moddedInstall,
@@ -64,13 +61,10 @@ export default function ListSelection(props: any) {
   const modListContainer = {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1),
     height: '100%',
   };
 
-  const poiInfoStyles = {
-    maxWidth: '66%',
-  };
   const parentTitleStyles = {
     fontSize: '1.5rem',
     fontWeight: 'bold',
@@ -82,6 +76,13 @@ export default function ListSelection(props: any) {
     zIndex: 1,
     boxShadow: opened && '0px 2px 4px rgba(0, 0, 0, 0.2)',
   });
+
+  const settlementInfoContainerStyles = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: theme.spacing(2),
+    width: '100%',
+  };
 
   return (
     <>
@@ -101,33 +102,34 @@ export default function ListSelection(props: any) {
               <AccordionSummary
                 sx={accordionSummaryStyles(selected)}
                 key={`${parent.name}_index`}
-                expandIcon={
-                  hasChildren && (
-                    <IconButton onClick={toggle}>
-                      <FontAwesomeIcon icon={faChevronDown} />
-                    </IconButton>
-                  )
-                }
               >
-                <Box sx={poiInfoStyles}>
-                  <FormControl>
-                    <FormControlLabel
-                      control={<Checkbox checked={selected} onClick={toggle} />}
-                      label={RemoveZ(parent.name)}
-                      slotProps={{ typography: { sx: parentTitleStyles } }}
-                    />
-                    <Typography variant="caption">
-                      {parent.description}
-                    </Typography>
-                  </FormControl>
-
+                <Box sx={settlementInfoContainerStyles}>
+                  <Box>
+                    <FormControl>
+                      <FormControlLabel
+                        control={
+                          <Checkbox checked={selected} onClick={toggle} />
+                        }
+                        label={RemoveZ(parent.name)}
+                        slotProps={{ typography: { sx: parentTitleStyles } }}
+                      />
+                      <Typography variant="caption">
+                        {parent.description}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        <br />
+                        {parent.childSelections?.length > 0 &&
+                          `${parent.childSelections.length} sub-selection(s) available`}
+                      </Typography>
+                    </FormControl>
+                  </Box>
                   {parent.image && (
                     <Zoom>
                       <img
                         src={`${baseUrl}/${parent.image}`}
                         alt=""
                         loading="lazy"
-                        style={{ maxHeight: '90px' }}
+                        style={{ maxHeight: '120px' }}
                       />
                     </Zoom>
                   )}
@@ -139,56 +141,33 @@ export default function ListSelection(props: any) {
                     Select All
                   </Button>
                 )}
-                {parent.childSelections?.map((child: any) => {
-                  const tabFile = {
-                    parent: parent.name,
-                    name: child.name,
-                    description: child.description,
-                    images: child.images,
-                    editorGroups: child.editorGroups,
-                  };
-                  return (
-                    <>
-                      <PoiListItem
-                        index={tabFile.name + tabFile.parent}
-                        poiInfoStyles={poiInfoStyles}
-                        tabFile={tabFile}
-                        onToggle={onChildCheckToggle}
-                        setInfoDialogState={setInfoDialogState}
-                        selectedTags={[]}
-                        selection={currentSelection}
-                      />
-                      <Divider variant="middle" />
-                    </>
-                  );
-                })}
-
-                {/* <Box sx={childContainerStyles}>
-                    {parent.childSelections?.length > 0 &&
-                      parent.childSelections
-                        .sort((a: any, b: any) => a.name.localeCompare(b.name))
-                        .map((child: any) => {
-                          const tabFile = {
-                            parent: parent.name,
-                            name: child.name,
-                            description: child.description,
-                            images: child.images,
-                            editorGroups: child.editorGroups,
-                          };
-
-                          return (
-                            <PoiListItem
-                              index={index}
-                              poiInfoStyles={poiInfoStyles}
-                              tabFile={tabFile}
-                              onToggle={onChildCheckToggle}
-                              setInfoDialogState={setInfoDialogState}
-                              selectedTags={[]}
-                              selection={currentSelection}
-                            />
-                          );
-                        })}
-                  </Box> */}
+                <List>
+                  {parent.childSelections?.map((child: any) => {
+                    const tabFile = {
+                      parent: parent.name,
+                      name: child.name,
+                      description: child.description,
+                      images: child.images,
+                      editorGroups: child.editorGroups,
+                    };
+                    return (
+                      <>
+                        <PoiListItem
+                          index={tabFile.name + tabFile.parent}
+                          tabFile={tabFile}
+                          onToggle={onChildCheckToggle}
+                          setInfoDialogState={setInfoDialogState}
+                          selectedTags={[]}
+                          selection={currentSelection}
+                        />
+                        {parent.childSelections?.indexOf(child) !==
+                          parent.childSelections?.length - 1 && (
+                          <Divider variant="middle" />
+                        )}
+                      </>
+                    );
+                  })}
+                </List>
               </AccordionDetails>
             </Accordion>
           );

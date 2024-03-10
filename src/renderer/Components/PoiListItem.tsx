@@ -17,13 +17,11 @@ import {
 import { useMemo } from 'react';
 import { RemoveZ, ProperCase } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
-import { poiStyles } from '../Services/CommonStyles';
 import Zoom from 'react-medium-image-zoom';
 
 export default function PoiListItem(props: any) {
   const {
     index,
-    poiInfoStyles,
     tabFile,
     onToggle,
     setInfoDialogState,
@@ -45,9 +43,13 @@ export default function PoiListItem(props: any) {
   const chipVariant = (tag: string) =>
     selectedTags.includes(tag) ? 'filled' : 'outlined';
 
-  const poiStylesMemo = useMemo(() => {
-    return poiStyles(theme, selected);
-  }, [selected, theme]);
+  const poiStyles = {
+    paddingY: theme.spacing(1),
+    paddingX: theme.spacing(2),
+    marginY: theme.spacing(1),
+    justifyContent: 'space-between',
+    gap: theme.spacing(2),
+  };
 
   // Styles
   const tagChipContainerStyles = {
@@ -57,10 +59,13 @@ export default function PoiListItem(props: any) {
   const imageContainerStyles = {
     maxWidth: '50%',
   };
+  const infoContainerStyles = {
+    maxWidth: '66%',
+  };
 
   return (
-    <ListItem key={index} sx={poiStylesMemo} dense={true}>
-      <Box sx={poiInfoStyles}>
+    <ListItem key={index} sx={poiStyles} dense>
+      <Box sx={infoContainerStyles}>
         <FormControl>
           <FormControlLabel
             control={

@@ -22,19 +22,6 @@ export const dialogStyles = {
   padding: '2rem',
 };
 
-export const poiStyles = (theme: any, selected: boolean): any => ({
-  paddingY: theme.spacing(1),
-  paddingX: theme.spacing(2),
-  marginY: theme.spacing(1.5),
-  justifyContent: 'space-between',
-  gap: theme.spacing(2),
-  // borderLeft: `6px solid ${
-  //   selected ? theme.palette.primary.dark : theme.palette.text.secondary
-  // }`,
-  //lighten background with filter
-  // filter: selected ? 'brightness(105%)' : 'brightness(102%)',
-});
-
 export const centerContentStyles = {
   display: 'flex',
   flexDirection: 'column',
