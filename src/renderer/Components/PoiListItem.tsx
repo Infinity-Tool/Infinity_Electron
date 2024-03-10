@@ -59,7 +59,7 @@ export default function PoiListItem(props: any) {
   };
 
   return (
-    <ListItem key={index} sx={poiStylesMemo}>
+    <ListItem key={index} sx={poiStylesMemo} dense={true}>
       <Box sx={poiInfoStyles}>
         <FormControl>
           <FormControlLabel

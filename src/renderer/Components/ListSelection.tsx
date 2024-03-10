@@ -6,12 +6,10 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControl,
   FormControlLabel,
   IconButton,
-  ImageList,
-  ImageListItem,
-  Paper,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -19,13 +17,12 @@ import Zoom from 'react-medium-image-zoom';
 import '../Assets/css/react-medium-image-zoom-overrides.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useState } from 'react';
-import { faChevronDown, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import PoiInfoDialog from './PoiInfoDialog';
-import { poiStyles } from '../Services/CommonStyles';
 import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
-import { Virtuoso } from 'react-virtuoso';
 import { TRADER_TAG } from '../Services/Constants';
+import PoiListItem from './PoiListItem';
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -50,20 +47,6 @@ export default function ListSelection(props: any) {
     return currentSelection.some((x: any) => x.name === fileName);
   };
 
-  const getIsChildSelected = (
-    parentFileName: string,
-    childFileName: string,
-  ): boolean => {
-    const parentIndex = currentSelection.findIndex(
-      (x: any) => x.name === parentFileName,
-    );
-    if (parentIndex === -1) return false;
-    const childIndex = currentSelection[parentIndex]?.childSelections.findIndex(
-      (x: any) => x === childFileName,
-    );
-    return childIndex > -1;
-  };
-
   const filteredSelection = useMemo(() => {
     const filtered = availableFiles?.map((x: any) => {
       if (excludeTraders) {
@@ -84,15 +67,7 @@ export default function ListSelection(props: any) {
     gap: theme.spacing(2),
     height: '100%',
   };
-  const getModListItemStyles = (file: string) => {
-    return {
-      my: theme.spacing(1.5),
-    };
-  };
-  const childContainerStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-  };
+
   const poiInfoStyles = {
     maxWidth: '66%',
   };
@@ -100,140 +75,124 @@ export default function ListSelection(props: any) {
     fontSize: '1.5rem',
     fontWeight: 'bold',
   };
+  const accordionSummaryStyles = (opened: boolean): any => ({
+    position: 'sticky',
+    top: -1,
+    background: theme.palette.background.paper,
+    zIndex: 1,
+    boxShadow: opened && '0px 2px 4px rgba(0, 0, 0, 0.2)',
+  });
 
   return (
     <>
       <Box sx={modListContainer}>
-        <Virtuoso
-          totalCount={filteredSelection?.length}
-          // eslint-disable-next-line react/no-unstable-nested-components
-          itemContent={(index) => {
-            const parent = filteredSelection[index];
-            const selected = getIsSelected(parent.name);
-            const toggle = (e: any) => {
-              onParentCheckToggle(!selected, parent.name);
-            };
-            const hasChildren = parent.childSelections?.length > 0;
+        {filteredSelection?.map((parent: any) => {
+          const selected = getIsSelected(parent.name);
+          const toggle = (e: any) => {
+            onParentCheckToggle(!selected, parent.name);
+          };
+          const hasChildren = parent.childSelections?.length > 0;
 
-            return (
-              <Accordion
-                expanded={selected && hasChildren}
-                sx={getModListItemStyles(parent.name)}
-                TransitionProps={{ unmountOnExit: true }}
+          return (
+            <Accordion
+              expanded={selected && hasChildren}
+              TransitionProps={{ unmountOnExit: true }}
+            >
+              <AccordionSummary
+                sx={accordionSummaryStyles(selected)}
+                key={`${parent.name}_index`}
+                expandIcon={
+                  hasChildren && (
+                    <IconButton onClick={toggle}>
+                      <FontAwesomeIcon icon={faChevronDown} />
+                    </IconButton>
+                  )
+                }
               >
-                <AccordionSummary
-                  key={`${parent.name}_index`}
-                  expandIcon={
-                    hasChildren && (
-                      <IconButton onClick={toggle}>
-                        <FontAwesomeIcon icon={faChevronDown} />
-                      </IconButton>
-                    )
-                  }
-                >
-                  <Box sx={poiInfoStyles}>
-                    <FormControl>
-                      <FormControlLabel
-                        control={
-                          <Checkbox checked={selected} onClick={toggle} />
-                        }
-                        label={RemoveZ(parent.name)}
-                        slotProps={{ typography: { sx: parentTitleStyles } }}
-                      />
-                      <Typography variant="caption">
-                        {parent.description}
-                      </Typography>
-                    </FormControl>
+                <Box sx={poiInfoStyles}>
+                  <FormControl>
+                    <FormControlLabel
+                      control={<Checkbox checked={selected} onClick={toggle} />}
+                      label={RemoveZ(parent.name)}
+                      slotProps={{ typography: { sx: parentTitleStyles } }}
+                    />
+                    <Typography variant="caption">
+                      {parent.description}
+                    </Typography>
+                  </FormControl>
 
-                    {parent.image && (
-                      <Zoom>
-                        <img
-                          src={`${baseUrl}/${parent.image}`}
-                          alt=""
-                          loading="lazy"
-                          style={{ maxHeight: '90px' }}
-                        />
-                      </Zoom>
-                    )}
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {selectAll && (
-                    <Button onClick={() => selectAll(parent.name)}>
-                      Select All
-                    </Button>
+                  {parent.image && (
+                    <Zoom>
+                      <img
+                        src={`${baseUrl}/${parent.image}`}
+                        alt=""
+                        loading="lazy"
+                        style={{ maxHeight: '90px' }}
+                      />
+                    </Zoom>
                   )}
-                  <Box sx={childContainerStyles}>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {selectAll && (
+                  <Button onClick={() => selectAll(parent.name)}>
+                    Select All
+                  </Button>
+                )}
+                {parent.childSelections?.map((child: any) => {
+                  const tabFile = {
+                    parent: parent.name,
+                    name: child.name,
+                    description: child.description,
+                    images: child.images,
+                    editorGroups: child.editorGroups,
+                  };
+                  return (
+                    <>
+                      <PoiListItem
+                        index={tabFile.name + tabFile.parent}
+                        poiInfoStyles={poiInfoStyles}
+                        tabFile={tabFile}
+                        onToggle={onChildCheckToggle}
+                        setInfoDialogState={setInfoDialogState}
+                        selectedTags={[]}
+                        selection={currentSelection}
+                      />
+                      <Divider variant="middle" />
+                    </>
+                  );
+                })}
+
+                {/* <Box sx={childContainerStyles}>
                     {parent.childSelections?.length > 0 &&
                       parent.childSelections
                         .sort((a: any, b: any) => a.name.localeCompare(b.name))
                         .map((child: any) => {
-                          const selected = getIsChildSelected(
-                            parent.name,
-                            child.name,
-                          );
+                          const tabFile = {
+                            parent: parent.name,
+                            name: child.name,
+                            description: child.description,
+                            images: child.images,
+                            editorGroups: child.editorGroups,
+                          };
+
                           return (
-                            <Paper
-                              sx={poiStyles(theme, selected)}
-                              key={`${parent.name}_${child.name}_index`}
-                            >
-                              <FormControl>
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      disabled={!getIsSelected(parent.name)}
-                                      checked={selected}
-                                      onClick={(e: any) =>
-                                        onChildCheckToggle(
-                                          e.target.checked,
-                                          parent.name,
-                                          child.name,
-                                        )
-                                      }
-                                    />
-                                  }
-                                  label={RemoveZ(child.name)}
-                                />
-                              </FormControl>
-                              {showDetails && (
-                                <IconButton
-                                  onClick={(e) => {
-                                    setInfoDialogState({
-                                      open: true,
-                                      poi: child,
-                                    });
-                                  }}
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faInfoCircle}
-                                    color={theme.palette.text.secondary}
-                                  />
-                                </IconButton>
-                              )}
-                              <Typography>{child.description}</Typography>
-                              <ImageList rowHeight={100} cols={100}>
-                                {child.images?.map((img: string) => (
-                                  <ImageListItem>
-                                    <Zoom>
-                                      <img
-                                        src={`${baseUrl}/${img}`}
-                                        alt={child.name}
-                                        style={{ maxHeight: '90px' }}
-                                        loading="lazy"
-                                      />
-                                    </Zoom>
-                                  </ImageListItem>
-                                ))}
-                              </ImageList>
-                            </Paper>
+                            <PoiListItem
+                              index={index}
+                              poiInfoStyles={poiInfoStyles}
+                              tabFile={tabFile}
+                              onToggle={onChildCheckToggle}
+                              setInfoDialogState={setInfoDialogState}
+                              selectedTags={[]}
+                              selection={currentSelection}
+                            />
                           );
                         })}
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-            );
-          }}
-        />
+                  </Box> */}
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
       </Box>
       {/* Info Popover */}
       <PoiInfoDialog

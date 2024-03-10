@@ -67,6 +67,11 @@ const noShadows = {
   18: 'none',
   19: 'none',
   20: 'none',
+  21: 'none',
+  22: 'none',
+  23: 'none',
+  24: 'none',
+  25: 'none',
 };
 
 const baseTheme = {

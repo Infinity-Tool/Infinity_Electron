@@ -3,7 +3,7 @@ export const headerContainerStyles = {
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
-  mb: '1.5rem',
+  my: '1.5rem',
 };
 
 export const noUnderlineTextFieldStyles = {
@@ -27,11 +27,12 @@ export const poiStyles = (theme: any, selected: boolean): any => ({
   paddingX: theme.spacing(2),
   marginY: theme.spacing(1.5),
   justifyContent: 'space-between',
-  borderLeft: `6px solid ${
-    selected ? theme.palette.primary.dark : theme.palette.text.secondary
-  }`,
+  gap: theme.spacing(2),
+  // borderLeft: `6px solid ${
+  //   selected ? theme.palette.primary.dark : theme.palette.text.secondary
+  // }`,
   //lighten background with filter
-  filter: selected ? 'brightness(105%)' : 'brightness(102%)',
+  // filter: selected ? 'brightness(105%)' : 'brightness(102%)',
 });
 
 export const centerContentStyles = {
