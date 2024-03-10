@@ -385,10 +385,13 @@ ipcMain.on('save-json-file', async (event, selection) => {
   const jsonToSave = JSON.stringify(selection, null, 2);
 
   // Show save file dialog
+  const downloadsPath = app.getPath('downloads');
+  const defaultPath = path.join(downloadsPath, fileName);
+
   dialog
     .showSaveDialog({
       title: 'Save Selection File',
-      defaultPath: fileName,
+      defaultPath,
       filters: [{ name: 'JSON', extensions: ['json'] }],
     })
     .then((result: any) => {
