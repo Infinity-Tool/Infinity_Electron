@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useHttpContext } from '../Services/http/HttpContext';
 import ConfirmationDialog from '../Components/ConfirmationDialog';
 import { AppRoutes, TRADER_TAG } from '../Services/Constants';
-import { LoadingMessages } from '../Services/LoadingMessages';
 import { GetDirectoryFileQuery } from '../Services/http/HttpFunctions';
 import {
   InstallMethod,
@@ -24,6 +23,7 @@ import StorageKeys from '../Services/StorageKeys';
 import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
+import LoadingMessages from '../Components/LoadingMessages';
 
 export default function Installation() {
   const router = useNavigate();
@@ -58,7 +58,6 @@ export default function Installation() {
   } = useSelectionContext();
   const [filesCompleted, setFilesCompleted]: any = useState([]);
   const [filesErrored, setFilesErrored]: any = useState([]);
-  const [loadingMessage, setLoadingMessage] = useState('');
   const [startTime, setStartTime]: any = useState(new Date());
   const [downloadsStarted, setDownloadsStarted] = useState(false);
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
@@ -288,22 +287,11 @@ export default function Installation() {
     ipcRenderer.sendMessage('queue-files-for-download', request);
   };
 
-  const updateLoadingMessage = () => {
-    const randomLoadingMessage =
-      LoadingMessages[Math.floor(Math.random() * LoadingMessages.length)];
-    setLoadingMessage(randomLoadingMessage);
-
-    setTimeout(() => {
-      updateLoadingMessage();
-    }, 20000);
-  };
-
   // Effects
   useEffect(() => {
     if (directoryQuery.isSuccess && !downloadsStarted) {
       setDownloadsStarted(true);
       startDownloads();
-      updateLoadingMessage();
     }
   }, [directoryQuery]);
 
@@ -387,7 +375,7 @@ export default function Installation() {
         <PageContent justifyContent={'space-between'}>
           <Box>
             <Slideshow moddedInstall={moddedInstall} />
-            <Typography sx={loadingMessageStyles}>{loadingMessage}</Typography>
+            <LoadingMessages />
           </Box>
           <Box>
             <Typography variant="h1" sx={percentDoneStyles}>

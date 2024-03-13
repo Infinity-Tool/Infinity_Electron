@@ -65,6 +65,23 @@ export const GetAnnouncementQuery = (
   return query;
 };
 
+export const GetLoadingMessagesQuery = (): UseQueryResult<any, unknown> => {
+  const { baseUrl } = useHttpContext();
+  const query = useQuery(
+    `${baseUrl}_loading_messages`,
+    () => {
+      const url = `${baseUrl}/LoadingMessages.json`;
+      return axios.get(url, noCacheHeaders).then((res) => res.data);
+    },
+    {
+      staleTime: Infinity,
+      retry: false,
+    },
+  );
+
+  return query;
+};
+
 export const enum AnnouncementType {
   error = 'error',
   info = 'info',
