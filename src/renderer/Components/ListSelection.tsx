@@ -104,6 +104,7 @@ export default function ListSelection(props: any) {
             <Accordion
               expanded={selected && hasChildren}
               TransitionProps={{ unmountOnExit: true }}
+              key={parent.name}
             >
               <AccordionSummary
                 sx={accordionSummaryStyles(selected)}
@@ -159,7 +160,7 @@ export default function ListSelection(props: any) {
                       editorGroups: child.editorGroups,
                     };
                     return (
-                      <>
+                      <div key={`${parent.name}_${child.name}`}>
                         <Divider variant="middle" />
                         <PoiListItem
                           index={tabFile.name + tabFile.parent}
@@ -169,7 +170,7 @@ export default function ListSelection(props: any) {
                           selectedTags={[]}
                           selection={currentSelection}
                         />
-                      </>
+                      </div>
                     );
                   })}
                 </List>

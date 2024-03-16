@@ -96,6 +96,7 @@ export default function PoiListItem(props: any) {
         <Box sx={tagChipContainerStyles}>
           {tabFile.editorGroups?.map((eg: string) => (
             <Chip
+              key={`${tabFile.name}_${eg}`}
               label={ProperCase(eg)}
               size="small"
               color="default"

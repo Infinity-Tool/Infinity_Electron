@@ -235,7 +235,7 @@ export default function TabSelection(props: any) {
         <Box sx={tabRowstyles}>
           <Tabs value={currentTab} onChange={onTabChange} variant="scrollable">
             {availableTabs?.map((tabName: any, index: number) => (
-              <Tab label={RemoveZ(tabName)} value={tabName} />
+              <Tab key={tabName} label={RemoveZ(tabName)} value={tabName} />
             ))}
           </Tabs>
         </Box>
