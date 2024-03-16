@@ -47,6 +47,7 @@ const typography = {
   },
 };
 const noShadows = {
+  0: 'none',
   1: 'none',
   2: 'none',
   3: 'none',

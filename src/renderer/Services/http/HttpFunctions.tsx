@@ -77,7 +77,6 @@ export const GetLoadingMessagesQuery = (
       });
     },
     {
-      staleTime: Infinity,
       retry: false,
     },
   );

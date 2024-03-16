@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetLoadingMessagesQuery } from '../Services/http/HttpFunctions';
 
 export default function LoadingMessages(props: any) {

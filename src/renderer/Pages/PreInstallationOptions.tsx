@@ -22,6 +22,8 @@ import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import { headerContainerStyles } from '../Services/CommonStyles';
 import PageFooter from '../Components/PageFooter';
+import ConfirmationDialog from '../Components/ConfirmationDialog';
+import { useState } from 'react';
 
 export default function PreInstallationOptions(props: any) {
   const fullSelection = useSelectionContext();
@@ -36,6 +38,7 @@ export default function PreInstallationOptions(props: any) {
   const theme = useTheme();
   const router = useNavigate();
   const { ipcRenderer } = window.electron;
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const onBackClick = () => {
     if (moddedInstall) {
@@ -46,6 +49,15 @@ export default function PreInstallationOptions(props: any) {
   };
 
   const onNextClick = () => {
+    if (installMethod == InstallMethod.cleanInstall) {
+      setShowConfirm(true);
+    } else {
+      router(AppRoutes.installation);
+    }
+  };
+
+  const navigateToInstall = () => {
+    setShowConfirm(false);
     router(AppRoutes.installation);
   };
 
@@ -211,6 +223,14 @@ export default function PreInstallationOptions(props: any) {
         <Button variant="contained" onClick={onNextClick}>
           Download & Install
         </Button>
+        {/* Clean Install confirmation */}
+        <ConfirmationDialog
+          open={showConfirm}
+          onCancel={() => setShowConfirm(false)}
+          onConfirm={navigateToInstall}
+          promptTitle="Are you sure you want to do a clean install?"
+          promptDescription="This will delete the entire contents of the paths you specified!"
+        />
       </PageFooter>
     </PageContainer>
   );
