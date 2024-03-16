@@ -362,11 +362,8 @@ export default function Installation() {
     fontSize: '3rem',
     textAlign: 'center',
   };
-  const loadingMessageStyles = {
-    my: theme.spacing(2),
-    width: '100%',
-    fontSize: '1.2rem',
-    textAlign: 'center',
+  const progressContainerStyles = {
+    mt: 'auto',
   };
 
   return (
@@ -377,7 +374,7 @@ export default function Installation() {
             <Slideshow moddedInstall={moddedInstall} />
             <LoadingMessages />
           </Box>
-          <Box>
+          <Box sx={progressContainerStyles}>
             <Typography variant="h1" sx={percentDoneStyles}>
               {downloadPercentCompleted.toFixed(1) || 0}%
             </Typography>

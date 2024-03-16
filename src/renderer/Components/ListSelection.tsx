@@ -136,6 +136,8 @@ export default function ListSelection(props: any) {
                         alt=""
                         loading="lazy"
                         style={{ maxHeight: '120px' }}
+                        decoding="async"
+                        crossOrigin="anonymous"
                       />
                     </Zoom>
                   )}

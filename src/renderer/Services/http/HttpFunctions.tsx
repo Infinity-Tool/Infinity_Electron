@@ -1,7 +1,3 @@
-// const headers = {
-//   "Access-Control-Allow-Origin": "*",
-// };
-
 import { UseQueryResult, useQuery } from 'react-query';
 import { useHttpContext } from './HttpContext';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -9,6 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 const noCacheHeaders: AxiosRequestConfig = {
   headers: {
     'Cache-Control': 'no-cache',
+    'Content-Encoding': 'gzip',
   },
 };
 
@@ -65,13 +62,19 @@ export const GetAnnouncementQuery = (
   return query;
 };
 
-export const GetLoadingMessagesQuery = (): UseQueryResult<any, unknown> => {
+export const GetLoadingMessagesQuery = (
+  setLoadingMessages: any,
+): UseQueryResult<any, unknown> => {
   const { baseUrl } = useHttpContext();
   const query = useQuery(
     `${baseUrl}_loading_messages`,
     () => {
       const url = `${baseUrl}/LoadingMessages.json`;
-      return axios.get(url, noCacheHeaders).then((res) => res.data);
+      return axios.get(url, noCacheHeaders).then((res) => {
+        const result = res.data;
+        setLoadingMessages(result);
+        return result;
+      });
     },
     {
       staleTime: Infinity,

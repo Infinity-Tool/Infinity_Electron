@@ -117,6 +117,8 @@ export default function PoiListItem(props: any) {
                 alt={tabFile.name}
                 style={{ maxHeight: '90px' }}
                 loading="lazy"
+                decoding="async"
+                crossOrigin="anonymous"
               />
             </Zoom>
           </ImageListItem>

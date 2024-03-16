@@ -11,7 +11,7 @@ export class Selection {
   public installMethod: InstallMethod = InstallMethod.cleanInstall;
   public setInstallMethod: any;
 
-  public moddedInstall: boolean = false;
+  public moddedInstall: boolean = true;
   public setModdedInstall: any;
 
   public modsDirectory: string | null = null;

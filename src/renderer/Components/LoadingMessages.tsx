@@ -4,31 +4,30 @@ import { GetLoadingMessagesQuery } from '../Services/http/HttpFunctions';
 
 export default function LoadingMessages(props: any) {
   const theme = useTheme();
-  const [message, setMessage] = useState('');
+  const [loadingMessages, setLoadingMessages]: any = useState([]);
+  const [message, setMessage] = useState(null);
 
-  const loadingMessagesQuery = GetLoadingMessagesQuery();
-  const loadingMessages = useMemo(
-    () => loadingMessagesQuery.data ?? [],
-    [loadingMessagesQuery],
-  );
-  // const [messagesStarted, setMessagesStarted] = useSessionStorage(
-  //   'loadingMessagesStarted',
-  //   false,
-  // );
+  const loadingMessagesQuery = GetLoadingMessagesQuery(setLoadingMessages);
 
-  const updateLoadingMessage = () => {
-    const randomLoadingMessage =
-      loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
-    setMessage(randomLoadingMessage);
+  const updateMessage = () => {
+    const randomIndex = Math.floor(Math.random() * loadingMessages.length);
+    setMessage(loadingMessages[randomIndex]);
+  };
 
-    setInterval(() => {
-      updateLoadingMessage();
+  const cycleMessages = () => {
+    const interval = setInterval(() => {
+      updateMessage();
     }, 20000);
+
+    return () => {
+      clearInterval(interval);
+    };
   };
 
   useEffect(() => {
-    if (loadingMessages.length > 0) {
-      updateLoadingMessage();
+    if (loadingMessages?.length > 0 && message == null) {
+      updateMessage();
+      cycleMessages();
     }
   }, [loadingMessages]);
 
@@ -42,9 +41,13 @@ export default function LoadingMessages(props: any) {
     textAlign: 'center',
   };
 
+  const messageStyles = {
+    fontSize: '1.2rem',
+  };
+
   return (
     <Box sx={messageContainerStyles}>
-      <Typography>{message}</Typography>
+      <Typography sx={messageStyles}>{message}</Typography>
     </Box>
   );
 }

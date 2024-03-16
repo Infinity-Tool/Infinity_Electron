@@ -37,7 +37,13 @@ export default function Slideshow(props: any) {
         >
           {images.map((image: string, index: number) => (
             <ImageListItem key={index}>
-              <img style={imageStyles} src={`${showcaseUrl}/${image}`} alt="" />
+              <img
+                style={imageStyles}
+                src={`${showcaseUrl}/${image}`}
+                alt=""
+                decoding="async"
+                crossOrigin="anonymous"
+              />
             </ImageListItem>
           ))}
         </Carousel>
