@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@mui/material";
+} from '@mui/material';
 
 export default function ConfirmationDialog(props: any) {
   const { open, onCancel, onConfirm, promptTitle, promptDescription } = props;
@@ -36,7 +36,7 @@ export default function ConfirmationDialog(props: any) {
           No
         </Button>
         <Button onClick={onConfirm} autoFocus>
-          Yeah
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>

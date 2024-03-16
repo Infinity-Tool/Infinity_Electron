@@ -34,6 +34,7 @@ import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
 import FolderHelpDialog from '../Components/FolderHelpDialog';
+import { headerContainerStyles } from '../Services/CommonStyles';
 
 export default function Options() {
   const { ipcRenderer } = window.electron;
@@ -232,7 +233,9 @@ export default function Options() {
   return (
     <PageContainer>
       <PageContent>
-        <Typography variant="h1">Options</Typography>
+        <Box sx={headerContainerStyles}>
+          <Typography variant="h1">Options</Typography>
+        </Box>
         {directoryQuery.isLoading && <Loading />}
         {directoryQuery.isSuccess && (
           <Box>

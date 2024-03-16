@@ -3,7 +3,6 @@ import '@fontsource/poiret-one';
 import '@fontsource/viga';
 import '@fontsource/oswald';
 import '@fontsource/chela-one';
-import shadows from '@mui/material/styles/shadows';
 
 const componentOverrides = {
   MuiButton: {
@@ -154,10 +153,13 @@ export const lightTheme = {
   palette: {
     mode: 'light',
     primary: {
-      main: '#009569',
+      main: '#c90c13',
     },
     secondary: {
-      main: '#DD1F26',
+      main: '#009569',
+    },
+    error: {
+      main: '#000000',
     },
     background: {
       default: '#fff',

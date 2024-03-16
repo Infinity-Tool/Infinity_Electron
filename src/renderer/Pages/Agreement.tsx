@@ -17,6 +17,7 @@ import StorageKeys from '../Services/StorageKeys';
 import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
+import { headerContainerStyles } from '../Services/CommonStyles';
 
 export default function Agreement() {
   const router = useNavigate();
@@ -51,7 +52,9 @@ export default function Agreement() {
   return (
     <PageContainer>
       <PageContent>
-        <Typography variant="h1">Agreement</Typography>
+        <Box sx={headerContainerStyles}>
+          <Typography variant="h1">Agreement</Typography>
+        </Box>
 
         {agreementQuery.isLoading && <Loading />}
         {agreementQuery.isError && (
