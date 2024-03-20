@@ -171,6 +171,7 @@ export default function Options() {
       // todo throw toast/display error?
     }
   };
+
   const Validate = (): boolean => {
     let valid = true;
     if (!IsOkayPath(localPrefabsDirectory)) {

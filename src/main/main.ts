@@ -21,6 +21,7 @@ import async from 'async';
 import { InstallationRequest } from '../renderer/Models/InstallationRequest';
 import { InstallMethod } from '../renderer/Services/SelectionContext';
 import zlib from 'zlib';
+import { IsOkayPath } from '../renderer/Services/utils/PathValidatorUtils';
 
 class AppUpdater {
   constructor() {
@@ -288,6 +289,13 @@ async function downloadFiles(
 }
 
 async function clearFolders(request: InstallationRequest) {
+  if (!IsOkayPath(request.modsDirectory)) {
+    throw new Error('Invalid Mods Directory');
+  }
+  if (!IsOkayPath(request.localPrefabsDirectory)) {
+    throw new Error('Invalid Local Prefabs Directory');
+  }
+
   const deleteFiles = async (directory: string) => {
     if (fs.existsSync(directory)) {
       fs.rmdirSync(directory, { recursive: true });

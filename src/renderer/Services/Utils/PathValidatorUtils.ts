@@ -1,15 +1,22 @@
-const folderKeyWords = ['7days', 'prefabs', 'mods', 'die', '7d'];
-const blacklistKeyworks = ['system32', 'c:/windows']; //TODO
+/* eslint-disable import/prefer-default-export */
+const validKeywords = ['7days', 'prefabs', 'mods', 'die', '7d'];
+const invalidKeywords = ['system32', 'c:/windows'];
 
 export const IsOkayPath = (path: string | null): boolean => {
   if (path == null || path === '') return false;
 
-  const lowerCasePath = path.toLowerCase();
-  var isValidPath = folderKeyWords.some((word) => lowerCasePath.includes(word));
-  return isValidPath;
-};
+  const lowerCasePath = path.toLocaleLowerCase();
+  const isValidPath = validKeywords.some((word) =>
+    lowerCasePath.includes(word),
+  );
 
-//TODO
-// class ValidPathResult {
-//   constructor(isValid: boolean, message: string) {}
-// }
+  const isInvalidPath =
+    invalidKeywords.some((word) => lowerCasePath.includes(word)) ||
+    lowerCasePath == 'c:' ||
+    lowerCasePath == 'c:\\' ||
+    lowerCasePath == 'c:\\windows' ||
+    lowerCasePath == 'c:\\program files' ||
+    lowerCasePath == 'c:\\program files (x86)';
+
+  return isValidPath && !isInvalidPath;
+};
