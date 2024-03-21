@@ -259,8 +259,8 @@ export default function Options() {
                       Modded (Recommended)
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Adds support for custom textures, towns & settlements, and
-                      some optional mods, allowing for even more POI choices.
+                      Adds support for custom towns & settlements and some
+                      optional mods - allowing for even more POI choices.
                     </Typography>
                   </CardContent>
                 </CardActionArea>
