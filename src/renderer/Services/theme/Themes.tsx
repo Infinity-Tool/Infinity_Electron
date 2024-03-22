@@ -133,7 +133,6 @@ export const darkTheme = {
     mode: 'dark',
     primary: {
       main: '#3AFFC4',
-      // main: "#ff0000",
     },
     secondary: {
       main: '#DD1F26',
@@ -153,39 +152,20 @@ export const lightTheme = {
   palette: {
     mode: 'light',
     primary: {
-      main: '#c90c13',
-    },
-    secondary: {
       main: '#009569',
     },
+    secondary: {
+      main: '#DD1F26',
+    },
     error: {
-      main: '#000000',
+      main: '#c90c13',
     },
     background: {
       default: '#fff',
       defaultDarker: '#f8f8f8',
-      paper: '#f2f2f2',
+      paper: '#e7e7e7',
     },
   },
   ...baseTheme,
   components: { ...componentOverrides, ...lightThemeComponentOverrides },
 };
-
-//update global scrollbar
-// overrides: {
-//   MuiCssBaseline: {
-//     "@global": {
-//       "*::-webkit-scrollbar": {
-//         width: "0.4em",
-//       },
-//       "*::-webkit-scrollbar-track": {
-//         boxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-//         webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-//       },
-//       "*::-webkit-scrollbar-thumb": {
-//         backgroundColor: "rgba(0,0,0,.1)",
-//         outline: "1px solid slategrey",
-//       },
-//     },
-//   },
-// },

@@ -230,6 +230,12 @@ export default function Options() {
     gap: theme.spacing(2),
     mb: theme.spacing(2),
   };
+  const errorMessageContainerStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(1),
+    mb: theme.spacing(2),
+  };
 
   return (
     <PageContainer>
@@ -309,6 +315,20 @@ export default function Options() {
                 setHelpDialogOpen={setHelpDialogOpen}
               />
             </Box>
+
+            {/* Error Message */}
+            {hasErrors && (
+              <Box sx={errorMessageContainerStyles}>
+                <Typography color="error" variant="h6">
+                  Invalid folder path(s) provided
+                </Typography>
+                <Typography color="error">
+                  Paths must have "Mods", "LocalPrefabs", or "7Days" in it and
+                  it must not be a root folder.
+                </Typography>
+              </Box>
+            )}
+
             <Box sx={formContainerStyles}>
               <FormControl>
                 <TextField
@@ -352,6 +372,7 @@ export default function Options() {
                 />
               </FormControl>
 
+              {/* Exclude Traders */}
               <Box>
                 <FormGroup sx={formControlStyles}>
                   <FormControlLabel
@@ -369,9 +390,6 @@ export default function Options() {
                   Usually for those who play with overhauls
                 </FormHelperText>
               </Box>
-              <Typography variant="caption" color="error">
-                {hasErrors && 'Please provide valid file paths.'}
-              </Typography>
             </Box>
           </Box>
         )}
@@ -384,7 +402,7 @@ export default function Options() {
         </Tooltip>
 
         <Button onClick={onBackClick}>Back</Button>
-        <Button variant="contained" onClick={onNextClick}>
+        <Button variant="contained" onClick={onNextClick} disabled={hasErrors}>
           Next
         </Button>
       </PageFooter>
