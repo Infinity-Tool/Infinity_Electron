@@ -183,7 +183,7 @@ export default function Installation() {
                 townPropertyList += foundChildEntry.townPropertyList + '\n';
               }
               if (foundChildEntry.poiPropertyList) {
-                poiPropertyList += foundChildEntry.poiPropertyList;
+                poiPropertyList += foundChildEntry.poiPropertyList + '\n';
               }
 
               FormatAndAddModFiles(mods, formattedInstallationFiles);

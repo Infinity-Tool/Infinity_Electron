@@ -142,8 +142,9 @@ export default function PreInstallationOptions(props: any) {
             )}
           >
             <Typography variant="h5">Clean Install</Typography>
-            <Typography>
-              Wipe out target folders and fully install all files from scratch.
+            <Typography color="error">
+              DANGER: This will wipe out the contents of the paths you specified
+              for Mods & LocalPrefabs.
             </Typography>
           </Paper>
           {/* Overwrite */}
@@ -186,10 +187,10 @@ export default function PreInstallationOptions(props: any) {
           </Alert>
         )}
         {installMethod == InstallMethod.cleanInstall && (
-          <Alert severity={'warning'}>
+          <Alert severity={'error'}>
             <AlertTitle>
               {
-                'WARNING: This will delete the entire contents of the paths you specified!'
+                'DANGER: This will wipe out the contents of the paths you specified for Mods & LocalPrefabs.'
               }
             </AlertTitle>
           </Alert>
