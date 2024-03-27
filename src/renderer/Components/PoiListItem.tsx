@@ -55,12 +55,17 @@ export default function PoiListItem(props: any) {
   const tagChipContainerStyles = {
     display: 'flex',
     gap: theme.spacing(0.5),
+    mt: theme.spacing(1),
   };
   const imageContainerStyles = {
     maxWidth: '50%',
   };
   const infoContainerStyles = {
     maxWidth: '66%',
+    overflowWrap: 'break-word',
+  };
+  const imgStyles = {
+    height: '90px',
   };
 
   return (
@@ -105,18 +110,14 @@ export default function PoiListItem(props: any) {
           ))}
         </Box>
       </Box>
-      <ImageList
-        rowHeight={100}
-        cols={tabFile.images?.length}
-        sx={imageContainerStyles}
-      >
+      <ImageList cols={tabFile.images?.length} sx={imageContainerStyles}>
         {tabFile.images?.map((img: string) => (
           <ImageListItem>
             <Zoom>
               <img
                 src={`${baseUrl}/${img}`}
                 alt={tabFile.name}
-                style={{ maxHeight: '90px' }}
+                style={imgStyles}
                 loading="lazy"
                 decoding="async"
                 crossOrigin="anonymous"

@@ -14,6 +14,7 @@ import { useLocation } from 'react-router-dom';
 import { useSelectionContext } from '../Services/SelectionContext';
 import ThemeToggler from './ThemeToggler';
 import AppVersionLabel from './AppVersionLabel';
+import FontToggler from './FontToggler';
 
 export default function InstallTimeline() {
   const location = useLocation();
@@ -51,7 +52,7 @@ export default function InstallTimeline() {
     alignItems: 'space-between',
   };
   const timelineItemStyles = {
-    width: '220px',
+    width: '16rem !important',
 
     [`& .${timelineItemClasses.root}:before`]: {
       flex: 0,
@@ -97,7 +98,11 @@ export default function InstallTimeline() {
         }
       </Timeline>
       <Box sx={bottomRowStyles}>
-        <ThemeToggler />
+        <Box>
+          <ThemeToggler />
+          <FontToggler />
+        </Box>
+
         <AppVersionLabel />
       </Box>
     </Paper>

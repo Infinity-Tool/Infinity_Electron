@@ -264,9 +264,11 @@ export default function Options() {
                     <Typography gutterBottom variant="h5" component="div">
                       Modded (Recommended)
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Adds support for custom towns & settlements and some
-                      optional mods - allowing for even more POI choices.
+                    <Typography variant="caption">
+                      Includes Custom settlements, Towns and Cities. POIs use
+                      both the Custom Block Pack and Compopack mods (both server
+                      side only). Some Optional Mods use custom blocks from
+                      Unity. POI Count: 3000+
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -287,10 +289,12 @@ export default function Options() {
                   )}
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Vanilla
+                      Unmodded
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Add custom POIs to vanilla towns.
+                    <Typography variant="caption">
+                      Contains pois not modded and only spawn in vanilla cities,
+                      towns, wilderness and gateway. Max zombie cap of 250, POI
+                      Count: 1100+
                     </Typography>
                   </CardContent>
                 </CardActionArea>

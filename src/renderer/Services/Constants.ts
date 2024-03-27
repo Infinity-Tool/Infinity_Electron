@@ -64,7 +64,7 @@ export const RoutesMeta: Record<
   },
   // Step 4
   [AppRoutes.vanillaPois]: {
-    title: 'Vanilla POIs',
+    title: 'POIs',
     value: 3,
     installFlow: installFlow.vanilla,
   },

@@ -158,6 +158,13 @@ export default function ListSelection(props: any) {
                       description: child.description,
                       images: child.images,
                       editorGroups: child.editorGroups,
+                      tags: child.tags,
+                      themeTags: child.themeTags,
+                      themeRepeatDistance: child.themeRepeatDistance,
+                      duplicateRepeatDistance: child.duplicateRepeatDistance,
+                      sleeperMin: child.sleeperMin,
+                      sleeperMax: child.sleeperMax,
+                      prefabSize: child.prefabSize,
                     };
                     return (
                       <div key={`${parent.name}_${child.name}`}>

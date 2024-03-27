@@ -1,10 +1,15 @@
 import { IconButton, useTheme } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFont,
+  faMoon,
+  faSun,
+  faTextHeight,
+} from '@fortawesome/free-solid-svg-icons';
 import { useInfinityThemeContext } from '../Services/theme/ThemeContext';
 
-export default function ThemeToggler() {
-  const { themeMode, toggleTheme } = useInfinityThemeContext();
+export default function FontToggler() {
+  const { themeMode, toggleFontSize } = useInfinityThemeContext();
   const theme = useTheme();
 
   const themeTogglerButtonStyles = {
@@ -12,11 +17,11 @@ export default function ThemeToggler() {
   };
 
   return (
-    <IconButton onClick={toggleTheme}>
+    <IconButton onClick={toggleFontSize}>
       <FontAwesomeIcon
         size="sm"
         style={themeTogglerButtonStyles}
-        icon={themeMode == 'dark' ? faSun : faMoon}
+        icon={faTextHeight}
       />
     </IconButton>
   );

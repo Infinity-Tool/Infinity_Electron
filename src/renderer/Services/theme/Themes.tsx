@@ -163,7 +163,7 @@ export const lightTheme = {
     background: {
       default: '#fff',
       defaultDarker: '#f8f8f8',
-      paper: '#e7e7e7',
+      paper: '#eaeaea',
     },
   },
   ...baseTheme,

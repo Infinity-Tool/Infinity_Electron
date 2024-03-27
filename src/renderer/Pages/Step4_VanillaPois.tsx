@@ -114,7 +114,7 @@ export default function Step4_VanillaPois() {
       <PageContent>
         <Box sx={headerContainerStyles}>
           <Box>
-            <Typography variant="h1">Vanilla Poi Selection</Typography>
+            <Typography variant="h1">POI Selection</Typography>
             <Typography variant="caption">
               Add individual custom Points of Interest to your world.
             </Typography>

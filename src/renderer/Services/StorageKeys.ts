@@ -1,6 +1,7 @@
 enum StorageKeys {
   host = 'host',
   theme = 'theme',
+  fontSize = 'fontSize',
   modsDirectory = 'modsDirectory',
   localPrefabsDirectory = 'localPrefabsDirectory',
   installMethod = 'installMethod',
