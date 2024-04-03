@@ -27,6 +27,7 @@ export default function PoiListItem(props: any) {
     setInfoDialogState,
     selectedTags,
     selection,
+    activeConflictKeys,
   } = props;
 
   const theme = useTheme();
@@ -75,6 +76,11 @@ export default function PoiListItem(props: any) {
           <FormControlLabel
             control={
               <Checkbox
+                disabled={
+                  !selected &&
+                  tabFile.conflictKey &&
+                  activeConflictKeys?.includes(tabFile.conflictKey)
+                }
                 checked={selected}
                 onClick={(e: any) => {
                   onToggle(e.target.checked, tabFile.parent, tabFile.name);
@@ -97,6 +103,7 @@ export default function PoiListItem(props: any) {
             color={theme.palette.text.secondary}
           />
         </IconButton>
+        <Typography>{tabFile.description}</Typography>
         <Typography>{tabFile.description}</Typography>
         <Box sx={tagChipContainerStyles}>
           {tabFile.editorGroups?.map((eg: string) => (

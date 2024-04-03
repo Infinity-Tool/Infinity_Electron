@@ -21,6 +21,7 @@ import { RemoveZ } from '../Services/utils/NameFormatterUtils';
 import { useHttpContext } from '../Services/http/HttpContext';
 import { TRADER_TAG } from '../Services/Constants';
 import PoiListItem from './PoiListItem';
+import PoiItem from '../Models/PoiItem';
 
 export default function ListSelection(props: any) {
   const theme = useTheme();
@@ -43,6 +44,30 @@ export default function ListSelection(props: any) {
   const getIsSelected = (fileName: string): boolean => {
     return currentSelection.some((x: any) => x.name === fileName);
   };
+
+  const activeConflictKeys = useMemo<string[]>(() => {
+    if (!currentSelection) return [];
+
+    const selectedConflictKeys: string[] = [];
+
+    currentSelection.forEach((parent: any) => {
+      const foundParent = availableFiles.find(
+        (f: any) => f.name === parent.name,
+      );
+
+      if (foundParent && foundParent.conflictKey) {
+        selectedConflictKeys.push(foundParent.conflictKey);
+      }
+
+      parent.childSelections.forEach((child: any) => {
+        if (child.conflictKey) {
+          selectedConflictKeys.push(child.conflictKey);
+        }
+      });
+    });
+
+    return selectedConflictKeys;
+  }, [currentSelection]);
 
   const filteredSelection = useMemo(() => {
     const filtered = availableFiles?.map((x: any) => {
@@ -115,7 +140,15 @@ export default function ListSelection(props: any) {
                     <FormControl>
                       <FormControlLabel
                         control={
-                          <Checkbox checked={selected} onClick={toggle} />
+                          <Checkbox
+                            checked={selected}
+                            onClick={toggle}
+                            disabled={
+                              !selected &&
+                              parent.conflictKey &&
+                              activeConflictKeys?.includes(parent.conflictKey)
+                            }
+                          />
                         }
                         label={RemoveZ(parent.name)}
                         slotProps={{ typography: { sx: parentTitleStyles } }}
@@ -152,20 +185,21 @@ export default function ListSelection(props: any) {
                 )}
                 <List>
                   {parent.childSelections?.map((child: any) => {
-                    const tabFile = {
-                      parent: parent.name,
-                      name: child.name,
-                      description: child.description,
-                      images: child.images,
-                      editorGroups: child.editorGroups,
-                      tags: child.tags,
-                      themeTags: child.themeTags,
-                      themeRepeatDistance: child.themeRepeatDistance,
-                      duplicateRepeatDistance: child.duplicateRepeatDistance,
-                      sleeperMin: child.sleeperMin,
-                      sleeperMax: child.sleeperMax,
-                      prefabSize: child.prefabSize,
-                    };
+                    const tabFile = new PoiItem(
+                      parent.name,
+                      child.name,
+                      child.description,
+                      child.images,
+                      child.editorGroups,
+                      child.tags,
+                      child.themeTags,
+                      child.themeRepeatDistance,
+                      child.duplicateRepeatDistance,
+                      child.sleeperMin,
+                      child.sleeperMax,
+                      child.prefabSize,
+                      child.conflictKey,
+                    );
                     return (
                       <div key={`${parent.name}_${child.name}`}>
                         <Divider variant="middle" />
@@ -176,6 +210,7 @@ export default function ListSelection(props: any) {
                           setInfoDialogState={setInfoDialogState}
                           selectedTags={[]}
                           selection={currentSelection}
+                          activeConflictKeys={activeConflictKeys}
                         />
                       </div>
                     );
