@@ -5,6 +5,7 @@ import {
 } from '../Services/http/HttpFunctions';
 import useSessionStorage from '../Services/useSessionStorage';
 import StorageKeys from '../Services/StorageKeys';
+import React from 'react';
 
 export default function Announcements() {
   const theme = useTheme();
@@ -32,7 +33,14 @@ export default function Announcements() {
     if (!dismissedAnnouncements.includes(type) && query.data) {
       return (
         <Alert severity={type} onClose={() => dismissAlert(type)}>
-          <AlertTitle>{query.data}</AlertTitle>
+          <AlertTitle>
+            {query.data.split('\n').map((line: string, index: number) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
+          </AlertTitle>
         </Alert>
       );
     }
