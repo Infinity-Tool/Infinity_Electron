@@ -104,7 +104,6 @@ export default function PoiListItem(props: any) {
           />
         </IconButton>
         <Typography>{tabFile.description}</Typography>
-        <Typography>{tabFile.description}</Typography>
         <Box sx={tagChipContainerStyles}>
           {tabFile.editorGroups?.map((eg: string) => (
             <Chip
