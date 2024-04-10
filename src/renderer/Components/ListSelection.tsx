@@ -71,11 +71,13 @@ export default function ListSelection(props: any) {
 
   const filteredSelection = useMemo(() => {
     const filtered = availableFiles?.map((x: any) => {
-      if (excludeTraders) {
-        x.childSelections = x.childSelections.filter(
-          (y: any) => !y.editorGroups?.includes(TRADER_TAG(moddedInstall)),
-        );
-      }
+      x.childSelections = x.childSelections
+        .filter(
+          (y: any) =>
+            !excludeTraders ||
+            !y.editorGroups?.includes(TRADER_TAG(moddedInstall)),
+        )
+        .sort((a: any, b: any) => a.name.localeCompare(b.name));
       return x;
     });
 

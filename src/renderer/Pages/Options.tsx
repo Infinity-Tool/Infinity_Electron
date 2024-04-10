@@ -293,7 +293,7 @@ export default function Options() {
                     </Typography>
                     <Typography variant="caption">
                       Contains pois not modded and only spawn in vanilla cities,
-                      towns, wilderness and gateway. Max zombie cap of 250, POI
+                      towns, wilderness and gateway. Max zombie cap of 200, POI
                       Count: 1100+
                     </Typography>
                   </CardContent>

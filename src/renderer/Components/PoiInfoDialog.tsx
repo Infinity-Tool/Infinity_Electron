@@ -64,6 +64,7 @@ export default function PoiInfoDialog(props: any) {
           <Typography>{poi.description}</Typography>
 
           <Box sx={bodyContainerStyles}>
+            {/* The image zoom onclick handler closes this dialog, so it's not worth atm. */}
             {/* <Box sx={imageContainerStyles}>
               <ImageList cols={poi.images?.length} sx={imageContainerStyles}>
                 {poi.images?.map((img: string) => (

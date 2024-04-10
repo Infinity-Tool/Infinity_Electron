@@ -112,12 +112,14 @@ export default function TabSelection(props: any) {
     tabs.push({
       tabName: 'All',
       parentName: null,
-      tabFiles: filteredAvailableFiles.flatMap((x: any) =>
-        x.childSelections.map((file: any) => ({
-          parent: x.name,
-          ...file,
-        })),
-      ),
+      tabFiles: filteredAvailableFiles
+        .flatMap((x: any) =>
+          x.childSelections.map((file: any) => ({
+            parent: x.name,
+            ...file,
+          })),
+        )
+        .sort((a: any, b: any) => a.name.localeCompare(b.name)),
     });
 
     return tabs;
@@ -164,6 +166,15 @@ export default function TabSelection(props: any) {
   };
 
   const tabRowstyles = { borderBottom: 1, borderColor: 'divider' };
+
+  const tabPanelStyles = {
+    p: 0,
+    height: '100%',
+  };
+  const selectAllButtonHeight = '40px';
+  const selectAllButtonStyles = {
+    height: selectAllButtonHeight,
+  };
 
   return (
     <>
@@ -245,7 +256,7 @@ export default function TabSelection(props: any) {
           <TabPanel
             value={tabContent.tabName}
             key={tabContent.tabName}
-            sx={{ height: '100%' }}
+            sx={tabPanelStyles}
           >
             {tabContent?.parentName && (
               <Button
@@ -253,11 +264,12 @@ export default function TabSelection(props: any) {
                   const { parentName } = tabContent;
                   selectAll(parentName);
                 }}
+                sx={selectAllButtonStyles}
               >
                 Select All
               </Button>
             )}
-            <Paper sx={{ height: '100%' }}>
+            <Paper sx={{ height: `calc(100% - ${selectAllButtonHeight})` }}>
               <List sx={{ height: '100%' }}>
                 {tabContent.tabFiles.length > 0 ? (
                   <VirtualTabFileList
