@@ -24,6 +24,8 @@ import PageContainer from '../Components/PageContainer';
 import PageContent from '../Components/PageContent';
 import PageFooter from '../Components/PageFooter';
 import LoadingMessages from '../Components/LoadingMessages';
+import LocalizationFile from '../Models/LocalizationFile';
+import RWGMixerFile from '../Models/RWGMixerFile';
 
 export default function Installation() {
   const router = useNavigate();
@@ -77,6 +79,9 @@ export default function Installation() {
   }, [filesCompleted, filesErrored]);
 
   const downloadEstimatedTime = useMemo(() => {
+    if (downloadPercentCompleted === 100) {
+      return 'Wrapping up a few more things...';
+    }
     if (installMethod == InstallMethod.quickInstall) {
       return '';
     }
@@ -133,10 +138,14 @@ export default function Installation() {
     selectedFiles: any,
   ): {
     installationFiles: InstallationFile[];
+    localizationFiles: LocalizationFile[];
+    rwgMixerFiles: RWGMixerFile[];
     poiPropertyList: string;
     townPropertyList: string;
   } => {
-    let formattedInstallationFiles: any = [];
+    const formattedInstallationFiles: any = [];
+    const localizationFiles: LocalizationFile[] = [];
+    const rwgMixerFiles: RWGMixerFile[] = [];
     let poiPropertyList = '';
     let townPropertyList = '';
 
@@ -146,8 +155,7 @@ export default function Installation() {
       );
 
       if (foundEntry) {
-        const mods = foundEntry.mods;
-        const localPrefabs = foundEntry.localPrefabs;
+        const { mods, localPrefabs } = foundEntry;
 
         FormatAndAddModFiles(mods, formattedInstallationFiles);
         FormatAndAddLocalPrefabFiles(localPrefabs, formattedInstallationFiles);
@@ -177,13 +185,34 @@ export default function Installation() {
             );
 
             if (foundChildEntry) {
-              const mods = foundChildEntry.mods;
-              const localPrefabs = foundChildEntry.localPrefabs;
+              const mods = foundChildEntry.mods ?? [];
+              const {
+                localPrefabs,
+                localizationSource,
+                localizationDestination,
+                rwgMixerSource,
+                rwgMixerDestination,
+              } = foundChildEntry;
+
               if (foundChildEntry.townPropertyList) {
                 townPropertyList += foundChildEntry.townPropertyList + '\n';
               }
               if (foundChildEntry.poiPropertyList) {
                 poiPropertyList += foundChildEntry.poiPropertyList + '\n';
+              }
+              if (localizationSource && localizationDestination) {
+                const localizationFile = new LocalizationFile(
+                  `${baseUrl}/${localizationSource}`,
+                  `${modsDirectory}/${localizationDestination}`,
+                );
+                localizationFiles.push(localizationFile);
+              }
+              if (rwgMixerSource && rwgMixerDestination) {
+                const rwgMixerFile = new RWGMixerFile(
+                  `${baseUrl}/${rwgMixerSource}`,
+                  `${modsDirectory}/${rwgMixerDestination}`,
+                );
+                rwgMixerFiles.push(rwgMixerFile);
               }
 
               FormatAndAddModFiles(mods, formattedInstallationFiles);
@@ -199,6 +228,8 @@ export default function Installation() {
 
     return {
       installationFiles: formattedInstallationFiles,
+      localizationFiles,
+      rwgMixerFiles,
       poiPropertyList,
       townPropertyList,
     };
@@ -209,6 +240,8 @@ export default function Installation() {
     setLastInstallDate(utcNow);
     setStartTime(utcNow);
     let allFiles = [];
+    let localizationFiles: LocalizationFile[] = [];
+    let rwgMixerFiles: RWGMixerFile[] = [];
     let townPropertyList = '';
     let poiPropertyList = '';
 
@@ -228,6 +261,18 @@ export default function Installation() {
         ...step1Files.installationFiles,
         ...step2Files.installationFiles,
         ...step3Files.installationFiles,
+      ];
+      localizationFiles = [
+        ...step0FilesModded.localizationFiles,
+        ...step1Files.localizationFiles,
+        ...step2Files.localizationFiles,
+        ...step3Files.localizationFiles,
+      ];
+      rwgMixerFiles = [
+        ...step0FilesModded.rwgMixerFiles,
+        ...step1Files.rwgMixerFiles,
+        ...step2Files.rwgMixerFiles,
+        ...step3Files.rwgMixerFiles,
       ];
       townPropertyList =
         step0FilesModded.townPropertyList +
@@ -255,6 +300,16 @@ export default function Installation() {
         ...step4Files.installationFiles,
         ...step5Files.installationFiles,
       ];
+      localizationFiles = [
+        ...step0FilesUnModded.localizationFiles,
+        ...step4Files.localizationFiles,
+        ...step5Files.localizationFiles,
+      ];
+      rwgMixerFiles = [
+        ...step0FilesUnModded.rwgMixerFiles,
+        ...step4Files.rwgMixerFiles,
+        ...step5Files.rwgMixerFiles,
+      ];
       townPropertyList =
         step0FilesUnModded.townPropertyList +
         step4Files.townPropertyList +
@@ -276,6 +331,8 @@ export default function Installation() {
       localPrefabsDirectory,
       files: allFiles.reverse(),
       installMethod,
+      localizationFiles,
+      rwgMixerFiles,
       teragon: buildTeragonFiles
         ? {
             townPropertyList,

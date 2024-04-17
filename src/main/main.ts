@@ -22,6 +22,8 @@ import { InstallationRequest } from '../renderer/Models/InstallationRequest';
 import { InstallMethod } from '../renderer/Services/SelectionContext';
 import zlib from 'zlib';
 import { IsOkayPath } from '../renderer/Services/utils/PathValidatorUtils';
+import LocalizationFile from '../renderer/Models/LocalizationFile';
+import RWGMixerFile from '../renderer/Models/RWGMixerFile';
 
 class AppUpdater {
   constructor() {
@@ -193,7 +195,6 @@ async function downloadFile(
 ) {
   try {
     if (shouldCancel) {
-      console.log('Download canceled:', file.source);
       return;
     }
 
@@ -288,6 +289,105 @@ async function downloadFiles(
   });
 }
 
+async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
+  return async.eachLimit(
+    localizationFiles,
+    1,
+    async (file: LocalizationFile) => {
+      try {
+        if (shouldCancel) {
+          return;
+        }
+
+        // Ensure the destination files exists
+        const destDir = path.dirname(file.destination);
+        if (!fs.existsSync(destDir)) {
+          throw new Error(
+            `Destination localization file does not exist: ${destDir}`,
+          );
+        }
+
+        const downloadedLocalization = await axios({
+          method: 'get',
+          url: file.source,
+          responseType: 'text',
+          headers: {
+            'Accept-Encoding': 'gzip',
+          },
+        });
+
+        // remove the first line from the downloadedLocalization
+        const localizationToAppend =
+          '\n' +
+          downloadedLocalization.data
+            .toString()
+            .split('\n')
+            .slice(1)
+            .join('\n');
+
+        const targetLocalization = await fs.readFileSync(
+          file.destination,
+          'utf-8',
+        );
+        if (
+          targetLocalization &&
+          !targetLocalization.includes(localizationToAppend)
+        ) {
+          fs.appendFileSync(file.destination, localizationToAppend);
+        }
+      } catch (error: any) {
+        mainWindow?.webContents.send('download-error', file.source);
+      }
+    },
+  );
+}
+
+async function buildRWGMixerFiles(rwgMixerFiles: RWGMixerFile[]) {
+  return async.eachLimit(rwgMixerFiles, 1, async (file: LocalizationFile) => {
+    try {
+      if (shouldCancel) {
+        return;
+      }
+
+      // Ensure the destination files exists
+      const destDir = path.dirname(file.destination);
+      if (!fs.existsSync(destDir)) {
+        throw new Error(
+          `Destination localization file does not exist: ${destDir}`,
+        );
+      }
+
+      const downloadedRwgMixerFile = await axios({
+        method: 'get',
+        url: file.source,
+        responseType: 'text',
+        headers: {
+          'Accept-Encoding': 'gzip',
+        },
+      });
+
+      const rwgMixerToAppend = downloadedRwgMixerFile.data
+        .replace('<compopack>', '')
+        .replace('</compopack>', '');
+
+      const targetRwgMixer = await fs.readFileSync(file.destination, 'utf-8');
+
+      let newRwgMixer = targetRwgMixer;
+
+      if (targetRwgMixer && !targetRwgMixer.includes(rwgMixerToAppend)) {
+        newRwgMixer = targetRwgMixer.replace(
+          '</compopack>',
+          rwgMixerToAppend + '\n' + '</compopack>',
+        );
+      }
+
+      fs.writeFileSync(file.destination, newRwgMixer);
+    } catch (error: any) {
+      mainWindow?.webContents.send('download-error', file.source);
+    }
+  });
+}
+
 async function clearFolders(request: InstallationRequest) {
   if (!IsOkayPath(request.modsDirectory)) {
     throw new Error('Invalid Mods Directory');
@@ -323,6 +423,10 @@ ipcMain.on(
     }
 
     await downloadFiles(request.files, installMethod);
+
+    await buildLocalizationFiles(request.localizationFiles);
+
+    await buildRWGMixerFiles(request.rwgMixerFiles);
 
     if (request.teragon) {
       buildTownPropertyList(
