@@ -292,7 +292,7 @@ async function downloadFiles(
 async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
   return async.eachLimit(
     localizationFiles,
-    8,
+    1,
     async (file: LocalizationFile) => {
       try {
         if (shouldCancel) {
