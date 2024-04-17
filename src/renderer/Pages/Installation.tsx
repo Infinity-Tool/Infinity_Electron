@@ -319,7 +319,9 @@ export default function Installation() {
         step4Files.poiPropertyList +
         step5Files.poiPropertyList;
     }
-    setFileCount(allFiles.length);
+    setFileCount(
+      allFiles.length + localizationFiles.length + rwgMixerFiles.length,
+    );
 
     if (modsDirectory == null || localPrefabsDirectory == null) {
       alert('Error: Mods and local prefabs directories are not set.');

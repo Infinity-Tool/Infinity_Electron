@@ -292,7 +292,7 @@ async function downloadFiles(
 async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
   return async.eachLimit(
     localizationFiles,
-    1,
+    8,
     async (file: LocalizationFile) => {
       try {
         if (shouldCancel) {
@@ -335,6 +335,7 @@ async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
         ) {
           fs.appendFileSync(file.destination, localizationToAppend);
         }
+        mainWindow?.webContents.send('download-complete', file.source);
       } catch (error: any) {
         mainWindow?.webContents.send('download-error', file.source);
       }
@@ -382,6 +383,7 @@ async function buildRWGMixerFiles(rwgMixerFiles: RWGMixerFile[]) {
       }
 
       fs.writeFileSync(file.destination, newRwgMixer);
+      mainWindow?.webContents.send('download-complete', file.source);
     } catch (error: any) {
       mainWindow?.webContents.send('download-error', file.source);
     }
@@ -424,9 +426,10 @@ ipcMain.on(
 
     await downloadFiles(request.files, installMethod);
 
-    await buildLocalizationFiles(request.localizationFiles);
-
-    await buildRWGMixerFiles(request.rwgMixerFiles);
+    await Promise.all([
+      buildLocalizationFiles(request.localizationFiles),
+      buildRWGMixerFiles(request.rwgMixerFiles),
+    ]);
 
     if (request.teragon) {
       buildTownPropertyList(
