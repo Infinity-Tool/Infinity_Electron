@@ -51,7 +51,7 @@ export default function ListSelection(props: any) {
     const selectedConflictKeys: string[] = [];
 
     currentSelection.forEach((parent: any) => {
-      const foundParent = availableFiles.find(
+      const foundParent = availableFiles?.find(
         (f: any) => f.name === parent.name,
       );
 

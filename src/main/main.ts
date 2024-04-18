@@ -284,9 +284,54 @@ async function downloadFiles(
   files: InstallationFile[],
   installMethod: InstallMethod,
 ) {
-  return async.eachLimit(files, 8, async (file: InstallationFile) => {
+  return async.eachLimit(files, 12, async (file: InstallationFile) => {
     await downloadFile(file, installMethod);
   });
+}
+
+async function downloadLocalizationFile(file: LocalizationFile) {
+  try {
+    if (shouldCancel) {
+      return;
+    }
+
+    // Ensure the destination files exists
+    const destDir = path.dirname(file.destination);
+    if (!fs.existsSync(destDir)) {
+      mainWindow?.webContents.send('download-error', file.source);
+      return;
+    }
+
+    const downloadedLocalization = await axios({
+      method: 'get',
+      url: file.source,
+      responseType: 'text',
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+    });
+
+    // remove the first line from the downloadedLocalization
+    const localizationToAppend =
+      '\n' +
+      downloadedLocalization.data
+        .toString()
+        .split('\n')
+        .slice(1)
+        .join('\n')
+        .trim();
+
+    const targetLocalization = fs.readFileSync(file.destination, 'utf-8');
+    if (
+      targetLocalization &&
+      !targetLocalization.includes(localizationToAppend)
+    ) {
+      fs.appendFileSync(file.destination, localizationToAppend);
+    }
+    mainWindow?.webContents.send('download-complete', file.source);
+  } catch (error: any) {
+    mainWindow?.webContents.send('download-error', file.source);
+  }
 }
 
 async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
@@ -294,51 +339,7 @@ async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
     localizationFiles,
     1,
     async (file: LocalizationFile) => {
-      try {
-        if (shouldCancel) {
-          return;
-        }
-
-        // Ensure the destination files exists
-        const destDir = path.dirname(file.destination);
-        if (!fs.existsSync(destDir)) {
-          throw new Error(
-            `Destination localization file does not exist: ${destDir}`,
-          );
-        }
-
-        const downloadedLocalization = await axios({
-          method: 'get',
-          url: file.source,
-          responseType: 'text',
-          headers: {
-            'Accept-Encoding': 'gzip',
-          },
-        });
-
-        // remove the first line from the downloadedLocalization
-        const localizationToAppend =
-          '\n' +
-          downloadedLocalization.data
-            .toString()
-            .split('\n')
-            .slice(1)
-            .join('\n');
-
-        const targetLocalization = await fs.readFileSync(
-          file.destination,
-          'utf-8',
-        );
-        if (
-          targetLocalization &&
-          !targetLocalization.includes(localizationToAppend)
-        ) {
-          fs.appendFileSync(file.destination, localizationToAppend);
-        }
-        mainWindow?.webContents.send('download-complete', file.source);
-      } catch (error: any) {
-        mainWindow?.webContents.send('download-error', file.source);
-      }
+      await downloadLocalizationFile(file);
     },
   );
 }
@@ -353,9 +354,8 @@ async function buildRWGMixerFiles(rwgMixerFiles: RWGMixerFile[]) {
       // Ensure the destination files exists
       const destDir = path.dirname(file.destination);
       if (!fs.existsSync(destDir)) {
-        throw new Error(
-          `Destination localization file does not exist: ${destDir}`,
-        );
+        mainWindow?.webContents.send('download-error', file.source);
+        return;
       }
 
       const downloadedRwgMixerFile = await axios({
