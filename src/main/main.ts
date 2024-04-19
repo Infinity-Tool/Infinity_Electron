@@ -12,6 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import * as lockfile from 'proper-lockfile';
 import { resolveHtmlPath } from './util';
 import MenuBuilder from './menu';
 import axios from 'axios';
@@ -283,13 +284,17 @@ async function decompressFile(filePath: string) {
 async function downloadFiles(
   files: InstallationFile[],
   installMethod: InstallMethod,
-) {
-  return async.eachLimit(files, 12, async (file: InstallationFile) => {
-    await downloadFile(file, installMethod);
-  });
+): Promise<void> {
+  return async
+    .eachLimit(files, 12, async (file: InstallationFile) => {
+      await downloadFile(file, installMethod);
+    })
+    .then(() => {
+      console.log('All files downloaded');
+    });
 }
 
-async function downloadLocalizationFile(file: LocalizationFile) {
+async function downloadLocalizationFile(file: LocalizationFile): Promise<void> {
   try {
     if (shouldCancel) {
       return;
@@ -321,72 +326,117 @@ async function downloadLocalizationFile(file: LocalizationFile) {
         .join('\n')
         .trim();
 
-    const targetLocalization = fs.readFileSync(file.destination, 'utf-8');
-    if (
-      targetLocalization &&
-      !targetLocalization.includes(localizationToAppend)
-    ) {
+    const targetLocalizationText = fs.readFileSync(file.destination, 'utf-8');
+
+    if (!targetLocalizationText.includes(localizationToAppend)) {
       fs.appendFileSync(file.destination, localizationToAppend);
     }
+
+    mainWindow?.webContents.send('download-complete', file.source);
+  } catch (error: any) {
+    console.error('Error downloading localization file', file, error);
+    mainWindow?.webContents.send('download-error', file.source);
+  }
+}
+
+async function downloadRWGMixerFile(file: RWGMixerFile): Promise<void> {
+  try {
+    if (shouldCancel) {
+      return;
+    }
+
+    // Ensure the destination files exists
+    const destDir = path.dirname(file.destination);
+    if (!fs.existsSync(destDir)) {
+      mainWindow?.webContents.send('download-error', file.source);
+      return;
+    }
+
+    const downloadedRwgMixerFile = await axios({
+      method: 'get',
+      url: file.source,
+      responseType: 'text',
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+    });
+
+    const rwgMixerToAppend = downloadedRwgMixerFile.data
+      .replace('<compopack>', '')
+      .replace('</compopack>', '');
+
+    const targetRwgMixer = await fs.readFileSync(file.destination, 'utf-8');
+
+    let newRwgMixer = targetRwgMixer;
+
+    if (targetRwgMixer && !targetRwgMixer.includes(rwgMixerToAppend)) {
+      newRwgMixer = targetRwgMixer.replace(
+        '</compopack>',
+        rwgMixerToAppend + '\n' + '</compopack>',
+      );
+    }
+
+    fs.writeFileSync(file.destination, newRwgMixer);
     mainWindow?.webContents.send('download-complete', file.source);
   } catch (error: any) {
     mainWindow?.webContents.send('download-error', file.source);
   }
 }
 
-async function buildLocalizationFiles(localizationFiles: LocalizationFile[]) {
+const lockOptions: lockfile.LockOptions = {
+  retries: {
+    retries: 100,
+    factor: 1,
+    minTimeout: 500,
+    maxTimeout: 2000,
+  },
+};
+
+async function buildLocalizationFiles(
+  localizationFiles: LocalizationFile[],
+): Promise<void> {
   return async.eachLimit(
     localizationFiles,
-    1,
+    8,
     async (file: LocalizationFile) => {
-      await downloadLocalizationFile(file);
+      await lockfile
+        .lock(file.destination, lockOptions)
+        .then(async (release: any) => {
+          try {
+            await downloadLocalizationFile(file);
+          } catch (error: any) {
+            console.error('Error downloading localization file', file, error);
+          } finally {
+            // Always release the lock, whether the download succeeded or not
+            await release();
+          }
+        })
+        .catch((error: any) => {
+          console.error('Error acquiring lock', file, error);
+        });
     },
   );
 }
 
-async function buildRWGMixerFiles(rwgMixerFiles: RWGMixerFile[]) {
-  return async.eachLimit(rwgMixerFiles, 1, async (file: LocalizationFile) => {
-    try {
-      if (shouldCancel) {
-        return;
-      }
-
-      // Ensure the destination files exists
-      const destDir = path.dirname(file.destination);
-      if (!fs.existsSync(destDir)) {
-        mainWindow?.webContents.send('download-error', file.source);
-        return;
-      }
-
-      const downloadedRwgMixerFile = await axios({
-        method: 'get',
-        url: file.source,
-        responseType: 'text',
-        headers: {
-          'Accept-Encoding': 'gzip',
-        },
+async function buildRWGMixerFiles(
+  rwgMixerFiles: RWGMixerFile[],
+): Promise<void> {
+  return async.eachLimit(rwgMixerFiles, 8, async (file: LocalizationFile) => {
+    await lockfile
+      .lock(file.destination, lockOptions)
+      .then(async (release: any) => {
+        try {
+          await downloadRWGMixerFile(file);
+        } catch (error: any) {
+          console.error('Error downloading rwgMixer file', file, error);
+        } finally {
+          // Always release the lock, whether the download succeeded or not
+          await release();
+        }
+      })
+      .catch((error: any) => {
+        console.error('Error acquiring lock', file, error);
       });
-
-      const rwgMixerToAppend = downloadedRwgMixerFile.data
-        .replace('<compopack>', '')
-        .replace('</compopack>', '');
-
-      const targetRwgMixer = await fs.readFileSync(file.destination, 'utf-8');
-
-      let newRwgMixer = targetRwgMixer;
-
-      if (targetRwgMixer && !targetRwgMixer.includes(rwgMixerToAppend)) {
-        newRwgMixer = targetRwgMixer.replace(
-          '</compopack>',
-          rwgMixerToAppend + '\n' + '</compopack>',
-        );
-      }
-
-      fs.writeFileSync(file.destination, newRwgMixer);
-      mainWindow?.webContents.send('download-complete', file.source);
-    } catch (error: any) {
-      mainWindow?.webContents.send('download-error', file.source);
-    }
   });
 }
 
@@ -425,11 +475,8 @@ ipcMain.on(
     }
 
     await downloadFiles(request.files, installMethod);
-
-    await Promise.all([
-      buildLocalizationFiles(request.localizationFiles),
-      buildRWGMixerFiles(request.rwgMixerFiles),
-    ]);
+    await buildLocalizationFiles(request.localizationFiles);
+    await buildRWGMixerFiles(request.rwgMixerFiles);
 
     if (request.teragon) {
       buildTownPropertyList(
