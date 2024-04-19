@@ -388,7 +388,7 @@ const lockOptions: lockfile.LockOptions = {
     retries: 100,
     factor: 1,
     minTimeout: 500,
-    maxTimeout: 2000,
+    maxTimeout: 5000,
   },
 };
 
@@ -397,7 +397,7 @@ async function buildLocalizationFiles(
 ): Promise<void> {
   return async.eachLimit(
     localizationFiles,
-    8,
+    4,
     async (file: LocalizationFile) => {
       await lockfile
         .lock(file.destination, lockOptions)
@@ -412,7 +412,7 @@ async function buildLocalizationFiles(
           }
         })
         .catch((error: any) => {
-          console.error('Error acquiring lock', file, error);
+          console.error('Error acquiring lock', file.source);
         });
     },
   );
@@ -421,7 +421,7 @@ async function buildLocalizationFiles(
 async function buildRWGMixerFiles(
   rwgMixerFiles: RWGMixerFile[],
 ): Promise<void> {
-  return async.eachLimit(rwgMixerFiles, 8, async (file: LocalizationFile) => {
+  return async.eachLimit(rwgMixerFiles, 4, async (file: LocalizationFile) => {
     await lockfile
       .lock(file.destination, lockOptions)
       .then(async (release: any) => {
@@ -475,8 +475,10 @@ ipcMain.on(
     }
 
     await downloadFiles(request.files, installMethod);
-    await buildLocalizationFiles(request.localizationFiles);
-    await buildRWGMixerFiles(request.rwgMixerFiles);
+    await Promise.all([
+      buildLocalizationFiles(request.localizationFiles),
+      buildRWGMixerFiles(request.rwgMixerFiles),
+    ]);
 
     if (request.teragon) {
       buildTownPropertyList(
