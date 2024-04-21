@@ -493,14 +493,12 @@ ipcMain.on(
 
     await downloadFiles(request.files, installMethod);
 
-    await Promise.all([
-      buildLocalizationFiles(
-        request.baseUrl,
-        request.modsDirectory,
-        request.localizationFiles,
-      ),
-      buildRWGMixerFiles(request.rwgMixerFiles),
-    ]);
+    await buildLocalizationFiles(
+      request.baseUrl,
+      request.modsDirectory,
+      request.localizationFiles,
+    );
+    await buildRWGMixerFiles(request.rwgMixerFiles);
 
     if (request.teragon) {
       buildTownPropertyList(
