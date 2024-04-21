@@ -202,8 +202,7 @@ export default function Installation() {
               }
               if (localizationSource && localizationDestination) {
                 const localizationFile = new LocalizationFile(
-                  `${baseUrl}/${localizationSource}`,
-                  `${modsDirectory}/${localizationDestination}`,
+                  localizationSource,
                 );
                 localizationFiles.push(localizationFile);
               }
@@ -329,6 +328,7 @@ export default function Installation() {
     }
 
     const request: InstallationRequest = {
+      baseUrl,
       modsDirectory,
       localPrefabsDirectory,
       files: allFiles.reverse(),

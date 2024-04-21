@@ -4,6 +4,7 @@ import LocalizationFile from './LocalizationFile';
 import RWGMixerFile from './RWGMixerFile';
 
 export interface InstallationRequest {
+  baseUrl: string;
   modsDirectory: string;
   localPrefabsDirectory: string;
   files: InstallationFile[];
