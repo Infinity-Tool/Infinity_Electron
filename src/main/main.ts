@@ -404,6 +404,8 @@ async function buildLocalizationFiles(
         return;
       }
 
+      mainWindow?.webContents.send('building-localization', file.source);
+
       const foundEntry = localizationDirectory.find(
         (l: any) => l.source === file.source,
       );

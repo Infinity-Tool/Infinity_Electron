@@ -65,6 +65,7 @@ export default function Installation() {
   const [confirmBackOpen, setConfirmBackOpen] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
   const [cleanInstallError, setCleanInstallError] = useState<string>('');
+  const [buildingLocalization, setBuildingLocalization] = useState(null);
 
   const downloadPercentCompleted = useMemo(() => {
     const totalFiles = fileCount;
@@ -355,6 +356,9 @@ export default function Installation() {
   }, [directoryQuery]);
 
   useEffect(() => {
+    ipcRenderer.on('building-localization', (file: any) => {
+      setBuildingLocalization(file);
+    });
     ipcRenderer.on('download-complete', (file: any) => {
       addToCompletedFiles(file);
     });
@@ -365,6 +369,7 @@ export default function Installation() {
       navigateFinished();
     });
     return () => {
+      ipcRenderer.removeAllListeners('building-localization');
       ipcRenderer.removeAllListeners('download-complete');
       ipcRenderer.removeAllListeners('download-error');
       ipcRenderer.removeAllListeners('install-complete');
@@ -437,6 +442,12 @@ export default function Installation() {
             <Typography variant="h1" sx={percentDoneStyles}>
               {downloadPercentCompleted.toFixed(1) || 0}%
             </Typography>
+
+            {buildingLocalization && (
+              <Typography>
+                Building localization: {buildingLocalization}
+              </Typography>
+            )}
 
             <LinearProgress
               variant="determinate"
