@@ -230,29 +230,25 @@ async function downloadFile(
     const writer = fs.createWriteStream(file.destination);
     response.data.pipe(writer);
 
-    return new Promise((resolve: any, reject) => {
-      writer.on('finish', () => {
-        if (file.source.endsWith('.gz')) {
-          decompressFile(file.destination)
-            .then(() => {
-              mainWindow?.webContents.send('download-complete', file.fileName);
-              resolve();
-            })
-            .catch((error) => {
-              log.error('Error decompressing file', file, error);
-              mainWindow?.webContents.send('download-error', file.fileName);
-              reject(error);
-            });
-        } else {
-          mainWindow?.webContents.send('download-complete', file.fileName);
-          resolve();
-        }
-      });
-      writer.on('error', reject);
+    await writer.on('finish', () => {
+      if (file.source.endsWith('.gz')) {
+        decompressFile(file.destination)
+          .then(() => {
+            mainWindow?.webContents.send('download-complete', file.fileName);
+          })
+          .catch((error) => {
+            throw error;
+          });
+      } else {
+        mainWindow?.webContents.send('download-complete', file.fileName);
+      }
     });
   } catch (error: any) {
     if (attemptCount < 3) {
-      log.warn(`Download failed, retrying: ${file.source}`);
+      log.warn(
+        `Download or decompression failed, retrying: ${file.source}`,
+        error,
+      );
       await downloadFile(file, installMethod, attemptCount + 1);
       return;
     }
