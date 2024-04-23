@@ -291,96 +291,6 @@ async function downloadFiles(
     });
 }
 
-// async function downloadLocalizationFile(file: LocalizationFile): Promise<void> {
-//   try {
-//     if (shouldCancel) {
-//       return;
-//     }
-
-//     // Ensure the destination files exists
-//     const destDir = path.dirname(file.destination);
-//     if (!fs.existsSync(destDir)) {
-//       mainWindow?.webContents.send('download-error', file.source);
-//       return;
-//     }
-
-//     const downloadedLocalization = await axios({
-//       method: 'get',
-//       url: file.source,
-//       responseType: 'text',
-//       headers: {
-//         'Accept-Encoding': 'gzip',
-//       },
-//     });
-
-//     // remove the first line from the downloadedLocalization
-//     const localizationToAppend =
-//       '\n' +
-//       downloadedLocalization.data
-//         .toString()
-//         .split('\n')
-//         .slice(1)
-//         .join('\n')
-//         .trim();
-
-//     const targetLocalizationText = fs.readFileSync(file.destination, 'utf-8');
-
-//     if (!targetLocalizationText.includes(localizationToAppend)) {
-//       fs.appendFileSync(file.destination, localizationToAppend);
-//     }
-
-//     mainWindow?.webContents.send('download-complete', file.source);
-//   } catch (error: any) {
-//     log.error('Error downloading localization file', file, error);
-//     mainWindow?.webContents.send('download-error', file.source);
-//   }
-// }
-
-async function downloadRWGMixerFile(file: RWGMixerFile): Promise<void> {
-  try {
-    if (shouldCancel) {
-      return;
-    }
-
-    // Ensure the destination files exists
-    const destDir = path.dirname(file.destination);
-    if (!fs.existsSync(destDir)) {
-      mainWindow?.webContents.send('download-error', file.source);
-      return;
-    }
-
-    const downloadedRwgMixerFile = await axios({
-      method: 'get',
-      url: file.source,
-      responseType: 'text',
-      headers: {
-        'Accept-Encoding': 'gzip',
-      },
-    });
-
-    const rwgMixerToAppend = downloadedRwgMixerFile.data
-      .replace('<compopack>', '')
-      .replace('</compopack>', '');
-
-    const targetRwgMixer = await fs.readFileSync(file.destination, 'utf-8');
-
-    let newRwgMixer = targetRwgMixer;
-
-    if (targetRwgMixer && !targetRwgMixer.includes(rwgMixerToAppend)) {
-      newRwgMixer = targetRwgMixer.replace(
-        '</compopack>',
-        rwgMixerToAppend + '\n' + '</compopack>',
-      );
-    }
-
-    fs.writeFileSync(file.destination, newRwgMixer);
-    mainWindow?.webContents.send('download-complete', file.source);
-  } catch (error: any) {
-    log.error('Error downloading rwgMixer file', file, error);
-    mainWindow?.webContents.send('download-error', file.source);
-  }
-}
-
 async function buildLocalizationFiles(
   baseUrl: string,
   modsDirectory: string,
@@ -400,14 +310,13 @@ async function buildLocalizationFiles(
         return;
       }
 
-      mainWindow?.webContents.send('building-localization', file.source);
-
       const foundEntry = localizationDirectory.find(
         (l: any) => l.source === file.source,
       );
 
       if (!foundEntry) {
         log.error('Localization file not found in localizations.json', file);
+        mainWindow?.webContents.send('download-error', file.source);
         return;
       }
 
@@ -438,18 +347,57 @@ async function buildLocalizationFiles(
 }
 
 async function buildRWGMixerFiles(
+  baseUrl: string,
+  modsDirectory: string,
   rwgMixerFiles: RWGMixerFile[],
 ): Promise<void> {
-  return async.eachLimit(rwgMixerFiles, 1, async (file: RWGMixerFile) => {
-    try {
+  if (shouldCancel) {
+    return;
+  }
+  try {
+    const rwgMixerDirectoryRequest = await axios.get(
+      baseUrl + '/rwgMixers.json',
+    );
+    const rwgMixerDirectory = rwgMixerDirectoryRequest.data;
+
+    rwgMixerFiles.forEach(async (file: RWGMixerFile) => {
       if (shouldCancel) {
         return;
       }
-      await downloadRWGMixerFile(file);
-    } catch (error: any) {
-      log.error('Error downloading rwgMixer file', file, error);
-    }
-  });
+
+      const foundEntry = rwgMixerDirectory.find(
+        (l: any) => l.source === file.source,
+      );
+
+      if (!foundEntry) {
+        log.error('RWGMixer file not found in rwgMixers.json', file);
+        mainWindow?.webContents.send('download-error', file.source);
+        return;
+      }
+
+      const rwgMixerToAppend = foundEntry.value.replace('ï»¿', ''); // Wierd characters at the start of the file
+      const targetRwgMixerPath = path.join(
+        modsDirectory,
+        foundEntry.destination,
+      );
+
+      const targetRwgMixer = fs.readFileSync(targetRwgMixerPath, 'utf-8');
+
+      let newRwgMixer = targetRwgMixer;
+
+      if (targetRwgMixer && !targetRwgMixer.includes(rwgMixerToAppend)) {
+        newRwgMixer = targetRwgMixer.replace(
+          '</compopack>',
+          rwgMixerToAppend + '\n' + '</compopack>',
+        );
+        fs.writeFileSync(targetRwgMixerPath, newRwgMixer);
+      }
+
+      mainWindow?.webContents.send('download-complete', file.source);
+    });
+  } catch (error: any) {
+    log.error('Error downloading building RWGMixer files', error);
+  }
 }
 
 async function clearFolders(request: InstallationRequest) {
@@ -494,7 +442,12 @@ ipcMain.on(
       request.modsDirectory,
       request.localizationFiles,
     );
-    await buildRWGMixerFiles(request.rwgMixerFiles);
+
+    await buildRWGMixerFiles(
+      request.baseUrl,
+      request.modsDirectory,
+      request.rwgMixerFiles,
+    );
 
     if (request.teragon) {
       buildTownPropertyList(
