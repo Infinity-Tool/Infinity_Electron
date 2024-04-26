@@ -305,7 +305,7 @@ async function buildLocalizationFiles(
     );
     const localizationDirectory = localizationDirectoryRequest.data;
 
-    localizationFiles.forEach(async (file: LocalizationFile) => {
+    localizationFiles.forEach((file: LocalizationFile) => {
       if (shouldCancel) {
         return;
       }

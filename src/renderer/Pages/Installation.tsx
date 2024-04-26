@@ -186,13 +186,8 @@ export default function Installation() {
 
             if (foundChildEntry) {
               const mods = foundChildEntry.mods ?? [];
-              const {
-                localPrefabs,
-                localizationSource,
-                localizationDestination,
-                rwgMixerSource,
-                rwgMixerDestination,
-              } = foundChildEntry;
+              const { localPrefabs, localizationSource, rwgMixerSource } =
+                foundChildEntry;
 
               if (foundChildEntry.townPropertyList) {
                 townPropertyList += foundChildEntry.townPropertyList + '\n';
@@ -200,13 +195,13 @@ export default function Installation() {
               if (foundChildEntry.poiPropertyList) {
                 poiPropertyList += foundChildEntry.poiPropertyList + '\n';
               }
-              if (localizationSource && localizationDestination) {
+              if (localizationSource) {
                 const localizationFile = new LocalizationFile(
                   localizationSource,
                 );
                 localizationFiles.push(localizationFile);
               }
-              if (rwgMixerSource && rwgMixerDestination) {
+              if (rwgMixerSource) {
                 const rwgMixerFile = new RWGMixerFile(rwgMixerSource);
                 rwgMixerFiles.push(rwgMixerFile);
               }
