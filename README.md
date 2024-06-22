@@ -9,14 +9,6 @@ Choose from many mods, fully custom Cities and Settlements, and over a thousand 
 - Network connection
 - 200MB disk space for tool, Up to 10GB of disk space depending on chosen addons
 
-## How to run the code (developers)
-
-1. Download the source files, or clone using Git
-2. Install Node (v20 or higher)
-3. From root of project folder:  
-   run `npm install`
-   and then `npm run start`
-
 Redistribution is not permitted
 
 <!-- Discord Link: -->
